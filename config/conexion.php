@@ -1,17 +1,19 @@
 <?php
-$servername = "localhost";
-$database = "";
-$username = "root";
-$password = "";
+class Conexion {
+    // conexion a bd
+    public static function conectar() {
+        $host = "localhost";
+        $dbname = "farmacia";
+        $user = "root";
+        $pass = "";
 
-// Crear la conexión
-$conn = new mysqli($servername, $username, $password, $database);
-
-// Verificar si la conexión fue exitosa
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
+        try {
+            $pdo = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $pdo->exec("SET NAMES utf8mb4");
+            return $pdo;
+        } catch (PDOException $e) {
+            die("Error de conexión: " . $e->getMessage());
+        }
+    }
 }
-
-// Configurar el conjunto de caracteres
-$conn->set_charset('utf8mb4');
-?>
