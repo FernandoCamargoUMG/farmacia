@@ -1,3 +1,21 @@
+<?php
+session_start();
+require_once __DIR__ . '/../../config/conexion.php';
+
+$sucursalNombre = 'No definido';
+
+if (isset($_SESSION['sucursal_id'])) {
+    $conn = Conexion::conectar();
+    $stmt = $conn->prepare("SELECT nombre_sucursal FROM sucursal WHERE id = ?");
+    $stmt->execute([$_SESSION['sucursal_id']]);
+    $sucursal = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($sucursal) {
+        $sucursalNombre = $sucursal['nombre_sucursal'];
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -19,8 +37,17 @@
             <button id="menuToggle" class="menu-btn">
                 <i class="bi bi-list"></i>
             </button>
-            <span class="navbar-brand">Farmacia</span>
+            <span class="navbar-brand">
+                Sucursal: <?php echo htmlspecialchars($sucursalNombre); ?>
+            </span>
+
         </div>
+        <div class="ms-auto">
+            <a href="/farmacia/controllers/logout.php" class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+            </a>
+        </div>
+
     </nav>
 
     <!-- Menú lateral -->
