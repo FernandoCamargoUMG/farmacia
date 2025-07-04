@@ -1,7 +1,7 @@
 <?php
 class Auth
 {
-    public static function iniciarSesionSiNoExiste()
+    public static function sessionNoExist()
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -10,37 +10,37 @@ class Auth
 
     public static function usuarioId()
     {
-        self::iniciarSesionSiNoExiste();
+        self::sessionNoExist();
         return $_SESSION['usuario_id'] ?? null;
     }
 
     public static function nombreUsuario()
     {
-        self::iniciarSesionSiNoExiste();
+        self::sessionNoExist();
         return $_SESSION['nombre'] ?? 'Invitado';
     }
 
     public static function rolId()
     {
-        self::iniciarSesionSiNoExiste();
+        self::sessionNoExist();
         return $_SESSION['rol_id'] ?? null;
     }
 
     public static function sucursalId()
     {
-        self::iniciarSesionSiNoExiste();
+        self::sessionNoExist();
         return $_SESSION['sucursal_id'] ?? null;
     }
 
-    public static function estaAutenticado()
+    public static function Autenticado()
     {
-        self::iniciarSesionSiNoExiste();
+        self::sessionNoExist();
         return isset($_SESSION['usuario_id']);
     }
 
     public static function cerrarSesion()
     {
-        self::iniciarSesionSiNoExiste();
+        self::sessionNoExist();
         session_destroy();
     }
 }
