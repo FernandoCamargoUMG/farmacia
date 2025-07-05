@@ -26,30 +26,35 @@ if (isset($_SESSION['sucursal_id'])) {
     <!-- Bootstrap 5 + Íconos -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- CSS Personalizado -->
-    <link rel="stylesheet" href="../public/css/style.css">
+    <link rel="stylesheet" href="/farmacia/public/css/style.css?v=1">
 </head>
 
 <body>
     <!-- Navbar minimalista -->
     <nav class="navbar">
-        <div class="container-fluid">
-            <button id="menuToggle" class="menu-btn">
-                <i class="bi bi-list"></i>
-            </button>
-            <span class="navbar-brand">
-                Sucursal: <?php echo htmlspecialchars($sucursalNombre); ?>
-            </span>
-
+        <div class="container-fluid d-flex justify-content-between">
+            <div>
+                <button id="menuToggle" class="menu-btn">
+                    <i class="bi bi-list"></i>
+                </button>
+                <span class="navbar-brand">
+                    Sucursal: <?php echo htmlspecialchars($sucursalNombre); ?>
+                </span>
+            </div>
+            <div>
+                <a href="/farmacia/controllers/logout.php" class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                </a>
+            </div>
         </div>
-        <div class="ms-auto">
-            <a href="/farmacia/controllers/logout.php" class="btn btn-outline-danger btn-sm">
-                <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-            </a>
-        </div>
-
     </nav>
-
     <!-- Menú lateral -->
     <div id="sidebar">
         <ul>
@@ -61,10 +66,8 @@ if (isset($_SESSION['sucursal_id'])) {
             <li><a href="/activos"><i class="bi bi-building-gear"></i> Activos Fijos</a></li>
         </ul>
     </div>
-
     <!-- Overlay -->
     <div id="overlay"></div>
-
     <!-- Contenido principal -->
     <div class="main-content" id="main-content">
         <!-- Contenido dinámico se cargará aquí -->
@@ -74,14 +77,12 @@ if (isset($_SESSION['sucursal_id'])) {
             <p>Usuario</p>
             <!--<h3>Inicio</h3>-->
             <!-- <footer>© 2025 Sistema de Farmacia</footer>-->
-
         </div>
     </div>
-
-
-
     <!-- JS -->
     <script src="../public/js/menu.js"></script>
+    <script src="../public/js/controllers.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 
 </html>
