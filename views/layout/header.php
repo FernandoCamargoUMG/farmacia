@@ -60,7 +60,8 @@ if (isset($_SESSION['sucursal_id'])) {
         <ul>
             <li><a href="./dashboard.php"><i class="bi bi-house-door"></i> Inicio</a></li>
             <li><a class="nav-link" href="#clientes"><i class="bi bi-people"></i> Clientes</a></li>
-            <li><a href="/productos"><i class="bi bi-capsule-pill"></i> Productos</a></li>
+            <li><a class="nav-link" href="#proveedores"><i class="bi bi-people"></i>Proveedores</a></li>
+            <li><a class="nav-link" href="#"><i class="bi bi-capsule-pill"></i> Productos</a></li>
             <li><a href="/ventas"><i class="bi bi-currency-dollar"></i> Ventas</a></li>
             <li><a href="/planilla"><i class="bi bi-file-earmark-text"></i> Planilla</a></li>
             <li><a href="/activos"><i class="bi bi-building-gear"></i> Activos Fijos</a></li>
@@ -81,7 +82,8 @@ if (isset($_SESSION['sucursal_id'])) {
     </div>
     <!-- JS -->
     <script src="../public/js/menu.js"></script>
-    <script src="../public/js/controllers.js"></script>
+    <script src="../public/js/clientes.js"></script>
+    <script src="../public/js/proveedor.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 
