@@ -1,17 +1,16 @@
 <?php
-require_once __DIR__ . '/../models/proveedor.php';
+require_once __DIR__ . '/../models/producto.php';
 session_start();
 
 $action = $_GET['action'] ?? '';
 
 if ($action === 'listar') {
     header('Content-Type: application/json');
-    //$categoria_id = $_SESSION['categoria_id'] ?? 1; // puedes ajustar este valor según tu lógica
-    $proveedores = Proveedor::obtenerTodos();
-    echo json_encode($proveedores);
+    $producto = Producto::obtenerTodos();
+    echo json_encode($producto);
     exit;
 }
-
+/*
 if ($_GET['action'] === 'guardar') {
     //$stmt = $conn->prepare("INSERT INTO proveedor (categoria_id, codigo, nombre, nit, direccion, telefono, email) VALUES (?, ?, ?, ?, ?, ?, ?)");
     if(!isset($_SESSION['sucursal_id'])){
@@ -49,4 +48,4 @@ if ($action === 'eliminar') {
     $id = $_POST['id'] ?? 0;
     $exito = Proveedor::eliminar($id);
     echo json_encode(['success' => $exito]);
-}
+}*/

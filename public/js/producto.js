@@ -1,35 +1,32 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-        function loadProveedores() {
+        function loadProducto() {
             const content = document.getElementById('dynamic-content');
             content.innerHTML = `
-        <div class="proveedores-view">
-            <h2 class="mb-4"><i class="bi bi-truck"></i> Módulo de Proveedores</h2>
+        <div class="producto-view">
+            <h2 class="mb-4"><i class="bi bi-truck"></i> Módulo de Productos</h2>
             <div class="card shadow" style="max-width: 1000px; margin: 0 auto;">
                 <div class="card-body">
-                    <h5 class="card-title">Listado de Proveedores</h5>
+                    <h5 class="card-title">Listado de Productos</h5>
 
-                    <button id="btnMostrarProveedores" class="btn btn-outline-primary mb-3">
-                        <i class="bi bi-eye"></i> Mostrar Proveedores
+                    <button id="btnMostrarProducto" class="btn btn-outline-primary mb-3">
+                        <i class="bi bi-eye"></i> Mostrar Productos
                     </button>
-                    <button class="btn btn-success mb-3 float-end" data-bs-toggle="modal" data-bs-target="#modalNuevoProveedor">
+                    <button class="btn btn-success mb-3 float-end" data-bs-toggle="modal" data-bs-target="#modalNuevoProducto">
                         <i class="bi bi-plus-circle"></i> Nuevo Proveedor
                     </button>
 
-                    <table id="tablaProveedores" class="table table-striped table-bordered" style="width:100%">
+                    <table id="tablaProducto" class="table table-striped table-bordered" style="width:100%">
                         <thead>
                             <tr>
-                                <th>Código</th>
                                 <th>Nombre</th>
-                                <th>Categoría</th>
-                                <th>NIT</th>
-                                <th>Dirección</th>
-                                <th>Teléfono</th>
-                                <th>Email</th>
+                                <th>Descripcion</th>
+                                <th>Precio</th>
+                                <th>Categoria</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="tbodyProveedores"></tbody>
+                        <tbody id="tbodyProducto"></tbody>
                     </table>
                 </div>
             </div>
@@ -68,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Función para cargar categorías
             function cargarCategorias() {
-                fetch('/farmacia/controllers/categoriaProveedorController.php?action=listar')
+                fetch('/farmacia/controllers/categoriaProductoController.php?action=listar')
                     .then(res => res.json())
                     .then(data => {
                         const select = document.getElementById('selectCategoria');
@@ -83,35 +80,32 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Abrir modal
-            document.querySelector('[data-bs-target="#modalNuevoProveedor"]').addEventListener('click', function() {
-                const form = document.getElementById('formNuevoProveedor');
+            document.querySelector('[data-bs-target="#modalNuevoProducto"]').addEventListener('click', function() {
+                const form = document.getElementById('formNuevoProducto');
                 form.reset();
                 form.proveedorId.value = '';
-                cargarCategorias();
+                //cargarCategorias();
             });
 
-            // Mostrar listado de proveedores
-            function mostrarProveedores() {
-                fetch('/farmacia/controllers/proveedorController.php?action=listar')
+            // Mostrar listado de productos
+            function mostrarProductos() {
+                fetch('/farmacia/controllers/productoController.php?action=listar')
                     .then(res => res.json())
                     .then(data => {
-                        if ($.fn.DataTable.isDataTable('#tablaProveedores')) {
-                            $('#tablaProveedores').DataTable().clear().destroy();
+                        if ($.fn.DataTable.isDataTable('#tablaProducto')) {
+                            $('#tablaProducto').DataTable().clear().destroy();
                         }
 
-                        const tbody = document.getElementById('tbodyProveedores');
-                        tbody.innerHTML = data.map(proveedor => `
+                        const tbody = document.getElementById('tbodyProducto');
+                        tbody.innerHTML = data.map(producto => `
                         <tr>
-                            <td>${proveedor.codigo || ''}</td>
-                            <td>${proveedor.nombre}</td>
-                            <td>${proveedor.categoria || ''}</td>
-                            <td>${proveedor.nit || ''}</td>
-                            <td>${proveedor.direccion || ''}</td>
-                            <td>${proveedor.telefono || ''}</td>
-                            <td>${proveedor.email || ''}</td>
+                            <td>${producto.nombre}</td>
+                            <td>${producto.descripcion || ''}</td>
+                            <td>${'Q'+producto.precio || ''}</td>
+                            <td>${producto.categoria || ''}</td>
                             <td>
-                                <button class="btn btn-sm btn-warning btnEditar" data-id="${proveedor.id}">✏️</button>
-                                <button class="btn btn-sm btn-danger btnEliminar" data-id="${proveedor.id}">🗑️</button>
+                                <button class="btn btn-sm btn-warning btnEditar" data-id="${producto.id}">✏️</button>
+                                <button class="btn btn-sm btn-danger btnEliminar" data-id="${producto.id}">🗑️</button>
                             </td>
                         </tr>
                     `).join('');
@@ -182,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
             }
 
-            document.getElementById('btnMostrarProveedores').addEventListener('click', mostrarProveedores);
+            document.getElementById('btnMostrarProducto').addEventListener('click', mostrarProductos);
 
             // Guardar proveedor
             const form = document.getElementById('formNuevoProveedor');
@@ -230,11 +224,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
 
-        const proveedoresLink = document.querySelector('a[href="#proveedores"]');
-        if (proveedoresLink) {
-            proveedoresLink.addEventListener('click', function(e) {
+        const productoLink = document.querySelector('a[href="#producto"]');
+        if (productoLink) {
+            productoLink.addEventListener('click', function(e) {
                 e.preventDefault();
-                loadProveedores();
+                loadProducto();
             });
         }
     });

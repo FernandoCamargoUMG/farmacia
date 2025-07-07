@@ -1,12 +1,12 @@
 <?php
 require_once __DIR__ . '/../config/conexion.php';
 
-class Proveedor
+class Producto
 {
     public static function obtenerCategoriaPorId($categoriaId)
     {
         $pdo = Conexion::conectar();
-        $stmt = $pdo->prepare("SELECT * FROM proveedor WHERE categoria_id = ?");
+        $stmt = $pdo->prepare("SELECT * FROM producto WHERE categoria_id = ?");
         $stmt->execute([$categoriaId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -14,16 +14,16 @@ class Proveedor
     public static function obtenerPorId($id)
     {
         $conn = Conexion::conectar();
-        $stmt = $conn->prepare("SELECT * FROM proveedor WHERE id = ?");
+        $stmt = $conn->prepare("SELECT * FROM producto WHERE id = ?");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
     public static function obtenerTodos()
     {
         $conn = Conexion::conectar();
-        $stmt = $conn->query("SELECT p.*, c.descripcion AS categoria 
-                            FROM proveedor p
-                            LEFT JOIN categoria c ON p.categoria_id = c.id 
+        $stmt = $conn->query("SELECT pr.*, cp.descripcion AS categoria 
+                            FROM producto pr
+                            LEFT JOIN categoria_producto cp ON pr.categoria_id = cp.id
                             ");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
