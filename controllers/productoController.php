@@ -10,23 +10,19 @@ if ($action === 'listar') {
     echo json_encode($producto);
     exit;
 }
-/*
-if ($_GET['action'] === 'guardar') {
-    //$stmt = $conn->prepare("INSERT INTO proveedor (categoria_id, codigo, nombre, nit, direccion, telefono, email) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    if(!isset($_SESSION['sucursal_id'])){
+
+if ($action === 'guardar') {
+    if (!isset($_SESSION['sucursal_id'])){
         http_response_code(403);
         echo json_encode(['success' => false, 'message' => 'No autorizado']);
         exit;
     }
     
-    $exito = Proveedor::guardar(
+    $exito = Producto::guardar(
         $_POST['categoria_id'],
-        $_POST['codigo'],
-        $_POST['nombre'],
-        $_POST['nit'],
-        $_POST['direccion'],
-        $_POST['telefono'],
-        $_POST['email']);
+        $_POST['nombre'] ?? '',
+        $_POST['descripcion']?? '',
+        $_POST['precio'])?? '';
         
     
     echo json_encode(['success' => true]);
@@ -34,18 +30,18 @@ if ($_GET['action'] === 'guardar') {
 
 if ($action === 'ver') {
     $id = $_GET['id'] ?? 0;
-    echo json_encode(Proveedor::obtenerPorId($id));
+    echo json_encode(Producto::obtenerPorId($id));
 }
 
 
 if ($action === 'actualizar') {
     $id = $_POST['id'] ?? 0;
-    $exito = Proveedor::actualizar($id, $_POST);
+    $exito = Producto::actualizar($id, $_POST);
     echo json_encode(['success' => $exito]);
 }
 
 if ($action === 'eliminar') {
     $id = $_POST['id'] ?? 0;
-    $exito = Proveedor::eliminar($id);
+    $exito = Producto::eliminar($id);
     echo json_encode(['success' => $exito]);
-}*/
+}

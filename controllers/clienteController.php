@@ -11,14 +11,6 @@ if ($action === 'listar') {
     exit;
 }
 
-/*if ($action === 'guardar') {
-    // para guardar datos
-    if (!isset($_SESSION['sucursal_id'], $POST['nombre'], $POST['apellido'])) {
-        http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'Datos Incompletos.']);
-        exit;
-    }*/
-
 if ($action === 'guardar') {
     if (!isset($_SESSION['sucursal_id'])) {
         http_response_code(403);

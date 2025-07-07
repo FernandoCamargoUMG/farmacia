@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-
         function loadProducto() {
             const content = document.getElementById('dynamic-content');
             content.innerHTML = `
@@ -8,19 +7,18 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="card shadow" style="max-width: 1000px; margin: 0 auto;">
                 <div class="card-body">
                     <h5 class="card-title">Listado de Productos</h5>
-
                     <button id="btnMostrarProducto" class="btn btn-outline-primary mb-3">
                         <i class="bi bi-eye"></i> Mostrar Productos
                     </button>
                     <button class="btn btn-success mb-3 float-end" data-bs-toggle="modal" data-bs-target="#modalNuevoProducto">
-                        <i class="bi bi-plus-circle"></i> Nuevo Proveedor
+                        <i class="bi bi-plus-circle"></i> Nuevo Producto
                     </button>
 
                     <table id="tablaProducto" class="table table-striped table-bordered" style="width:100%">
                         <thead>
                             <tr>
                                 <th>Nombre</th>
-                                <th>Descripcion</th>
+                                <th>Descripción</th>
                                 <th>Precio</th>
                                 <th>Categoria</th>
                                 <th>Acciones</th>
@@ -32,13 +30,13 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         </div>
 
-        <div class="modal fade" id="modalNuevoProveedor" tabindex="-1">
+        <div class="modal fade" id="modalNuevoProducto" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content bg-white text-dark">
-                    <form id="formNuevoProveedor">
-                        <input type="hidden" name="id" id="proveedorId">
+                    <form id="formNuevoProducto">
+                        <input type="hidden" name="id" id="productoId">
                         <div class="modal-header">
-                            <h5 class="modal-title">Nuevo Proveedor</h5>
+                            <h5 class="modal-title">Nuevo Producto</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body">
@@ -48,12 +46,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <option value="">Seleccione una categoría</option>
                                 </select>
                             </div>
-                            <div class="mb-3"><label>Código</label><input type="text" name="codigo" class="form-control"></div>
                             <div class="mb-3"><label>Nombre</label><input type="text" name="nombre" class="form-control" required></div>
-                            <div class="mb-3"><label>NIT</label><input type="text" name="nit" class="form-control"></div>
-                            <div class="mb-3"><label>Dirección</label><input type="text" name="direccion" class="form-control"></div>
-                            <div class="mb-3"><label>Teléfono</label><input type="text" name="telefono" class="form-control"></div>
-                            <div class="mb-3"><label>Email</label><input type="email" name="email" class="form-control"></div>
+                            <div class="mb-3"><label>descripción</label><input type="text" name="descripcion" class="form-control"></div>
+                            <div class="mb-3"><label>precio</label><input type="text" name="precio" class="form-control"></div>
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">Guardar</button>
@@ -83,8 +78,8 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('[data-bs-target="#modalNuevoProducto"]').addEventListener('click', function() {
                 const form = document.getElementById('formNuevoProducto');
                 form.reset();
-                form.proveedorId.value = '';
-                //cargarCategorias();
+                form.productoId.value = '';
+                cargarCategorias();
             });
 
             // Mostrar listado de productos
@@ -110,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </tr>
                     `).join('');
 
-                        $('#tablaProveedores').DataTable({
+                        $('#tablaProducto').DataTable({
                             language: {
                                 url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
                             },
@@ -121,22 +116,19 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.querySelectorAll('.btnEditar').forEach(btn => {
                             btn.addEventListener('click', function() {
                                 const id = this.dataset.id;
-                                fetch(`/farmacia/controllers/proveedorController.php?action=ver&id=${id}`)
+                                fetch(`/farmacia/controllers/productoController.php?action=ver&id=${id}`)
                                     .then(res => res.json())
-                                    .then(proveedor => {
-                                        const form = document.getElementById('formNuevoProveedor');
-                                        form.proveedorId.value = proveedor.id;
-                                        form.codigo.value = proveedor.codigo;
-                                        form.nombre.value = proveedor.nombre;
-                                        form.nit.value = proveedor.nit;
-                                        form.direccion.value = proveedor.direccion;
-                                        form.telefono.value = proveedor.telefono;
-                                        form.email.value = proveedor.email;
+                                    .then(producto => {
+                                        const form = document.getElementById('formNuevoProducto');
+                                        form.productoId.value = producto.id;
+                                        form.nombre.value = producto.nombre;
+                                        form.descripcion.value = producto.descripcion;
+                                        form.precio.value = producto.precio;
                                         cargarCategorias();
                                         setTimeout(() => {
-                                            form.categoria_id.value = proveedor.categoria_id;
+                                            form.categoria_id.value = producto.categoria_id;
                                         }, 300);
-                                        new bootstrap.Modal(document.getElementById('modalNuevoProveedor')).show();
+                                        new bootstrap.Modal(document.getElementById('modalNuevoProducto')).show();
                                     });
                             });
                         });
@@ -145,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             btn.addEventListener('click', function() {
                                 const id = this.dataset.id;
                                 Swal.fire({
-                                    title: '¿Eliminar proveedor?',
+                                    title: '¿Eliminar producto?',
                                     text: 'Esta acción no se puede deshacer.',
                                     icon: 'warning',
                                     showCancelButton: true,
@@ -153,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     cancelButtonText: 'Cancelar'
                                 }).then(result => {
                                     if (result.isConfirmed) {
-                                        fetch('/farmacia/controllers/proveedorController.php?action=eliminar', {
+                                        fetch('/farmacia/controllers/productoController.php?action=eliminar', {
                                                 method: 'POST',
                                                 headers: {
                                                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -163,8 +155,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                             .then(res => res.json())
                                             .then(data => {
                                                 if (data.success) {
-                                                    Swal.fire('Eliminado', 'Proveedor eliminado correctamente.', 'success');
-                                                    mostrarProveedores();
+                                                    Swal.fire('Eliminado', 'Producto eliminado correctamente.', 'success');
+                                                    mostrarProductos();
                                                 } else {
                                                     Swal.fire('Error', 'No se pudo eliminar.', 'error');
                                                 }
@@ -178,8 +170,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             document.getElementById('btnMostrarProducto').addEventListener('click', mostrarProductos);
 
-            // Guardar proveedor
-            const form = document.getElementById('formNuevoProveedor');
+            // Guardar datos
+            const form = document.getElementById('formNuevoProducto');
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
 
@@ -187,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const id = formData.get("id");
                 const action = id ? 'actualizar' : 'guardar';
 
-                fetch(`/farmacia/controllers/proveedorController.php?action=${action}`, {
+                fetch(`/farmacia/controllers/productoController.php?action=${action}`, {
                         method: 'POST',
                         body: formData
                     })
@@ -195,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     .then(data => {
                         if (data.success) {
                             Swal.fire({
-                                title: '¡Proveedor guardado!',
+                                title: '¡Producto guardado!',
                                 text: '¿Qué deseas hacer ahora?',
                                 icon: 'success',
                                 showCancelButton: true,
@@ -204,16 +196,16 @@ document.addEventListener('DOMContentLoaded', function() {
                             }).then((result) => {
                                 if (result.isConfirmed) {
                                     form.reset();
-                                    form.proveedorId.value = '';
+                                    form.productorId.value = '';
                                     cargarCategorias();
                                 } else {
-                                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalNuevoProveedor'));
+                                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalNuevoProducto'));
                                     modal.hide();
                                     setTimeout(() => {
                                         document.body.classList.remove('modal-open');
                                         document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
                                     }, 300);
-                                    mostrarProveedores();
+                                    mostrarProductos();
                                 }
                             });
                         } else {
@@ -222,7 +214,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
             });
         }
-
 
         const productoLink = document.querySelector('a[href="#producto"]');
         if (productoLink) {

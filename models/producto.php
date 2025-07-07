@@ -28,25 +28,25 @@ class Producto
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public static function guardar($categoria_id, $codigo, $nombre, $nit, $direccion, $telefono, $email)
+    public static function guardar($categoria_id, $nombre, $descripcion, $precio)
     {
         $conn = Conexion::conectar();
-        $stmt = $conn->prepare("INSERT INTO proveedor (categoria_id, codigo, nombre, nit, direccion, telefono, email) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        return $stmt->execute([$categoria_id, $codigo, $nombre, $nit, $direccion, $telefono, $email]);
+        $stmt = $conn->prepare("INSERT INTO producto (categoria_id, nombre, descripcion, precio) VALUES (?, ?, ?, ?)");
+        return $stmt->execute([$categoria_id, $nombre, $descripcion, $precio]);
     }
 
     public static function actualizar($id, $datos)
     {
         $conn = Conexion::conectar();
-        $stmt = $conn->prepare("UPDATE proveedor SET categoria_id = ?, codigo = ?, nombre = ?, nit = ? , direccion = ?, telefono = ?, email = ? WHERE id = ?");
+        $stmt = $conn->prepare("UPDATE producto SET categoria_id = ?, nombre = ?, descripcion = ?, precio = ? WHERE id = ?");
         return $stmt->execute([
             $datos['categoria_id'],
-            $datos['codigo'],
             $datos['nombre'],
-            $datos['nit'],
-            $datos['direccion'],
-            $datos['telefono'],
-            $datos['email'],
+            $datos['descripcion'],
+            $datos['precio'],
+            //$datos['direccion'],
+            //$datos['telefono'],
+            //$datos['email'],
             //$datos['nit'],
             $id
         ]);
@@ -54,7 +54,7 @@ class Producto
     public static function eliminar($id)
     {
         $conn = Conexion::conectar();
-        $stmt = $conn->prepare("DELETE FROM proveedor WHERE id = ?");
+        $stmt = $conn->prepare("DELETE FROM producto WHERE id = ?");
         return $stmt->execute([$id]);
     }
 }

@@ -12,8 +12,7 @@ if ($action === 'listar') {
     exit;
 }
 
-if ($_GET['action'] === 'guardar') {
-    //$stmt = $conn->prepare("INSERT INTO proveedor (categoria_id, codigo, nombre, nit, direccion, telefono, email) VALUES (?, ?, ?, ?, ?, ?, ?)");
+if ($action === 'guardar') {
     if(!isset($_SESSION['sucursal_id'])){
         http_response_code(403);
         echo json_encode(['success' => false, 'message' => 'No autorizado']);

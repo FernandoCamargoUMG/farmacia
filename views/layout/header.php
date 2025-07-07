@@ -62,6 +62,8 @@ if (isset($_SESSION['sucursal_id'])) {
             <li><a class="nav-link" href="#clientes"><i class="bi bi-people"></i> Clientes</a></li>
             <li><a class="nav-link" href="#proveedores"><i class="bi bi-truck"></i>Proveedores</a></li>
             <li><a class="nav-link" href="#producto"><i class="bi bi-capsule-pill"></i> Productos</a></li>
+            <li><a href="/ventas"><i class="bi bi-box-seam"></i> Bodegas</a></li>
+            <li><a href="/ventas"><i class="bi bi-arrow-down-square"></i> Ingreso a Inventario</a></li>
             <li><a href="/ventas"><i class="bi bi-currency-dollar"></i> Ventas</a></li>
             <li><a href="/planilla"><i class="bi bi-file-earmark-text"></i> Planilla</a></li>
             <li><a href="/activos"><i class="bi bi-building-gear"></i> Activos Fijos</a></li>

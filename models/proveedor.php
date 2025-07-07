@@ -22,8 +22,8 @@ class Proveedor
     {
         $conn = Conexion::conectar();
         $stmt = $conn->query("SELECT p.*, c.descripcion AS categoria 
-                            FROM proveedor p
-                            LEFT JOIN categoria c ON p.categoria_id = c.id 
+                                FROM proveedor p
+                                LEFT JOIN categoria c ON p.categoria_id = c.id 
                             ");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
