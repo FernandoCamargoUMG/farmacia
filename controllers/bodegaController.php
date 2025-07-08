@@ -1,13 +1,13 @@
 <?php
-require_once __DIR__ . '/../models/producto.php';
+require_once __DIR__ . '/../models/bodega.php';
 session_start();
 
 $action = $_GET['action'] ?? '';
 
 if ($action === 'listar') {
     header('Content-Type: application/json');
-    $producto = Producto::obtenerTodos();
-    echo json_encode($producto);
+    $bodega = Bodega::obtenerPorSucursal($_SESSION['sucursal_id']);
+    echo json_encode($bodega);
     exit;
 }
 
@@ -18,12 +18,12 @@ if ($action === 'guardar') {
         exit;
     }
     
-    $exito = Producto::guardar(
-        $_POST['categoria_id'],
+    $exito = Bodega::guardar(
+        $_SESSION['sucursal_id'],
         $_POST['nombre'] ?? '',
-        $_POST['descripcion']?? '',
-        $_POST['precio']?? ''
-        );
+        $_POST['ubicacion']?? ''
+        //$_POST['precio']
+    );
         
     
     echo json_encode(['success' => true]);
@@ -31,18 +31,18 @@ if ($action === 'guardar') {
 
 if ($action === 'ver') {
     $id = $_GET['id'] ?? 0;
-    echo json_encode(Producto::obtenerPorId($id));
+    echo json_encode(Bodega::obtenerPorId($id));
 }
 
 
 if ($action === 'actualizar') {
     $id = $_POST['id'] ?? 0;
-    $exito = Producto::actualizar($id, $_POST);
+    $exito = Bodega::actualizar($id, $_POST);
     echo json_encode(['success' => $exito]);
 }
 
 if ($action === 'eliminar') {
     $id = $_POST['id'] ?? 0;
-    $exito = Producto::eliminar($id);
+    $exito = Bodega::eliminar($id);
     echo json_encode(['success' => $exito]);
 }

@@ -26,7 +26,8 @@ if ($action === 'guardar') {
         $_POST['nit'],
         $_POST['direccion'],
         $_POST['telefono'],
-        $_POST['email']);
+        $_POST['email']
+        );
         
     
     echo json_encode(['success' => true]);

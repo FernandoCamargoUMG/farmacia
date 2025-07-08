@@ -1,0 +1,17 @@
+.autocomplete-items {
+    max-height: 150px; /* altura máxima */
+    overflow-y: auto;  /* scroll vertical si excede altura */
+    border: 1px solid #d4d4d4;
+    background-color: #fff;
+    position: absolute;
+    z-index: 1000;
+    width: 100%;
+    box-sizing: border-box;
+}
+.autocomplete-item {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+.autocomplete-item:hover {
+    background-color: #e9e9e9;
+}
