@@ -1,3 +1,2 @@
 <?php
-header("Location: ../views/auth/login.php");
-exit;
+require_once __DIR__ . '/../views/auth/login.php';
