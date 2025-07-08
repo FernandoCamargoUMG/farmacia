@@ -8,7 +8,7 @@ RUN a2enmod rewrite
 RUN docker-php-ext-install pdo pdo_mysql
 
 # Copia todos los archivos del proyecto al servidor Apache
-COPY . /var/www/html/
+COPY ./farmacia /var/www/html/
 
 # Exponer el puerto 80 (Render lo usará internamente)
 EXPOSE 80
