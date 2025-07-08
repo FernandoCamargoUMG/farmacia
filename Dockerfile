@@ -11,7 +11,7 @@ RUN docker-php-ext-install pdo pdo_mysql
 COPY . /var/www/html/
 
 # Cambia la raíz web de Apache para que apunte a la carpeta public
-RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/*.conf
+#RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/*.conf
 
 # Exponer el puerto 80 (Render lo usará internamente)
 EXPOSE 80

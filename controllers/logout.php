@@ -1,8 +1,8 @@
 <?php
-require_once __DIR__ . '/../models/Auth.php';
+require_once __DIR__ . '/../models/auth.php';
 
 Auth::cerrarSesion();
 
 // Redirige al login
-header("Location: /farmacia/views/auth/login.php");
+header("Location: /views/auth/login.php");
 exit;

@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Función para cargar categorías
             function cargarCategorias() {
-                fetch('/farmacia/controllers/categoriaProductoController.php?action=listar')
+                fetch('//controllers/categoriaProductoController.php?action=listar')
                     .then(res => res.json())
                     .then(data => {
                         const select = document.getElementById('selectCategoria');
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Mostrar listado de productos
             function mostrarProductos() {
-                fetch('/farmacia/controllers/productoController.php?action=listar')
+                fetch('/controllers/productoController.php?action=listar')
                     .then(res => res.json())
                     .then(data => {
                         if ($.fn.DataTable.isDataTable('#tablaProducto')) {
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.querySelectorAll('.btnEditar').forEach(btn => {
                             btn.addEventListener('click', function() {
                                 const id = this.dataset.id;
-                                fetch(`/farmacia/controllers/productoController.php?action=ver&id=${id}`)
+                                fetch(`/controllers/productoController.php?action=ver&id=${id}`)
                                     .then(res => res.json())
                                     .then(producto => {
                                         const form = document.getElementById('formNuevoProducto');
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     cancelButtonText: 'Cancelar'
                                 }).then(result => {
                                     if (result.isConfirmed) {
-                                        fetch('/farmacia/controllers/productoController.php?action=eliminar', {
+                                        fetch('/controllers/productoController.php?action=eliminar', {
                                                 method: 'POST',
                                                 headers: {
                                                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const id = formData.get("id");
                 const action = id ? 'actualizar' : 'guardar';
 
-                fetch(`/farmacia/controllers/productoController.php?action=${action}`, {
+                fetch(`/controllers/productoController.php?action=${action}`, {
                         method: 'POST',
                         body: formData
                     })
