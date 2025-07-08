@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Función para cargar categorías
             function cargarCategorias() {
-                fetch('//controllers/categoriaProductoController.php?action=listar')
+                fetch('/controllers/categoriaProductoController.php?action=listar')
                     .then(res => res.json())
                     .then(data => {
                         const select = document.getElementById('selectCategoria');
