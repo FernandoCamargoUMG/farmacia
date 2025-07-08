@@ -19,7 +19,7 @@
                         <?php if (isset($_GET['error'])): ?>
                             <div class="alert alert-danger">Credenciales inválidas.</div>
                         <?php endif; ?>
-                        <form method="POST" action="/farmacia/routes/routes.php?route=login">
+                        <form method="POST" action="/?route=login">
                             <div class="mb-3">
                                 <label for="correo" class="form-label">Correo</label>
                                 <input type="email" class="form-control" name="correo" required>

@@ -1,5 +1,8 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once __DIR__ . '/../../config/conexion.php';
 
 $sucursalNombre = 'No definido';
@@ -33,8 +36,8 @@ if (isset($_SESSION['sucursal_id'])) {
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- CSS Personalizado -->
-    <link rel="stylesheet" href="/farmacia/public/css/style.css?v=1">
-    <link rel="stylesheet" href="/farmacia/public/css/ingreso.css">
+    <link rel="stylesheet" href="/css/style.css?v=1">
+    <link rel="stylesheet" href="/css/ingreso.css">
 
 </head>
 
@@ -85,12 +88,12 @@ if (isset($_SESSION['sucursal_id'])) {
         </div>
     </div>
     <!-- JS -->
-    <script src="../public/js/menu.js"></script>
-    <script src="../public/js/clientes.js"></script>
-    <script src="../public/js/proveedor.js"></script>
-    <script src="../public/js/producto.js"></script>
-    <script src="../public/js/bodega.js"></script>
-    <script src="../public/js/ingreso.js"></script>
+    <script src="/js/menu.js"></script>
+    <script src="/js/clientes.js"></script>
+    <script src="/js/proveedor.js"></script>
+    <script src="/js/producto.js"></script>
+    <script src="/js/bodega.js"></script>
+    <script src="/js/ingreso.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 

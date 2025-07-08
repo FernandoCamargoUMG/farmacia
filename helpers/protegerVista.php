@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/../models/Auth.php';
+require_once __DIR__ . '/../models/auth.php';
 
 if (!Auth::Autenticado()) {
-    header('Location: /farmacia/views/auth/login.php');
+    header('Location: /'); // Redirige a index.php sin rutas rotas
     exit;
 }

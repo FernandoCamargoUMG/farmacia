@@ -1,5 +1,4 @@
 <?php
-
 require_once __DIR__ . '/../models/usuario.php';
 
 class AuthController {
@@ -16,15 +15,19 @@ class AuthController {
             $_SESSION['sucursal_id'] = $sucursal_id;
             $_SESSION['rol_id'] = $usuario['rol_id'];
             $_SESSION['correo'] = $usuario['correo'];
-            header("Location: /farmacia/views/dashboard.php");
+
+            header("Location: /?route=dashboard");
+            exit;
         } else {
-            header('Location: /views/auth/login.php?error=Credenciales inválidas');
+            header('Location: /?error=1');
+            exit;
         }
     }
 
     public function logout() {
         session_start();
         session_destroy();
-        header('Location: /views/auth/login.php');
+        header('Location: /');
+        exit;
     }
 }
