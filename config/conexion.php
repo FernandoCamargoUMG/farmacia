@@ -2,17 +2,6 @@
 class Conexion {
     // conexion a bd
     public static function conectar() {
-        /*$host = "host.docker.internal";
-        $dbname = "farmacia";
-        $user = "root";
-        $pass = "";
-
-        
-        $host = "sql3.freesqldatabase.com";
-        $dbname = "sql3789022";
-        $user = "sql3789022";
-        $pass = "LbJBjUshA8";*/
-
         // Obtener datos desde variables de entorno
         $host = getenv('DB_HOST') ?: 'sql3.freesqldatabase.com';
         $dbname = getenv('DB_NAME') ?: 'sql3789022';
