@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <th>Bodega</th>
                                         <th>Cantidad</th>
                                         <th>Precio</th>
-                                        <th>Total</th>
+                                        <th>Importe</th>
                                         <th>Acción</th>
                                     </tr>
                                 </thead>
@@ -154,16 +154,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const inputProveedor = document.getElementById('inputProveedor');
             const proveedorId = document.getElementById('proveedor_id');
             const listaProveedor = document.getElementById('autocompleteProveedorList');
-            autocomplete(inputProveedor, proveedorId, listaProveedor, '/farmacia/autocomplete/autocomplete_proveedores.php');
+            autocomplete(inputProveedor, proveedorId, listaProveedor, '/autocomplete/autocomplete_proveedores.php');
 
             // Cargar productos y bodegas para uso en filas
-            fetch('/farmacia/controllers/productoController.php?action=listar')
+            fetch('/controllers/productoController.php?action=listar')
                 .then(res => res.json())
                 .then(data => {
                     window.productos = data;
                 });
 
-            fetch('/farmacia/controllers/sucursalBodegaController.php?action=listar')
+            fetch('/controllers/sucursalBodegaController.php?action=listar')
                 .then(res => res.json())
                 .then(data => {
                     window.bodegas = data;
@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById(`inputProducto${idUnico}`),
                     document.getElementById(`producto_id${idUnico}`),
                     document.getElementById(`autocompleteProductoList${idUnico}`),
-                    '/farmacia/autocomplete/autocomplete_productos.php',
+                    './autocomplete/autocomplete_productos.php',
                     (item) => {
                         const precioInput = tr.querySelector('.precio');
                         precioInput.value = item.precio || 0;
@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById(`inputBodega${idUnico}`),
                     document.getElementById(`bodega_id${idUnico}`),
                     document.getElementById(`autocompleteBodegaList${idUnico}`),
-                    '/farmacia/autocomplete/autocomplete_bodegas.php'
+                    '/autocomplete/autocomplete_bodegas.php'
                 );
 
                 // Eventos para recalcular totales cuando cambien cantidad o precio
@@ -232,8 +232,13 @@ document.addEventListener('DOMContentLoaded', function() {
             // Calcular total de fila
             function calcularFila(tr) {
                 const cantidad = parseFloat(tr.querySelector('.cantidad').value) || 0;
-                const precio = parseFloat(tr.querySelector('.precio').value) || 0;
-                const total = cantidad * precio;
+                const precioConIVA = parseFloat(tr.querySelector('.precio').value) || 0;
+
+                // Convertimos el precio con IVA a precio sin IVA
+                const precioSinIVA = precioConIVA / 1.12;
+
+                const total = cantidad * precioSinIVA;
+
                 tr.querySelector('.total').value = total.toFixed(2);
                 calcularTotales();
             }
@@ -242,23 +247,24 @@ document.addEventListener('DOMContentLoaded', function() {
             function calcularTotales() {
                 const filas = document.querySelectorAll('#detalleBody tr');
                 let subtotal = 0;
+
                 filas.forEach(tr => {
-                    subtotal += parseFloat(tr.querySelector('.total').value) || 0;
+                    subtotal += parseFloat(tr.querySelector('.total').value) || 0; // Ya es sin IVA
                 });
-                const gravada = subtotal;
-                const iva = gravada * 0.12;
-                const total = gravada + iva;
+
+                const iva = subtotal * 0.12;
+                const total = subtotal + iva;
 
                 const form = document.getElementById('formNuevoIngreso');
-                form.subtotal.value = subtotal.toFixed(2);
-                form.gravada.value = gravada.toFixed(2);
+                form.subtotal.value = subtotal.toFixed(2); // Subtotal ya sin IVA
+                form.gravada.value = subtotal.toFixed(2);  // Mismo valor
                 form.iva.value = iva.toFixed(2);
                 form.total.value = total.toFixed(2);
             }
 
             // Cargar ingreso para editar
             function cargarIngresoParaEditar(id) {
-                fetch(`/farmacia/controllers/ingresoController.php?action=obtener&id=${id}`)
+                fetch(`/controllers/ingresoController.php?action=obtener&id=${id}`)
                     .then(res => res.json())
                     .then(data => {
                         console.log(data);
@@ -314,7 +320,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Mostrar ingresos
             function mostrarIngresos() {
-                fetch('/farmacia/controllers/ingresoController.php?action=listar')
+                fetch('/controllers/ingresoController.php?action=listar')
                     .then(res => res.json())
                     .then(data => {
                         console.log(data);
@@ -357,7 +363,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     cancelButtonText: 'Cancelar'
                                 }).then(result => {
                                     if (result.isConfirmed) {
-                                        fetch('/farmacia/controllers/ingresoController.php?action=eliminar', {
+                                        fetch('/controllers/ingresoController.php?action=eliminar', {
                                                 method: 'POST',
                                                 headers: {
                                                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -441,7 +447,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     formData.append('id', form.dataset.editingId);
                 }
 
-                fetch(`/farmacia/controllers/ingresoController.php?action=${action}`, {
+                fetch(`/controllers/ingresoController.php?action=${action}`, {
                         method: 'POST',
                         body: formData
                     })

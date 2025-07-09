@@ -63,13 +63,13 @@ if (isset($_SESSION['sucursal_id'])) {
     <!-- Menú lateral -->
     <div id="sidebar">
         <ul>
-            <li><a href="./dashboard.php"><i class="bi bi-house-door"></i> Inicio</a></li>
+            <li><a href="/?route=dashboard.php"><i class="bi bi-house-door"></i> Inicio</a></li>
             <li><a class="nav-link" href="#clientes"><i class="bi bi-people"></i> Clientes</a></li>
             <li><a class="nav-link" href="#proveedores"><i class="bi bi-truck"></i>Proveedores</a></li>
             <li><a class="nav-link" href="#producto"><i class="bi bi-capsule-pill"></i> Productos</a></li>
             <li><a class="nav-link" href="#bodega"><i class="bi bi-box-seam"></i> Bodegas</a></li>
             <li><a class="nav-link" href="#ingreso"><i class="bi bi-arrow-down-square"></i> Ingreso a Inventario</a></li>
-            <li><a href="/ventas"><i class="bi bi-currency-dollar"></i> Ventas</a></li>
+            <li><a class="nav-link" href="#venta"><i class="bi bi-currency-dollar"></i> Ventas</a></li>
             <li><a href="/planilla"><i class="bi bi-file-earmark-text"></i> Planilla</a></li>
             <li><a href="/activos"><i class="bi bi-building-gear"></i> Activos Fijos</a></li>
         </ul>
@@ -94,6 +94,7 @@ if (isset($_SESSION['sucursal_id'])) {
     <script src="/public/js/producto.js"></script>
     <script src="/public/js/bodega.js"></script>
     <script src="/public/js/ingreso.js"></script>
+    <script src="/public/js/venta.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 

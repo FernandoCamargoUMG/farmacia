@@ -28,19 +28,20 @@ class Producto
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public static function guardar($categoria_id, $nombre, $descripcion, $precio)
+    public static function guardar($categoria_id, $codigo, $nombre, $descripcion, $precio)
     {
         $conn = Conexion::conectar();
-        $stmt = $conn->prepare("INSERT INTO producto (categoria_id, nombre, descripcion, precio) VALUES (?, ?, ?, ?)");
-        return $stmt->execute([$categoria_id, $nombre, $descripcion, $precio]);
+        $stmt = $conn->prepare("INSERT INTO producto (categoria_id, codigo ,nombre, descripcion, precio) VALUES (?, ?, ?, ?, ?)");
+        return $stmt->execute([$categoria_id, $codigo, $nombre, $descripcion, $precio]);
     }
 
     public static function actualizar($id, $datos)
     {
         $conn = Conexion::conectar();
-        $stmt = $conn->prepare("UPDATE producto SET categoria_id = ?, nombre = ?, descripcion = ?, precio = ? WHERE id = ?");
+        $stmt = $conn->prepare("UPDATE producto SET categoria_id = ?, codigo = ?, nombre = ?, descripcion = ?, precio = ? WHERE id = ?");
         return $stmt->execute([
             $datos['categoria_id'],
+            $datos['codigo'],
             $datos['nombre'],
             $datos['descripcion'],
             $datos['precio'],

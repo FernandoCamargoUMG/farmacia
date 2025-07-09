@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Función para cargar categorías
             function cargarCategorias() {
-                fetch('/farmacia/controllers/categoriaProveedorController.php?action=listar')
+                fetch('/controllers/categoriaProveedorController.php?action=listar')
                     .then(res => res.json())
                     .then(data => {
                         const select = document.getElementById('selectCategoria');
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Mostrar listado de proveedores
             function mostrarProveedores() {
-                fetch('/farmacia/controllers/proveedorController.php?action=listar')
+                fetch('/controllers/proveedorController.php?action=listar')
                     .then(res => res.json())
                     .then(data => {
                         if ($.fn.DataTable.isDataTable('#tablaProveedores')) {
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.querySelectorAll('.btnEditar').forEach(btn => {
                             btn.addEventListener('click', function() {
                                 const id = this.dataset.id;
-                                fetch(`/farmacia/controllers/proveedorController.php?action=ver&id=${id}`)
+                                fetch(`/controllers/proveedorController.php?action=ver&id=${id}`)
                                     .then(res => res.json())
                                     .then(proveedor => {
                                         const form = document.getElementById('formNuevoProveedor');
@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     cancelButtonText: 'Cancelar'
                                 }).then(result => {
                                     if (result.isConfirmed) {
-                                        fetch('/farmacia/controllers/proveedorController.php?action=eliminar', {
+                                        fetch('/controllers/proveedorController.php?action=eliminar', {
                                                 method: 'POST',
                                                 headers: {
                                                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const id = formData.get("id");
                 const action = id ? 'actualizar' : 'guardar';
 
-                fetch(`/farmacia/controllers/proveedorController.php?action=${action}`, {
+                fetch(`/controllers/proveedorController.php?action=${action}`, {
                         method: 'POST',
                         body: formData
                     })

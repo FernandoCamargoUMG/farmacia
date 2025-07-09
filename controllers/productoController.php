@@ -20,6 +20,7 @@ if ($action === 'guardar') {
     
     $exito = Producto::guardar(
         $_POST['categoria_id'],
+        $_POST['codigo'] ?? '',
         $_POST['nombre'] ?? '',
         $_POST['descripcion']?? '',
         $_POST['precio']?? ''

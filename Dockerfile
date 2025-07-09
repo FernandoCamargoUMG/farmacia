@@ -1,17 +1,24 @@
-# Usa una imagen oficial de PHP con Apache
+# Imagen base con Apache y PHP
 FROM php:8.2-apache
 
-# Habilita mod_rewrite (para rutas amigables, si lo usas)
+# Habilita mod_rewrite (útil para URLs amigables)
 RUN a2enmod rewrite
 
-# Habilita extensiones necesarias para MySQL
+# Habilita extensiones de PHP necesarias
 RUN docker-php-ext-install pdo pdo_mysql
 
-# Copia todo el proyecto al servidor Apache
+# Copia el contenido del proyecto al contenedor
 COPY . /var/www/html/
 
-# Cambia la raíz web de Apache para que apunte a la carpeta public
-#RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/*.conf
+# Da permisos adecuados
+RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
 
-# Exponer el puerto 80 (Render lo usará internamente)
+# Configura DocumentRoot a /
+RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html|' /etc/apache2/sites-available/000-default.conf
+
+# Habilita todos los accesos
+RUN echo "<Directory /var/www/html>\nOptions Indexes FollowSymLinks\nAllowOverride All\nRequire all granted\n</Directory>" > /etc/apache2/conf-available/custom-perms.conf \
+    && a2enconf custom-perms
+
+# Exponer el puerto
 EXPOSE 80

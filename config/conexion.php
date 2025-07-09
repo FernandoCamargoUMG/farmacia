@@ -2,22 +2,22 @@
 class Conexion {
     // conexion a bd
     public static function conectar() {
-        /* $host = "127.0.0.1";
+        $host = "host.docker.internal";
         $dbname = "farmacia";
         $user = "root";
         $pass = "";
 
-        
+        /* 
         $host = "sql3.freesqldatabase.com";
         $dbname = "sql3789022";
         $user = "sql3789022";
-        $pass = "LbJBjUshA8";*/
+        $pass = "LbJBjUshA8";
 
         // Obtener datos desde variables de entorno
         $host = getenv('DB_HOST') ?: 'sql3.freesqldatabase.com';
         $dbname = getenv('DB_NAME') ?: 'sql3789022';
         $user = getenv('DB_USER') ?: 'sql3789022';
-        $pass = getenv('DB_PASS') ?: 'LbJBjUshA8';
+        $pass = getenv('DB_PASS') ?: 'LbJBjUshA8';*/
 
         try {
             $pdo = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);

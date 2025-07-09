@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Mostrar listado de bodegas
             function mostrarBodegas() {
-                fetch('/farmacia/controllers/bodegaController.php?action=listar')
+                fetch('/controllers/bodegaController.php?action=listar')
                     .then(res => res.json())
                     .then(data => {
                         if ($.fn.DataTable.isDataTable('#tablaBodega')) {
@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.querySelectorAll('.btnEditar').forEach(btn => {
                             btn.addEventListener('click', function() {
                                 const id = this.dataset.id;
-                                fetch(`/farmacia/controllers/bodegaController.php?action=ver&id=${id}`)
+                                fetch(`/controllers/bodegaController.php?action=ver&id=${id}`)
                                     .then(res => res.json())
                                     .then(bodega => {
                                         const form = document.getElementById('formNuevoBodega');
@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     cancelButtonText: 'Cancelar'
                                 }).then(result => {
                                     if (result.isConfirmed) {
-                                        fetch('/farmacia/controllers/bodegaController.php?action=eliminar', {
+                                        fetch('/controllers/bodegaController.php?action=eliminar', {
                                                 method: 'POST',
                                                 headers: {
                                                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const id = formData.get("id");
                 const action = id ? 'actualizar' : 'guardar';
 
-                fetch(`/farmacia/controllers/bodegaController.php?action=${action}`, {
+                fetch(`/controllers/bodegaController.php?action=${action}`, {
                         method: 'POST',
                         body: formData
                     })

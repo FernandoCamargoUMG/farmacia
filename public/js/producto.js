@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <table id="tablaProducto" class="table table-striped table-bordered" style="width:100%">
                         <thead>
                             <tr>
+                                <th>Codigo</th>
                                 <th>Nombre</th>
                                 <th>Descripción</th>
                                 <th>Precio</th>
@@ -46,6 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <option value="">Seleccione una categoría</option>
                                 </select>
                             </div>
+                            <div class="mb-3"><label>codigo</label><input type="text" name="codigo" class="form-control" required></div>
                             <div class="mb-3"><label>Nombre</label><input type="text" name="nombre" class="form-control" required></div>
                             <div class="mb-3"><label>descripción</label><input type="text" name="descripcion" class="form-control"></div>
                             <div class="mb-3"><label>precio</label><input type="text" name="precio" class="form-control"></div>
@@ -94,6 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         const tbody = document.getElementById('tbodyProducto');
                         tbody.innerHTML = data.map(producto => `
                         <tr>
+                            <td>${producto.codigo}</td>
                             <td>${producto.nombre}</td>
                             <td>${producto.descripcion || ''}</td>
                             <td>${'Q'+producto.precio || ''}</td>
@@ -121,6 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     .then(producto => {
                                         const form = document.getElementById('formNuevoProducto');
                                         form.productoId.value = producto.id;
+                                        form.codigo.value = producto.codigo;
                                         form.nombre.value = producto.nombre;
                                         form.descripcion.value = producto.descripcion;
                                         form.precio.value = producto.precio;
