@@ -30,7 +30,6 @@ if (isset($_SESSION['sucursal_id'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
@@ -40,6 +39,16 @@ if (isset($_SESSION['sucursal_id'])) {
     <link rel="stylesheet" href="/public/css/ingreso.css">
 
 </head>
+<style>
+    a[aria-expanded="true"] .bi-chevron-down {
+        transform: rotate(180deg);
+        transition: transform 0.3s ease;
+    }
+
+    .bi-chevron-down {
+        transition: transform 0.3s ease;
+    }
+</style>
 
 <body>
     <!-- Navbar minimalista -->
@@ -62,18 +71,63 @@ if (isset($_SESSION['sucursal_id'])) {
     </nav>
     <!-- Menú lateral -->
     <div id="sidebar">
-        <ul>
+        <ul class="nav flex-column">
             <li><a href="/?route=dashboard.php"><i class="bi bi-house-door"></i> Inicio</a></li>
             <li><a class="nav-link" href="#clientes"><i class="bi bi-people"></i> Clientes</a></li>
-            <li><a class="nav-link" href="#proveedores"><i class="bi bi-truck"></i>Proveedores</a></li>
+            <li><a class="nav-link" href="#proveedores"><i class="bi bi-truck"></i> Proveedores</a></li>
             <li><a class="nav-link" href="#producto"><i class="bi bi-capsule-pill"></i> Productos</a></li>
             <li><a class="nav-link" href="#bodega"><i class="bi bi-box-seam"></i> Bodegas</a></li>
-            <li><a class="nav-link" href="#ingreso"><i class="bi bi-arrow-down-square"></i> Ingreso a Inventario</a></li>
-            <li><a class="nav-link" href="#venta"><i class="bi bi-currency-dollar"></i> Ventas</a></li>
+            <!--<li><a class="nav-link" href="#ingreso"><i class="bi bi-arrow-down-square"></i> Ingreso a Inventario</a></li>-->
+            <!--<li><a class="nav-link" href="#venta"><i class="bi bi-currency-dollar"></i> Ventas</a></li>-->
             <li><a class="nav-link" href="#planilla"><i class="bi bi-file-earmark-text"></i> Planilla</a></li>
-            <li><a href="/activos"><i class="bi bi-building-gear"></i> Activos Fijos</a></li>
+            <!--<li><a class="nav-link" href="#activo"><i class="bi bi-building-gear"></i> Activos Fijos</a></li>-->
+            <li class="nav-item">
+                <a class="nav-link d-flex justify-content-between align-items-center activos-toggle"
+                    href="#"
+                    data-target="#submenuinventario">
+                    <span><i class="bi bi-arrow-down-square"></i> Inventario</span>
+                    <i class="bi bi-chevron-down toggle-icon"></i>
+                </a>
+                <ul class="collapse list-unstyled ps-3" id="submenuinventario">
+                    <li><a class="nav-link" href="#ingreso"><i class="bi bi-arrow-down-square"></i> Ingreso a Inventario</a></li>
+                    <li><a class="nav-link" href="#venta"><i class="bi bi-currency-dollar"></i> Ventas</a></li>
+                    <li><a class="nav-link" href="#"><i class="bi bi-file-earmark-text"></i> Reporte</a></li>
+                    <!--<li><a class="nav-link" href="#activos/depreciacion">Categoria de proveedores</a></li>-->
+                </ul>
+            </li>
+            <!-- Menú activos fijos -->
+            <li class="nav-item">
+                <a class="nav-link d-flex justify-content-between align-items-center activos-toggle"
+                    href="#"
+                    data-target="#submenuActivos">
+                    <span><i class="bi bi-building-gear"></i> Activos Fijos</span>
+                    <i class="bi bi-chevron-down toggle-icon"></i>
+                </a>
+                <ul class="collapse list-unstyled ps-3" id="submenuActivos">
+                    <li><a class="nav-link" href="#activo"><i class="bi bi-currency-dollar"></i>Registro de Activos</a></li>
+                    <li><a class="nav-link" href="#"><i class="bi bi-currency-dollar"></i>Mantenimiento</a></li>
+                    <li><a class="nav-link" href="#"><i class="bi bi-currency-dollar"></i>Depreciaciones</a></li>
+                    <!--<li><a class="nav-link" href="#activos/depreciacion">Categoria de proveedores</a></li>-->
+                </ul>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link d-flex justify-content-between align-items-center activos-toggle"
+                    href="#"
+                    data-target="#submenuCategoria">
+                    <span><i class="bi bi-layers"></i> Categorias</span>
+                    <i class="bi bi-chevron-down toggle-icon"></i>
+                </a>
+                <ul class="collapse list-unstyled ps-3" id="submenuCategoria">
+                    <li><a class="nav-link" href="#activoc">Tipo de activos</a></li>
+                    <li><a class="nav-link" href="#productocat">Categoria de productos</a></li>
+                    <li><a class="nav-link" href="#formapago">Formas de pago</a></li>
+                    <li><a class="nav-link" href="#proveedorcat">Categoria de proveedores</a></li>
+                </ul>
+            </li>
         </ul>
     </div>
+
     <!-- Overlay -->
     <div id="overlay"></div>
     <!-- Contenido principal -->
@@ -96,7 +150,15 @@ if (isset($_SESSION['sucursal_id'])) {
     <script src="/public/js/ingreso.js"></script>
     <script src="/public/js/venta.js"></script>
     <script src="/public/js/planilla.js"></script>
+    <script src="/public/js/CategoriaActivo.js"></script>
+    <script src="/public/js/CategoriaProducto.js"></script>
+    <script src="/public/js/CategoriaProveedor.js"></script>
+    <script src="/public/js/formaPago.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        
+    </script>
 </body>
 
 </html>
