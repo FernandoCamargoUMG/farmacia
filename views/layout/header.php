@@ -77,10 +77,7 @@ if (isset($_SESSION['sucursal_id'])) {
             <li><a class="nav-link" href="#proveedores"><i class="bi bi-truck"></i> Proveedores</a></li>
             <li><a class="nav-link" href="#producto"><i class="bi bi-capsule-pill"></i> Productos</a></li>
             <li><a class="nav-link" href="#bodega"><i class="bi bi-box-seam"></i> Bodegas</a></li>
-            <!--<li><a class="nav-link" href="#ingreso"><i class="bi bi-arrow-down-square"></i> Ingreso a Inventario</a></li>-->
-            <!--<li><a class="nav-link" href="#venta"><i class="bi bi-currency-dollar"></i> Ventas</a></li>-->
             <li><a class="nav-link" href="#planilla"><i class="bi bi-file-earmark-text"></i> Planilla</a></li>
-            <!--<li><a class="nav-link" href="#activo"><i class="bi bi-building-gear"></i> Activos Fijos</a></li>-->
             <li class="nav-item">
                 <a class="nav-link d-flex justify-content-between align-items-center activos-toggle"
                     href="#"
@@ -92,7 +89,6 @@ if (isset($_SESSION['sucursal_id'])) {
                     <li><a class="nav-link" href="#ingreso"><i class="bi bi-arrow-down-square"></i> Ingreso a Inventario</a></li>
                     <li><a class="nav-link" href="#venta"><i class="bi bi-currency-dollar"></i> Ventas</a></li>
                     <li><a class="nav-link" href="#"><i class="bi bi-file-earmark-text"></i> Reporte</a></li>
-                    <!--<li><a class="nav-link" href="#activos/depreciacion">Categoria de proveedores</a></li>-->
                 </ul>
             </li>
             <!-- Menú activos fijos -->
@@ -104,10 +100,9 @@ if (isset($_SESSION['sucursal_id'])) {
                     <i class="bi bi-chevron-down toggle-icon"></i>
                 </a>
                 <ul class="collapse list-unstyled ps-3" id="submenuActivos">
-                    <li><a class="nav-link" href="#activo"><i class="bi bi-currency-dollar"></i>Registro de Activos</a></li>
-                    <li><a class="nav-link" href="#"><i class="bi bi-currency-dollar"></i>Mantenimiento</a></li>
-                    <li><a class="nav-link" href="#"><i class="bi bi-currency-dollar"></i>Depreciaciones</a></li>
-                    <!--<li><a class="nav-link" href="#activos/depreciacion">Categoria de proveedores</a></li>-->
+                    <li><a class="nav-link" href="#activos"><i class="bi bi-building-gear"></i>Registro de Activos</a></li>
+                    <!-- <li><a class="nav-link" href="#"><i class="bi bi-currency-dollar"></i>Mantenimiento</a></li>-->
+                    <li><a class="nav-link" href="#depreciacion"><i class="bi bi-currency-dollar"></i>Depreciaciones</a></li>
                 </ul>
             </li>
 
@@ -154,6 +149,8 @@ if (isset($_SESSION['sucursal_id'])) {
     <script src="/public/js/CategoriaProducto.js"></script>
     <script src="/public/js/CategoriaProveedor.js"></script>
     <script src="/public/js/formaPago.js"></script>
+    <script src="/public/js/activoFijo.js"></script>
+    <script src="/public/js/depreciacion.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
