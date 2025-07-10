@@ -70,7 +70,7 @@ if (isset($_SESSION['sucursal_id'])) {
             <li><a class="nav-link" href="#bodega"><i class="bi bi-box-seam"></i> Bodegas</a></li>
             <li><a class="nav-link" href="#ingreso"><i class="bi bi-arrow-down-square"></i> Ingreso a Inventario</a></li>
             <li><a class="nav-link" href="#venta"><i class="bi bi-currency-dollar"></i> Ventas</a></li>
-            <li><a href="/planilla"><i class="bi bi-file-earmark-text"></i> Planilla</a></li>
+            <li><a class="nav-link" href="#planilla"><i class="bi bi-file-earmark-text"></i> Planilla</a></li>
             <li><a href="/activos"><i class="bi bi-building-gear"></i> Activos Fijos</a></li>
         </ul>
     </div>
@@ -95,6 +95,7 @@ if (isset($_SESSION['sucursal_id'])) {
     <script src="/public/js/bodega.js"></script>
     <script src="/public/js/ingreso.js"></script>
     <script src="/public/js/venta.js"></script>
+    <script src="/public/js/planilla.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 
