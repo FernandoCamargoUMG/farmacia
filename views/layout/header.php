@@ -78,6 +78,7 @@ if (isset($_SESSION['sucursal_id'])) {
             <li><a class="nav-link" href="#producto"><i class="bi bi-capsule-pill"></i> Productos</a></li>
             <li><a class="nav-link" href="#bodega"><i class="bi bi-box-seam"></i> Bodegas</a></li>
             <li><a class="nav-link" href="#planilla"><i class="bi bi-file-earmark-text"></i> Planilla</a></li>
+            <li><a class="nav-link" href="#caja"><i class="bi bi-file-earmark-text"></i> Movimiento Caja</a></li>
             <li class="nav-item">
                 <a class="nav-link d-flex justify-content-between align-items-center activos-toggle"
                     href="#"
@@ -88,7 +89,7 @@ if (isset($_SESSION['sucursal_id'])) {
                 <ul class="collapse list-unstyled ps-3" id="submenuinventario">
                     <li><a class="nav-link" href="#ingreso"><i class="bi bi-arrow-down-square"></i> Ingreso a Inventario</a></li>
                     <li><a class="nav-link" href="#venta"><i class="bi bi-currency-dollar"></i> Ventas</a></li>
-                    <li><a class="nav-link" href="#"><i class="bi bi-file-earmark-text"></i> Reporte</a></li>
+                    <li><a class="nav-link" href="#stock"><i class="bi bi-file-earmark-text"></i> Reporte</a></li>
                 </ul>
             </li>
             <!-- Menú activos fijos -->
@@ -151,6 +152,8 @@ if (isset($_SESSION['sucursal_id'])) {
     <script src="/public/js/formaPago.js"></script>
     <script src="/public/js/activoFijo.js"></script>
     <script src="/public/js/depreciacion.js"></script>
+    <script src="/public/js/inventario.js"></script>
+    <script src="/public/js/caja.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>

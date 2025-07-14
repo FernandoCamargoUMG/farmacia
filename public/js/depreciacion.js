@@ -25,10 +25,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             <th>Estado</th>
                             <th>Costo</th>
                             <th>Valor Residual</th>
-                            <th>% Depreciación</th>
+                            <!--<th>% Depreciación</th>-->
                             <th>Dep. Anual</th>
-                            <th>Dep. Registrada</th>
-                            <th>Valor Esperado</th>
+                            <!--<th>Dep. Registrada</th>-->
+                            <!--<th>Valor Esperado</th>-->
                             <th>Valor Actual</th>
                         </tr>
                     </thead>
@@ -52,10 +52,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             <td>${row.estado}</td>
                             <td>${row.costo}</td>
                             <td>${row.valor_residual}</td>
-                            <td>${row.porcentaje_depreciacion}%</td>
+                            <!--<td>${row.porcentaje_depreciacion}%</td>-->
                             <td>${row.dep_anual}</td>
-                            <td>${row.dep_real || 0}</td>
-                            <td>${row.valor_esperado}</td>
+                            <!--<td>${row.dep_real || 0}</td>-->
+                            <!--<td>${row.valor_esperado}</td>-->
                             <td>${row.valor_actual || 0}</td>
                         </tr>
                     `).join('');
