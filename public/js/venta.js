@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const form = document.getElementById('formNuevoEgreso');
                 form.reset();
                 form.removeAttribute('data-editing-id'); // quitar ID si venía de una edición
-                document.getElementById('detalleBody').innerHTML = ''; // limpiar detalles
+                document.getElementById('detalleBodyEgreso').innerHTML = ''; // limpiar detalles
                 document.getElementById('cliente_id').value = '';
                 document.getElementById('inputCliente').value = '';
             });
