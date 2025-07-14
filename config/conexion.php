@@ -3,10 +3,10 @@ class Conexion {
     // conexion a bd
     public static function conectar() {
         // Obtener datos desde variables de entorno
-        $host = getenv('DB_HOST') ?: 'sql3.freesqldatabase.com';
-        $dbname = getenv('DB_NAME') ?: 'sql3789022';
-        $user = getenv('DB_USER') ?: 'sql3789022';
-        $pass = getenv('DB_PASS') ?: 'LbJBjUshA8';
+        $host = getenv('DB_HOST') ?: '82.197.82.175';
+        $dbname = getenv('DB_NAME') ?: 'u834187355_farmacia';
+        $user = getenv('DB_USER') ?: 'u834187355_fcamargo';
+        $pass = getenv('DB_PASS') ?: 'Pldb2610200';
 
         try {
             $pdo = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
