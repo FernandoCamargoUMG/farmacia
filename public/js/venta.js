@@ -531,7 +531,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 formData.set('detalles', JSON.stringify(detallesArray));
-                formData.set('id', egresoId); // ¡AGREGAR ESTA LÍNEA!
+                formData.set('id', egresoId);
                 // Cambiar URL según sea nuevo o editar
                 const url = egresoId ? '/controllers/egresoController.php?action=editar' : '/controllers/egresoController.php?action=guardar';
 
