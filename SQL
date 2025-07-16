@@ -78,9 +78,9 @@ CREATE TABLE IF NOT EXISTS farmacia.activo_fijo (
   ubicacion VARCHAR(255) NULL DEFAULT NULL,
   responsable INT(11) NULL DEFAULT NULL,
   PRIMARY KEY (id),
-  INDEX fk_activo_sucursal_idx (sucursal_id ASC) VISIBLE,
-  INDEX fk_activo_tipo_idx (tipo_activo_id ASC) VISIBLE,
-  INDEX fk_responsable_activo_idx (responsable ASC) VISIBLE,
+  INDEX fk_activo_sucursal_idx (sucursal_id ASC) ,
+  INDEX fk_activo_tipo_idx (tipo_activo_id ASC) ,
+  INDEX fk_responsable_activo_idx (responsable ASC) ,
   CONSTRAINT fk_activo_sucursal
     FOREIGN KEY (sucursal_id)
     REFERENCES farmacia.sucursal (id)
@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS farmacia.bodega (
   nombre VARCHAR(255) NULL DEFAULT NULL,
   ubicacion VARCHAR(100) NULL DEFAULT NULL,
   PRIMARY KEY (id),
-  INDEX fk_sucursal_bodega (sucursal_id ASC) VISIBLE,
+  INDEX fk_sucursal_bodega (sucursal_id ASC) ,
   CONSTRAINT fk_sucursal_bodega_constraint
     FOREIGN KEY (sucursal_id)
     REFERENCES farmacia.sucursal (id)
@@ -159,7 +159,7 @@ CREATE TABLE IF NOT EXISTS farmacia.clientes (
   telefono VARCHAR(50) NULL DEFAULT NULL,
   nit VARCHAR(100) NULL DEFAULT NULL,
   PRIMARY KEY (id),
-  INDEX index_sucursal_clientes (sucursal_id ASC) VISIBLE,
+  INDEX index_sucursal_clientes (sucursal_id ASC) ,
   CONSTRAINT fk_sucursal_clientes
     FOREIGN KEY (sucursal_id)
     REFERENCES farmacia.sucursal (id)
@@ -182,7 +182,7 @@ CREATE TABLE IF NOT EXISTS farmacia.depreciacion_activo (
   periodo_mes INT(11) NOT NULL,
   periodo_anio INT(11) NOT NULL,
   PRIMARY KEY (id),
-  INDEX fk_depreciacion_activo_idx (activo_id ASC) VISIBLE,
+  INDEX fk_depreciacion_activo_idx (activo_id ASC) ,
   CONSTRAINT fk_depreciacion_activo
     FOREIGN KEY (activo_id)
     REFERENCES farmacia.activo_fijo (id)
@@ -223,9 +223,9 @@ CREATE TABLE IF NOT EXISTS farmacia.egreso_cab (
   observaciones VARCHAR(255) NULL DEFAULT NULL,
   opcionpago TINYINT(4) NULL DEFAULT 0 COMMENT 'credito//contado',
   PRIMARY KEY (id),
-  INDEX index_sucursal_egreso (sucursal_id ASC) VISIBLE,
-  INDEX index_cliente_egreso (cliente_id ASC) VISIBLE,
-  INDEX fk_forma_pago_egreso_idx (forma_pago ASC) VISIBLE,
+  INDEX index_sucursal_egreso (sucursal_id ASC) ,
+  INDEX index_cliente_egreso (cliente_id ASC) ,
+  INDEX fk_forma_pago_egreso_idx (forma_pago ASC) ,
   CONSTRAINT fk_cliente_egreso
     FOREIGN KEY (cliente_id)
     REFERENCES farmacia.clientes (id)
@@ -257,7 +257,7 @@ CREATE TABLE IF NOT EXISTS farmacia.producto (
   descripcion VARCHAR(255) NULL DEFAULT NULL,
   precio DECIMAL(12,2) NULL DEFAULT NULL,
   PRIMARY KEY (id),
-  INDEX fk_categoria_producto_idx (categoria_id ASC) VISIBLE,
+  INDEX fk_categoria_producto_idx (categoria_id ASC) ,
   CONSTRAINT fk_categoria_producto
     FOREIGN KEY (categoria_id)
     REFERENCES farmacia.categoria_producto (id)
@@ -281,10 +281,10 @@ CREATE TABLE IF NOT EXISTS farmacia.egreso_det (
   precio DECIMAL(12,2) NULL DEFAULT 0.00,
   descuento DECIMAL(12,2) NULL DEFAULT 0.00,
   PRIMARY KEY (id),
-  INDEX fk_sucursal_det (sucursal_id ASC) VISIBLE,
-  INDEX fk_producto_det (producto_id ASC) VISIBLE,
-  INDEX fk_egreso_cab_det (egreso_cab_id ASC) VISIBLE,
-  INDEX fk_bodega_det (bodega_id ASC) VISIBLE,
+  INDEX fk_sucursal_det (sucursal_id ASC) ,
+  INDEX fk_producto_det (producto_id ASC) ,
+  INDEX fk_egreso_cab_det (egreso_cab_id ASC) ,
+  INDEX fk_bodega_det (bodega_id ASC) ,
   CONSTRAINT fk_bodega_egreso_det
     FOREIGN KEY (bodega_id)
     REFERENCES farmacia.bodega (id)
@@ -323,7 +323,7 @@ CREATE TABLE IF NOT EXISTS farmacia.proveedor (
   telefono VARCHAR(45) NULL DEFAULT NULL,
   email VARCHAR(45) NULL DEFAULT NULL,
   PRIMARY KEY (id),
-  INDEX fk_categoria_idx (categoria_id ASC) VISIBLE,
+  INDEX fk_categoria_idx (categoria_id ASC) ,
   CONSTRAINT fk_categoria
     FOREIGN KEY (categoria_id)
     REFERENCES farmacia.categoria (id)
@@ -350,8 +350,8 @@ CREATE TABLE IF NOT EXISTS farmacia.ingreso_cab (
   sta TINYINT(4) NOT NULL DEFAULT 0,
   observaciones VARCHAR(255) NULL DEFAULT NULL,
   PRIMARY KEY (id),
-  INDEX fk_proveedor_idx (proveedor_id ASC) VISIBLE,
-  INDEX fk_sucursal_idx (sucursal_id ASC) VISIBLE,
+  INDEX fk_proveedor_idx (proveedor_id ASC) ,
+  INDEX fk_sucursal_idx (sucursal_id ASC) ,
   CONSTRAINT fk_proveedor
     FOREIGN KEY (proveedor_id)
     REFERENCES farmacia.proveedor (id)
@@ -379,10 +379,10 @@ CREATE TABLE IF NOT EXISTS farmacia.ingreso_det (
   cantidad INT(11) NULL DEFAULT NULL,
   precio DECIMAL(12,2) NULL DEFAULT NULL,
   PRIMARY KEY (id),
-  INDEX fk_sucursal_ingreso_det_idx (sucursal_id ASC) VISIBLE,
-  INDEX fk_ingreso_cab_idx (ingreso_cab_id ASC) VISIBLE,
-  INDEX fk_ingreso_producto_idx (producto_id ASC) VISIBLE,
-  INDEX fk_bodega_ingreso_idx (bodega_id ASC) VISIBLE,
+  INDEX fk_sucursal_ingreso_det_idx (sucursal_id ASC) ,
+  INDEX fk_ingreso_cab_idx (ingreso_cab_id ASC) ,
+  INDEX fk_ingreso_producto_idx (producto_id ASC) ,
+  INDEX fk_bodega_ingreso_idx (bodega_id ASC) ,
   CONSTRAINT fk_bodega_ingreso
     FOREIGN KEY (bodega_id)
     REFERENCES farmacia.bodega (id)
@@ -422,10 +422,10 @@ CREATE TABLE IF NOT EXISTS farmacia.inventario (
   cab_id INT(11) NOT NULL,
   det_id INT(11) NOT NULL,
   PRIMARY KEY (id),
-  INDEX index_producto (producto_id ASC) VISIBLE,
-  INDEX index_sucursal (sucursal_id ASC) VISIBLE,
-  INDEX fk_inventario_bodega_idx (bodega_id ASC) VISIBLE,
-  INDEX fk_producto_bodega (sucursal_id ASC, bodega_id ASC, producto_id ASC) VISIBLE,
+  INDEX index_producto (producto_id ASC) ,
+  INDEX index_sucursal (sucursal_id ASC) ,
+  INDEX fk_inventario_bodega_idx (bodega_id ASC) ,
+  INDEX fk_producto_bodega (sucursal_id ASC, bodega_id ASC, producto_id ASC) ,
   CONSTRAINT fk_inventario_bodega
     FOREIGN KEY (bodega_id)
     REFERENCES farmacia.bodega (id)
@@ -459,7 +459,7 @@ CREATE TABLE IF NOT EXISTS farmacia.mantenimiento_activo (
   responsable VARCHAR(100) NULL DEFAULT NULL,
   tipo ENUM('Preventivo', 'Correctivo', 'Predictivo') NOT NULL,
   PRIMARY KEY (id),
-  INDEX fk_mantenimiento_activo_idx (activo_id ASC) VISIBLE,
+  INDEX fk_mantenimiento_activo_idx (activo_id ASC) ,
   CONSTRAINT fk_mantenimiento_activo
     FOREIGN KEY (activo_id)
     REFERENCES farmacia.activo_fijo (id)
@@ -481,7 +481,7 @@ CREATE TABLE IF NOT EXISTS farmacia.planilla (
   metodopago TINYINT(4) NULL DEFAULT NULL,
   observaciones VARCHAR(255) NULL DEFAULT NULL,
   PRIMARY KEY (id),
-  INDEX fk_sucursal_planilla_idx (sucursal_id ASC) VISIBLE,
+  INDEX fk_sucursal_planilla_idx (sucursal_id ASC) ,
   CONSTRAINT fk_sucursal_planilla
     FOREIGN KEY (sucursal_id)
     REFERENCES farmacia.sucursal (id)
@@ -507,9 +507,9 @@ CREATE TABLE IF NOT EXISTS farmacia.movimiento_caja (
   planilla_id INT(11) NULL DEFAULT NULL,
   observaciones VARCHAR(255) NULL DEFAULT NULL,
   PRIMARY KEY (id),
-  INDEX fk_sucural_caja_idx (sucursal_id ASC) VISIBLE,
-  INDEX fk_egreso_caja_idx (egreso_id ASC) VISIBLE,
-  INDEX fk_planilla_caja_idx (planilla_id ASC) VISIBLE,
+  INDEX fk_sucural_caja_idx (sucursal_id ASC) ,
+  INDEX fk_egreso_caja_idx (egreso_id ASC) ,
+  INDEX fk_planilla_caja_idx (planilla_id ASC) ,
   CONSTRAINT fk_egreso_caja
     FOREIGN KEY (egreso_id)
     REFERENCES farmacia.egreso_cab (id)
@@ -553,7 +553,7 @@ CREATE TABLE IF NOT EXISTS farmacia.traslado_cab (
   sta TINYINT(4) NULL DEFAULT NULL,
   observaciones VARCHAR(255) NULL DEFAULT NULL,
   PRIMARY KEY (id),
-  INDEX fk_traslado_cab_sucursal_idx (sucursal_id ASC) VISIBLE,
+  INDEX fk_traslado_cab_sucursal_idx (sucursal_id ASC) ,
   CONSTRAINT fk_traslado_cab_sucursal
     FOREIGN KEY (sucursal_id)
     REFERENCES farmacia.sucursal (id)
@@ -578,12 +578,12 @@ CREATE TABLE IF NOT EXISTS farmacia.traslado_det (
   observaciones VARCHAR(255) NULL DEFAULT NULL,
   cantidad INT(11) NULL DEFAULT NULL,
   PRIMARY KEY (id, traslado_cab_id),
-  INDEX fk_sucursal_traslado_idx (sucursal_id_in ASC) VISIBLE,
-  INDEX fk_sucursal_traslado_out_idx (sucursal_id_out ASC) VISIBLE,
-  INDEX fk_producto_traslado_idx (producto_id ASC) VISIBLE,
-  INDEX fk_bodega_traslado_in_idx (bodega_id_in ASC) VISIBLE,
-  INDEX fk_bodega_traslado_out_idx (bodega_id_out ASC) VISIBLE,
-  INDEX fk_traslado_cab_id_idx (traslado_cab_id ASC) VISIBLE,
+  INDEX fk_sucursal_traslado_idx (sucursal_id_in ASC) ,
+  INDEX fk_sucursal_traslado_out_idx (sucursal_id_out ASC) ,
+  INDEX fk_producto_traslado_idx (producto_id ASC) ,
+  INDEX fk_bodega_traslado_in_idx (bodega_id_in ASC) ,
+  INDEX fk_bodega_traslado_out_idx (bodega_id_out ASC) ,
+  INDEX fk_traslado_cab_id_idx (traslado_cab_id ASC) ,
   CONSTRAINT fk_bodega_traslado_in
     FOREIGN KEY (bodega_id_in)
     REFERENCES farmacia.bodega (id)
@@ -630,9 +630,9 @@ CREATE TABLE IF NOT EXISTS farmacia.usuario (
   sucursal_id INT(11) NULL DEFAULT NULL,
   rol_id INT(11) NULL DEFAULT NULL,
   PRIMARY KEY (id),
-  UNIQUE INDEX correo (correo ASC) VISIBLE,
-  INDEX sucursal_id (sucursal_id ASC) VISIBLE,
-  INDEX rol_id (rol_id ASC) VISIBLE,
+  UNIQUE INDEX correo (correo ASC) ,
+  INDEX sucursal_id (sucursal_id ASC) ,
+  INDEX rol_id (rol_id ASC) ,
   CONSTRAINT usuario_ibfk_1
     FOREIGN KEY (sucursal_id)
     REFERENCES farmacia.sucursal (id),
