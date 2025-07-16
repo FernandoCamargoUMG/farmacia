@@ -1,0 +1,1115 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema farmacia
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema farmacia
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS farmacia DEFAULT CHARACTER SET utf8 ;
+USE farmacia ;
+
+-- -----------------------------------------------------
+-- Table farmacia.sucursal
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.sucursal (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  nombre_sucursal VARCHAR(255) NULL DEFAULT NULL,
+  direccion_sucursal VARCHAR(255) NULL DEFAULT NULL,
+  departamento VARCHAR(255) NULL DEFAULT NULL,
+  telefono VARCHAR(50) NULL DEFAULT NULL,
+  porc_iva FLOAT NOT NULL DEFAULT 12,
+  PRIMARY KEY (id))
+ENGINE = InnoDB
+AUTO_INCREMENT = 34
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.tipo_activo
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.tipo_activo (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  nombre VARCHAR(100) NOT NULL,
+  categoria_depreciacion ENUM('Edificios', 'Mobiliario y Equipo', 'Vehiculos', 'Tecnologia') NOT NULL,
+  porcentaje_depreciacion DECIMAL(5,2) NOT NULL,
+  PRIMARY KEY (id))
+ENGINE = InnoDB
+AUTO_INCREMENT = 12
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.responsable
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.responsable (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  codigo VARCHAR(50) NULL DEFAULT NULL,
+  nombre VARCHAR(50) NULL DEFAULT NULL,
+  apellido VARCHAR(50) NULL DEFAULT NULL,
+  PRIMARY KEY (id))
+ENGINE = InnoDB
+AUTO_INCREMENT = 2
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.activo_fijo
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.activo_fijo (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  sucursal_id INT(11) NOT NULL,
+  tipo_activo_id INT(11) NOT NULL,
+  codigo VARCHAR(50) NULL DEFAULT NULL,
+  nombre VARCHAR(255) NOT NULL,
+  descripcion TEXT NULL DEFAULT NULL,
+  fecha_adquisicion DATE NOT NULL,
+  costo DECIMAL(12,2) NOT NULL,
+  valor_residual DECIMAL(12,2) NULL DEFAULT 0.00,
+  estado ENUM('Activo', 'En mantenimiento', 'Dado de baja', 'Vendido') NOT NULL DEFAULT 'Activo',
+  ubicacion VARCHAR(255) NULL DEFAULT NULL,
+  responsable INT(11) NULL DEFAULT NULL,
+  PRIMARY KEY (id),
+  INDEX fk_activo_sucursal_idx (sucursal_id ASC) VISIBLE,
+  INDEX fk_activo_tipo_idx (tipo_activo_id ASC) VISIBLE,
+  INDEX fk_responsable_activo_idx (responsable ASC) VISIBLE,
+  CONSTRAINT fk_activo_sucursal
+    FOREIGN KEY (sucursal_id)
+    REFERENCES farmacia.sucursal (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_activo_tipo
+    FOREIGN KEY (tipo_activo_id)
+    REFERENCES farmacia.tipo_activo (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_responsable_activo
+    FOREIGN KEY (responsable)
+    REFERENCES farmacia.responsable (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 26
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.bodega
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.bodega (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  sucursal_id INT(11) NOT NULL,
+  nombre VARCHAR(255) NULL DEFAULT NULL,
+  ubicacion VARCHAR(100) NULL DEFAULT NULL,
+  PRIMARY KEY (id),
+  INDEX fk_sucursal_bodega (sucursal_id ASC) VISIBLE,
+  CONSTRAINT fk_sucursal_bodega_constraint
+    FOREIGN KEY (sucursal_id)
+    REFERENCES farmacia.sucursal (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 10
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.categoria
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.categoria (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  descripcion VARCHAR(50) NULL DEFAULT NULL,
+  PRIMARY KEY (id))
+ENGINE = InnoDB
+AUTO_INCREMENT = 7
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.categoria_producto
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.categoria_producto (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  descripcion VARCHAR(50) NULL DEFAULT NULL,
+  PRIMARY KEY (id))
+ENGINE = InnoDB
+AUTO_INCREMENT = 12
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.clientes
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.clientes (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  sucursal_id INT(11) NOT NULL,
+  nombre VARCHAR(50) NULL DEFAULT NULL,
+  apellido VARCHAR(50) NULL DEFAULT NULL,
+  dpi VARCHAR(13) NULL DEFAULT NULL,
+  email VARCHAR(100) NULL DEFAULT NULL,
+  direccion VARCHAR(255) NULL DEFAULT NULL,
+  telefono VARCHAR(50) NULL DEFAULT NULL,
+  nit VARCHAR(100) NULL DEFAULT NULL,
+  PRIMARY KEY (id),
+  INDEX index_sucursal_clientes (sucursal_id ASC) VISIBLE,
+  CONSTRAINT fk_sucursal_clientes
+    FOREIGN KEY (sucursal_id)
+    REFERENCES farmacia.sucursal (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 17
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.depreciacion_activo
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.depreciacion_activo (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  activo_id INT(11) NOT NULL,
+  fecha_calculo DATE NOT NULL,
+  monto_depreciado DECIMAL(12,2) NOT NULL,
+  valor_actual DECIMAL(12,2) NOT NULL,
+  periodo_mes INT(11) NOT NULL,
+  periodo_anio INT(11) NOT NULL,
+  PRIMARY KEY (id),
+  INDEX fk_depreciacion_activo_idx (activo_id ASC) VISIBLE,
+  CONSTRAINT fk_depreciacion_activo
+    FOREIGN KEY (activo_id)
+    REFERENCES farmacia.activo_fijo (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 88
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.forma_pago
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.forma_pago (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  descripcion VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (id))
+ENGINE = InnoDB
+AUTO_INCREMENT = 8
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.egreso_cab
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.egreso_cab (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  sucursal_id INT(11) NOT NULL,
+  cliente_id INT(11) NOT NULL,
+  forma_pago INT(11) NULL DEFAULT NULL COMMENT 'Efectivo\\nCheque\\nDeposito\\nTarjeta de Crédito\\nTarjeta de Débito\\nTransferencia Bancaria\\n',
+  fecha DATETIME NULL DEFAULT NULL,
+  numero VARCHAR(50) NULL DEFAULT NULL,
+  gravada DECIMAL(12,2) NULL DEFAULT 0.00,
+  subtotal DECIMAL(12,2) NULL DEFAULT 0.00,
+  total DECIMAL(12,2) NULL DEFAULT 0.00,
+  iva DECIMAL(12,2) NULL DEFAULT 0.00,
+  sta TINYINT(4) NOT NULL DEFAULT 0 COMMENT '0=borrador/1=emitido',
+  observaciones VARCHAR(255) NULL DEFAULT NULL,
+  opcionpago TINYINT(4) NULL DEFAULT 0 COMMENT 'credito//contado',
+  PRIMARY KEY (id),
+  INDEX index_sucursal_egreso (sucursal_id ASC) VISIBLE,
+  INDEX index_cliente_egreso (cliente_id ASC) VISIBLE,
+  INDEX fk_forma_pago_egreso_idx (forma_pago ASC) VISIBLE,
+  CONSTRAINT fk_cliente_egreso
+    FOREIGN KEY (cliente_id)
+    REFERENCES farmacia.clientes (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_forma_pago_egreso
+    FOREIGN KEY (forma_pago)
+    REFERENCES farmacia.forma_pago (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_sucursal_egreso
+    FOREIGN KEY (sucursal_id)
+    REFERENCES farmacia.sucursal (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 24
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.producto
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.producto (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  categoria_id INT(11) NOT NULL,
+  codigo VARCHAR(50) NULL DEFAULT NULL,
+  nombre VARCHAR(255) NULL DEFAULT NULL,
+  descripcion VARCHAR(255) NULL DEFAULT NULL,
+  precio DECIMAL(12,2) NULL DEFAULT NULL,
+  PRIMARY KEY (id),
+  INDEX fk_categoria_producto_idx (categoria_id ASC) VISIBLE,
+  CONSTRAINT fk_categoria_producto
+    FOREIGN KEY (categoria_id)
+    REFERENCES farmacia.categoria_producto (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 21
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.egreso_det
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.egreso_det (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  sucursal_id INT(11) NOT NULL,
+  egreso_cab_id INT(11) NOT NULL,
+  producto_id INT(11) NOT NULL,
+  bodega_id INT(11) NOT NULL,
+  cantidad INT(11) NULL DEFAULT 0,
+  precio DECIMAL(12,2) NULL DEFAULT 0.00,
+  descuento DECIMAL(12,2) NULL DEFAULT 0.00,
+  PRIMARY KEY (id),
+  INDEX fk_sucursal_det (sucursal_id ASC) VISIBLE,
+  INDEX fk_producto_det (producto_id ASC) VISIBLE,
+  INDEX fk_egreso_cab_det (egreso_cab_id ASC) VISIBLE,
+  INDEX fk_bodega_det (bodega_id ASC) VISIBLE,
+  CONSTRAINT fk_bodega_egreso_det
+    FOREIGN KEY (bodega_id)
+    REFERENCES farmacia.bodega (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_egreso_cab_egreso_det
+    FOREIGN KEY (egreso_cab_id)
+    REFERENCES farmacia.egreso_cab (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_producto_egreso_det
+    FOREIGN KEY (producto_id)
+    REFERENCES farmacia.producto (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_sucursal_egreso_det
+    FOREIGN KEY (sucursal_id)
+    REFERENCES farmacia.sucursal (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 44
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.proveedor
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.proveedor (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  categoria_id INT(11) NOT NULL,
+  codigo VARCHAR(45) NULL DEFAULT NULL,
+  nombre VARCHAR(45) NULL DEFAULT NULL,
+  nit VARCHAR(45) NULL DEFAULT NULL,
+  direccion VARCHAR(45) NULL DEFAULT NULL,
+  telefono VARCHAR(45) NULL DEFAULT NULL,
+  email VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (id),
+  INDEX fk_categoria_idx (categoria_id ASC) VISIBLE,
+  CONSTRAINT fk_categoria
+    FOREIGN KEY (categoria_id)
+    REFERENCES farmacia.categoria (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 6
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.ingreso_cab
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.ingreso_cab (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  sucursal_id INT(11) NOT NULL,
+  proveedor_id INT(11) NOT NULL,
+  fecha DATETIME NULL DEFAULT NULL,
+  numero VARCHAR(50) NULL DEFAULT NULL,
+  subtotal DECIMAL(12,2) NULL DEFAULT 0.00,
+  gravada DECIMAL(12,2) NULL DEFAULT 0.00,
+  total DECIMAL(12,2) NULL DEFAULT 0.00,
+  iva DECIMAL(12,2) NULL DEFAULT 0.00,
+  sta TINYINT(4) NOT NULL DEFAULT 0,
+  observaciones VARCHAR(255) NULL DEFAULT NULL,
+  PRIMARY KEY (id),
+  INDEX fk_proveedor_idx (proveedor_id ASC) VISIBLE,
+  INDEX fk_sucursal_idx (sucursal_id ASC) VISIBLE,
+  CONSTRAINT fk_proveedor
+    FOREIGN KEY (proveedor_id)
+    REFERENCES farmacia.proveedor (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_sucursal_ingreso_cab
+    FOREIGN KEY (sucursal_id)
+    REFERENCES farmacia.sucursal (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 19
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.ingreso_det
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.ingreso_det (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  sucursal_id INT(11) NOT NULL,
+  ingreso_cab_id INT(11) NOT NULL,
+  bodega_id INT(11) NULL DEFAULT NULL,
+  producto_id INT(11) NULL DEFAULT NULL,
+  cantidad INT(11) NULL DEFAULT NULL,
+  precio DECIMAL(12,2) NULL DEFAULT NULL,
+  PRIMARY KEY (id),
+  INDEX fk_sucursal_ingreso_det_idx (sucursal_id ASC) VISIBLE,
+  INDEX fk_ingreso_cab_idx (ingreso_cab_id ASC) VISIBLE,
+  INDEX fk_ingreso_producto_idx (producto_id ASC) VISIBLE,
+  INDEX fk_bodega_ingreso_idx (bodega_id ASC) VISIBLE,
+  CONSTRAINT fk_bodega_ingreso
+    FOREIGN KEY (bodega_id)
+    REFERENCES farmacia.bodega (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_ingreso_cab
+    FOREIGN KEY (ingreso_cab_id)
+    REFERENCES farmacia.ingreso_cab (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_ingreso_producto
+    FOREIGN KEY (producto_id)
+    REFERENCES farmacia.producto (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_sucursal_ingreso_det
+    FOREIGN KEY (sucursal_id)
+    REFERENCES farmacia.sucursal (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 100
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.inventario
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.inventario (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  sucursal_id INT(11) NOT NULL,
+  bodega_id INT(11) NOT NULL,
+  producto_id INT(11) NOT NULL,
+  cantidad INT(11) NOT NULL DEFAULT 0,
+  fecha DATETIME NOT NULL,
+  movimiento ENUM('ingreso', 'egreso', 'traslado') NOT NULL,
+  cab_id INT(11) NOT NULL,
+  det_id INT(11) NOT NULL,
+  PRIMARY KEY (id),
+  INDEX index_producto (producto_id ASC) VISIBLE,
+  INDEX index_sucursal (sucursal_id ASC) VISIBLE,
+  INDEX fk_inventario_bodega_idx (bodega_id ASC) VISIBLE,
+  INDEX fk_producto_bodega (sucursal_id ASC, bodega_id ASC, producto_id ASC) VISIBLE,
+  CONSTRAINT fk_inventario_bodega
+    FOREIGN KEY (bodega_id)
+    REFERENCES farmacia.bodega (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_producto_inventario
+    FOREIGN KEY (producto_id)
+    REFERENCES farmacia.producto (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_sucursal_inventario
+    FOREIGN KEY (sucursal_id)
+    REFERENCES farmacia.sucursal (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 64
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.mantenimiento_activo
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.mantenimiento_activo (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  activo_id INT(11) NOT NULL,
+  fecha DATE NOT NULL,
+  descripcion TEXT NOT NULL,
+  costo DECIMAL(12,2) NOT NULL,
+  proveedor VARCHAR(100) NULL DEFAULT NULL,
+  responsable VARCHAR(100) NULL DEFAULT NULL,
+  tipo ENUM('Preventivo', 'Correctivo', 'Predictivo') NOT NULL,
+  PRIMARY KEY (id),
+  INDEX fk_mantenimiento_activo_idx (activo_id ASC) VISIBLE,
+  CONSTRAINT fk_mantenimiento_activo
+    FOREIGN KEY (activo_id)
+    REFERENCES farmacia.activo_fijo (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.planilla
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.planilla (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  sucursal_id INT(11) NULL DEFAULT NULL,
+  fecha DATETIME NULL DEFAULT NULL,
+  descripcion VARCHAR(255) NULL DEFAULT NULL,
+  monto DECIMAL(12,2) NULL DEFAULT NULL,
+  metodopago TINYINT(4) NULL DEFAULT NULL,
+  observaciones VARCHAR(255) NULL DEFAULT NULL,
+  PRIMARY KEY (id),
+  INDEX fk_sucursal_planilla_idx (sucursal_id ASC) VISIBLE,
+  CONSTRAINT fk_sucursal_planilla
+    FOREIGN KEY (sucursal_id)
+    REFERENCES farmacia.sucursal (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 7
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.movimiento_caja
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.movimiento_caja (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  sucursal_id INT(11) NULL DEFAULT NULL,
+  fecha DATETIME NULL DEFAULT NULL,
+  tipo ENUM('ingreso', 'egreso') NULL DEFAULT NULL,
+  descripcion VARCHAR(255) NULL DEFAULT NULL,
+  monto DECIMAL(12,2) NULL DEFAULT NULL,
+  metodo_pago TINYINT(4) NULL DEFAULT NULL,
+  egreso_id INT(11) NULL DEFAULT NULL,
+  planilla_id INT(11) NULL DEFAULT NULL,
+  observaciones VARCHAR(255) NULL DEFAULT NULL,
+  PRIMARY KEY (id),
+  INDEX fk_sucural_caja_idx (sucursal_id ASC) VISIBLE,
+  INDEX fk_egreso_caja_idx (egreso_id ASC) VISIBLE,
+  INDEX fk_planilla_caja_idx (planilla_id ASC) VISIBLE,
+  CONSTRAINT fk_egreso_caja
+    FOREIGN KEY (egreso_id)
+    REFERENCES farmacia.egreso_cab (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_planilla_caja
+    FOREIGN KEY (planilla_id)
+    REFERENCES farmacia.planilla (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_sucural_caja
+    FOREIGN KEY (sucursal_id)
+    REFERENCES farmacia.sucursal (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 19
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.rol
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.rol (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  nombre VARCHAR(100) NOT NULL,
+  PRIMARY KEY (id))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.traslado_cab
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.traslado_cab (
+  id INT(11) NOT NULL,
+  sucursal_id INT(11) NOT NULL,
+  fecha DATETIME NULL DEFAULT NULL,
+  numero VARCHAR(50) NULL DEFAULT NULL,
+  sta TINYINT(4) NULL DEFAULT NULL,
+  observaciones VARCHAR(255) NULL DEFAULT NULL,
+  PRIMARY KEY (id),
+  INDEX fk_traslado_cab_sucursal_idx (sucursal_id ASC) VISIBLE,
+  CONSTRAINT fk_traslado_cab_sucursal
+    FOREIGN KEY (sucursal_id)
+    REFERENCES farmacia.sucursal (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.traslado_det
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.traslado_det (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  traslado_cab_id INT(11) NOT NULL,
+  producto_id INT(11) NOT NULL,
+  bodega_id_in INT(11) NOT NULL,
+  bodega_id_out INT(11) NOT NULL,
+  sucursal_id_in INT(11) NOT NULL,
+  sucursal_id_out INT(11) NOT NULL,
+  descrip VARCHAR(255) NULL DEFAULT NULL,
+  observaciones VARCHAR(255) NULL DEFAULT NULL,
+  cantidad INT(11) NULL DEFAULT NULL,
+  PRIMARY KEY (id, traslado_cab_id),
+  INDEX fk_sucursal_traslado_idx (sucursal_id_in ASC) VISIBLE,
+  INDEX fk_sucursal_traslado_out_idx (sucursal_id_out ASC) VISIBLE,
+  INDEX fk_producto_traslado_idx (producto_id ASC) VISIBLE,
+  INDEX fk_bodega_traslado_in_idx (bodega_id_in ASC) VISIBLE,
+  INDEX fk_bodega_traslado_out_idx (bodega_id_out ASC) VISIBLE,
+  INDEX fk_traslado_cab_id_idx (traslado_cab_id ASC) VISIBLE,
+  CONSTRAINT fk_bodega_traslado_in
+    FOREIGN KEY (bodega_id_in)
+    REFERENCES farmacia.bodega (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_bodega_traslado_out
+    FOREIGN KEY (bodega_id_out)
+    REFERENCES farmacia.bodega (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_producto_traslado
+    FOREIGN KEY (producto_id)
+    REFERENCES farmacia.producto (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_sucursal_traslado_in
+    FOREIGN KEY (sucursal_id_in)
+    REFERENCES farmacia.sucursal (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_sucursal_traslado_out
+    FOREIGN KEY (sucursal_id_out)
+    REFERENCES farmacia.sucursal (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT fk_traslado_cab_id
+    FOREIGN KEY (traslado_cab_id)
+    REFERENCES farmacia.traslado_cab (id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+AUTO_INCREMENT = 5
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table farmacia.usuario
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS farmacia.usuario (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  nombre VARCHAR(100) NOT NULL,
+  correo VARCHAR(100) NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  sucursal_id INT(11) NULL DEFAULT NULL,
+  rol_id INT(11) NULL DEFAULT NULL,
+  PRIMARY KEY (id),
+  UNIQUE INDEX correo (correo ASC) VISIBLE,
+  INDEX sucursal_id (sucursal_id ASC) VISIBLE,
+  INDEX rol_id (rol_id ASC) VISIBLE,
+  CONSTRAINT usuario_ibfk_1
+    FOREIGN KEY (sucursal_id)
+    REFERENCES farmacia.sucursal (id),
+  CONSTRAINT usuario_ibfk_2
+    FOREIGN KEY (rol_id)
+    REFERENCES farmacia.rol (id))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8;
+
+USE farmacia ;
+
+-- -----------------------------------------------------
+-- procedure calcular_depreciacion
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE farmacia$$
+CREATE DEFINER=root@localhost PROCEDURE calcular_depreciacion(IN p_activo_id INT)
+BEGIN
+    DECLARE v_costo DECIMAL(12,2);
+    DECLARE v_valor_residual DECIMAL(12,2);
+    DECLARE v_porcentaje_dep DECIMAL(5,2);
+    DECLARE v_depreciacion_anual DECIMAL(12,2);
+    DECLARE v_anios_transcurridos INT;
+    DECLARE v_valor_actual DECIMAL(12,2);
+    DECLARE v_depreciacion_acumulada DECIMAL(12,2);
+    DECLARE v_estado VARCHAR(20);
+    
+    -- Obtener datos del activo y porcentaje de depreciación
+    SELECT 
+        a.costo, 
+        a.valor_residual,
+        t.porcentaje_depreciacion,
+        a.fecha_adquisicion,
+        a.estado
+    INTO 
+        v_costo, 
+        v_valor_residual,
+        v_porcentaje_dep,
+        @fecha_adq,
+        v_estado
+    FROM activo_fijo a
+    JOIN tipo_activo t ON a.tipo_activo_id = t.id
+    WHERE a.id = p_activo_id;
+    
+    -- Calcular años transcurridos
+    SET v_anios_transcurridos = TIMESTAMPDIFF(YEAR, @fecha_adq, CURDATE());
+    
+    -- Calcular depreciación anual basada en porcentaje
+    SET v_depreciacion_anual = ROUND(v_costo * (v_porcentaje_dep/100), 2);
+    
+    -- Calcular depreciación acumulada
+    SET v_depreciacion_acumulada = ROUND(v_depreciacion_anual * v_anios_transcurridos, 2);
+    
+    -- Calcular valor actual (no menor que residual)
+    SET v_valor_actual = GREATEST(v_costo - v_depreciacion_acumulada, v_valor_residual);
+    
+    -- Ajustar si alcanzó el valor residual
+    IF v_valor_actual <= v_valor_residual THEN
+        SET v_depreciacion_anual = 0;
+        SET v_valor_actual = v_valor_residual;
+    END IF;
+    
+    -- No depreciar activos dados de baja
+    IF v_estado = 'Dado de baja' THEN
+        SET v_depreciacion_anual = 0;
+        SET v_valor_actual = v_valor_residual;
+    END IF;
+    
+    -- Insertar o actualizar registro anual
+    INSERT INTO depreciacion_activo (
+        activo_id, fecha_calculo, monto_depreciado, valor_actual, periodo_mes, periodo_anio
+    ) VALUES (
+        p_activo_id, CURDATE(), v_depreciacion_anual, v_valor_actual, 12, YEAR(CURDATE())
+    )
+    ON DUPLICATE KEY UPDATE
+        monto_depreciado = VALUES(monto_depreciado),
+        valor_actual = VALUES(valor_actual);
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure sp_inventario
+-- -----------------------------------------------------
+
+DELIMITER $$
+USE farmacia$$
+CREATE DEFINER=root@localhost PROCEDURE sp_inventario(IN p_sucursal_id INT)
+BEGIN
+    SELECT 
+        i.id,
+        p.nombre AS producto,
+        s.nombre_sucursal AS sucursal,
+        b.nombre AS bodega,
+        i.movimiento,
+        i.cantidad,
+        DATE_FORMAT(i.fecha, '%d-%m-%Y %H:%i') AS fecha,
+        CASE 
+            WHEN i.movimiento = 'ingreso' THEN CONCAT('Ingreso #', ic.numero)
+            WHEN i.movimiento = 'egreso' THEN CONCAT('Venta #', ec.numero)
+            WHEN i.movimiento = 'traslado' THEN CONCAT('Traslado #', tc.numero)
+            ELSE 'Desconocido'
+        END AS origen,
+        (
+            SELECT SUM(
+                CASE 
+                    WHEN i2.movimiento = 'ingreso' THEN i2.cantidad
+                    WHEN i2.movimiento = 'egreso' THEN -i2.cantidad
+                    WHEN i2.movimiento = 'traslado' THEN i2.cantidad
+                    ELSE 0
+                END
+            )
+            FROM inventario i2
+            WHERE i2.producto_id = i.producto_id
+              AND i2.bodega_id = i.bodega_id
+              AND i2.sucursal_id = i.sucursal_id
+        ) AS stock_actual
+    FROM inventario i
+    INNER JOIN producto p ON i.producto_id = p.id
+    INNER JOIN bodega b ON i.bodega_id = b.id
+    INNER JOIN sucursal s ON i.sucursal_id = s.id
+    LEFT JOIN ingreso_cab ic ON i.movimiento = 'ingreso' AND i.cab_id = ic.id
+    LEFT JOIN egreso_cab ec ON i.movimiento = 'egreso' AND i.cab_id = ec.id
+    LEFT JOIN traslado_cab tc ON i.movimiento = 'traslado' AND i.cab_id = tc.id
+    WHERE i.sucursal_id = p_sucursal_id
+    ORDER BY i.fecha ASC;
+END$$
+
+DELIMITER ;
+USE farmacia;
+
+DELIMITER $$
+USE farmacia$$
+CREATE
+DEFINER=root@localhost
+TRIGGER farmacia.trg_delete_movimiento_caja_venta
+AFTER DELETE ON farmacia.egreso_cab
+FOR EACH ROW
+BEGIN
+  -- Si la venta eliminada era contado y activa, se borra de movimiento_caja
+  IF OLD.forma_pago = 1 AND OLD.sta = 1 THEN
+    DELETE FROM movimiento_caja
+    WHERE egreso_id = OLD.id AND tipo = 'ingreso';
+  END IF;
+END$$
+
+USE farmacia$$
+CREATE
+DEFINER=root@localhost
+TRIGGER farmacia.trg_insert_movimiento_caja_venta
+AFTER INSERT ON farmacia.egreso_cab
+FOR EACH ROW
+BEGIN
+  -- Registrar solo ventas al contado (forma_pago = 1) y que estén activas (sta = 1)
+  IF NEW.forma_pago = 1 AND NEW.sta = 1 THEN
+    INSERT INTO movimiento_caja (
+      sucursal_id,
+      tipo,
+      descripcion,
+      monto,
+      metodo_pago,
+      egreso_id,
+      observaciones,
+      fecha
+    )
+    VALUES (
+      NEW.sucursal_id,
+      'ingreso',
+      CONCAT('Venta al contado #', NEW.numero),
+      NEW.total,
+      NEW.opcionpago, -- Esto debería ser 3 según tus datos (Efectivo)
+      NEW.id,
+      NEW.observaciones,
+      NEW.fecha
+    );
+  END IF;
+END$$
+
+USE farmacia$$
+CREATE
+DEFINER=root@localhost
+TRIGGER farmacia.trg_update_movimiento_caja_venta
+AFTER UPDATE ON farmacia.egreso_cab
+FOR EACH ROW
+BEGIN
+  -- Si era contado y activo (ANTES) y ya no lo es (DESPUÉS), eliminamos el movimiento
+  IF OLD.forma_pago = 1 AND OLD.sta = 1 AND (NEW.forma_pago != 1 OR NEW.sta != 1) THEN
+    DELETE FROM movimiento_caja
+    WHERE egreso_id = OLD.id AND tipo = 'ingreso';
+  END IF;
+
+  -- Si sigue siendo contado y activo, actualizamos el monto u otros datos si cambiaron
+  IF NEW.forma_pago = 1 AND NEW.sta = 1 THEN
+    INSERT INTO movimiento_caja (
+      sucursal_id,
+      tipo,
+      descripcion,
+      monto,
+      metodo_pago,
+      egreso_id,
+      observaciones,
+      fecha
+    )
+    VALUES (
+      NEW.sucursal_id,
+      'ingreso',
+      CONCAT('Venta al contado #', NEW.numero),
+      NEW.total,
+      NEW.opcionpago,
+      NEW.id,
+      NEW.observaciones,
+      NEW.fecha
+    )
+    ON DUPLICATE KEY UPDATE
+      monto = VALUES(monto),
+      descripcion = VALUES(descripcion),
+      metodo_pago = VALUES(metodo_pago),
+      observaciones = VALUES(observaciones),
+      fecha = VALUES(fecha);
+  END IF;
+END$$
+
+USE farmacia$$
+CREATE
+DEFINER=root@localhost
+TRIGGER farmacia.egreso_det_AFTER_DELETE
+AFTER DELETE ON farmacia.egreso_det
+FOR EACH ROW
+BEGIN
+    DECLARE v_sta TINYINT;
+
+    SELECT sta INTO v_sta
+    FROM egreso_cab
+    WHERE id = OLD.egreso_cab_id;
+
+    IF v_sta = 1 THEN
+        DELETE FROM inventario
+        WHERE movimiento = 'egreso'
+        AND det_id = OLD.id
+        AND cab_id = OLD.egreso_cab_id;
+    END IF;
+END$$
+
+USE farmacia$$
+CREATE
+DEFINER=root@localhost
+TRIGGER farmacia.egreso_det_AFTER_INSERT
+AFTER INSERT ON farmacia.egreso_det
+FOR EACH ROW
+BEGIN
+    DECLARE v_sta TINYINT;
+
+    SELECT sta INTO v_sta
+    FROM egreso_cab
+    WHERE id = NEW.egreso_cab_id;
+
+    IF v_sta = 1 THEN
+        INSERT INTO inventario (
+            sucursal_id,
+            bodega_id,
+            producto_id,
+            cantidad,
+            fecha,
+            movimiento,
+            cab_id,
+            det_id
+        )
+        VALUES (
+            NEW.sucursal_id,
+            NEW.bodega_id,
+            NEW.producto_id,
+            NEW.cantidad,
+            NOW(),
+            'egreso',
+            NEW.egreso_cab_id,
+            NEW.id
+        );
+    END IF;
+END$$
+
+USE farmacia$$
+CREATE
+DEFINER=root@localhost
+TRIGGER farmacia.egreso_det_AFTER_UPDATE
+AFTER UPDATE ON farmacia.egreso_det
+FOR EACH ROW
+BEGIN
+    DECLARE v_sta TINYINT;
+
+    SELECT sta INTO v_sta
+    FROM egreso_cab
+    WHERE id = NEW.egreso_cab_id;
+
+    IF v_sta = 1 AND (
+        OLD.cantidad != NEW.cantidad
+        OR OLD.producto_id != NEW.producto_id
+        OR OLD.bodega_id != NEW.bodega_id
+    ) THEN
+
+        DELETE FROM inventario
+        WHERE movimiento = 'egreso'
+        AND det_id = OLD.id
+        AND cab_id = OLD.egreso_cab_id;
+
+        INSERT INTO inventario (
+            sucursal_id,
+            bodega_id,
+            producto_id,
+            cantidad,
+            fecha,
+            movimiento,
+            cab_id,
+            det_id
+        )
+        VALUES (
+            NEW.sucursal_id,
+            NEW.bodega_id,
+            NEW.producto_id,
+            NEW.cantidad,
+            NOW(),
+            'egreso',
+            NEW.egreso_cab_id,
+            NEW.id
+        );
+    END IF;
+END$$
+
+USE farmacia$$
+CREATE
+DEFINER=root@localhost
+TRIGGER farmacia.ingreso_det_AFTER_DELETE
+AFTER DELETE ON farmacia.ingreso_det
+FOR EACH ROW
+BEGIN
+    DELETE FROM inventario
+    WHERE movimiento = 'ingreso'
+    AND det_id = OLD.id
+    AND cab_id = OLD.ingreso_cab_id;
+END$$
+
+USE farmacia$$
+CREATE
+DEFINER=root@localhost
+TRIGGER farmacia.ingreso_det_AFTER_INSERT
+AFTER INSERT ON farmacia.ingreso_det
+FOR EACH ROW
+BEGIN
+    INSERT INTO inventario (
+        sucursal_id,
+        bodega_id,
+        producto_id,
+        cantidad,
+        fecha,
+        movimiento,
+        cab_id,
+        det_id
+    )
+    VALUES (
+        NEW.sucursal_id,
+        NEW.bodega_id,
+        NEW.producto_id,
+        NEW.cantidad,
+        NOW(),
+        'ingreso',
+        NEW.ingreso_cab_id,
+        NEW.id
+    );
+END$$
+
+USE farmacia$$
+CREATE
+DEFINER=root@localhost
+TRIGGER farmacia.ingreso_det_AFTER_UPDATE
+AFTER UPDATE ON farmacia.ingreso_det
+FOR EACH ROW
+BEGIN
+    -- Verifica si cambió algo relevante
+    IF OLD.cantidad != NEW.cantidad
+        OR OLD.producto_id != NEW.producto_id
+        OR OLD.bodega_id != NEW.bodega_id THEN
+
+        -- Eliminar el movimiento anterior
+        DELETE FROM inventario
+        WHERE movimiento = 'ingreso'
+        AND det_id = OLD.id
+        AND cab_id = OLD.ingreso_cab_id;
+
+        -- Insertar el nuevo movimiento
+        INSERT INTO inventario (
+            sucursal_id,
+            bodega_id,
+            producto_id,
+            cantidad,
+            fecha,
+            movimiento,
+            cab_id,
+            det_id
+        )
+        VALUES (
+            NEW.sucursal_id,
+            NEW.bodega_id,
+            NEW.producto_id,
+            NEW.cantidad,
+            NOW(),
+            'ingreso',
+            NEW.ingreso_cab_id,
+            NEW.id
+        );
+    END IF;
+END$$
+
+USE farmacia$$
+CREATE
+DEFINER=root@localhost
+TRIGGER farmacia.trg_delete_movimiento_caja_planilla
+AFTER DELETE ON farmacia.planilla
+FOR EACH ROW
+BEGIN
+  DELETE FROM movimiento_caja
+  WHERE planilla_id = OLD.id AND tipo = 'egreso';
+END$$
+
+USE farmacia$$
+CREATE
+DEFINER=root@localhost
+TRIGGER farmacia.trg_movimiento_caja_planilla
+AFTER INSERT ON farmacia.planilla
+FOR EACH ROW
+BEGIN
+  INSERT INTO movimiento_caja (
+    sucursal_id, fecha, tipo, descripcion,
+    monto, metodo_pago, planilla_id, observaciones
+  ) VALUES (
+    NEW.sucursal_id,
+    NEW.fecha,
+    'egreso',
+    NEW.descripcion,
+    NEW.monto,
+    NEW.metodopago,
+    NEW.id,
+    NEW.observaciones
+  );
+END$$
+
+USE farmacia$$
+CREATE
+DEFINER=root@localhost
+TRIGGER farmacia.trg_update_movimiento_caja_planilla
+AFTER UPDATE ON farmacia.planilla
+FOR EACH ROW
+BEGIN
+  INSERT INTO movimiento_caja (
+    sucursal_id, fecha, tipo, descripcion,
+    monto, metodo_pago, planilla_id, observaciones
+  ) VALUES (
+    NEW.sucursal_id,
+    NEW.fecha,
+    'egreso',
+    NEW.descripcion,
+    NEW.monto,
+    NEW.metodopago,
+    NEW.id,
+    NEW.observaciones
+  )
+  ON DUPLICATE KEY UPDATE
+    fecha = VALUES(fecha),
+    descripcion = VALUES(descripcion),
+    monto = VALUES(monto),
+    metodo_pago = VALUES(metodo_pago),
+    observaciones = VALUES(observaciones);
+END$$
+
+
+DELIMITER ;
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
