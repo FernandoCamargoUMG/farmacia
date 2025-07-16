@@ -31,10 +31,10 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
         </div>`;
 
-        const btnMostrar = document.getElementById('btnMostrarMovimientos');
-        const tbody = document.getElementById('tbodyMovimientos');
+            const btnMostrar = document.getElementById('btnMostrarMovimientos');
+            const tbody = document.getElementById('tbodyMovimientos');
 
-        btnMostrar.addEventListener('click', () => {
+            btnMostrar.addEventListener('click', () => {
             const sucursalId = document.getElementById('filtroSucursal').value;
 
             const url = new URL('/controllers/cajaController.php', window.location.origin);

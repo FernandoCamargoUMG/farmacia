@@ -36,10 +36,10 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
         </div>`;
 
-        const btnMostrar = document.getElementById('btnMostrarStock');
-        const tbody = document.getElementById('tbodyStock');
+            const btnMostrar = document.getElementById('btnMostrarStock');
+            const tbody = document.getElementById('tbodyStock');
 
-        btnMostrar.addEventListener('click', () => {
+            btnMostrar.addEventListener('click', () => {
             const sucursalId = document.getElementById('filtroSucursal').value;
             const bodegaId = document.getElementById('filtroBodega').value;
 

@@ -77,7 +77,6 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
         </div>`;
 
-        // Función autocomplete sin jQuery para Responsable
         function autocomplete(input, hidden, list, url) {
             input.oninput = () => {
                 list.innerHTML = '';

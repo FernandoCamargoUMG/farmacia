@@ -6,7 +6,7 @@ $action = $_GET['action'] ?? '';
 
 if ($action === 'listar') {
     header('Content-Type: application/json');
-    //$categoria_id = $_SESSION['categoria_id'] ?? 1; // puedes ajustar este valor según tu lógica
+    //$categoria_id = $_SESSION['categoria_id'] ?? 1;
     $proveedores = Proveedor::obtenerTodos();
     echo json_encode($proveedores);
     exit;

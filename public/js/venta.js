@@ -145,8 +145,8 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('[data-bs-target="#modalNuevoEgreso"]').addEventListener('click', function() {
                 const form = document.getElementById('formNuevoEgreso');
                 form.reset();
-                form.removeAttribute('data-editing-id'); // quitar ID si venía de una edición
-                document.getElementById('detalleBodyEgreso').innerHTML = ''; // limpiar detalles
+                form.removeAttribute('data-editing-id');
+                document.getElementById('detalleBodyEgreso').innerHTML = '';
                 document.getElementById('cliente_id').value = '';
                 document.getElementById('inputCliente').value = '';
             });
@@ -369,14 +369,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 fetch(`/controllers/egresoController.php?action=obtener&id=${id}`)
                     .then(res => res.json())
                     .then(data => {
-                        if (data && data.id) { // cambiar esta línea para detectar éxito
+                        if (data && data.id) {
                             const form = document.getElementById('formNuevoEgreso');
-                            const egreso = data; // aquí usas data directamente
+                            const egreso = data;
 
                             form.reset();
 
                             form.egreso_id.value = egreso.id;
-                            form.fecha.value = egreso.fecha.split(' ')[0]; // si quieres solo la fecha sin hora
+                            form.fecha.value = egreso.fecha.split(' ')[0];
                             form.numero.value = egreso.numero;
                             document.getElementById('inputCliente').value = egreso.cliente_nombre;
                             form.cliente_id.value = egreso.cliente_id;
@@ -558,7 +558,6 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('btnMostrarEgresos').addEventListener('click', mostrarEgresos);
             document.getElementById('btnAgregarDetalleEgreso').addEventListener('click', agregarFilaDetalleEgreso);
 
-            // Mostrar listado inicial al cargar la vista
             //mostrarEgresos();
         }
         const egresosLink = document.querySelector('a[href="#venta"]');

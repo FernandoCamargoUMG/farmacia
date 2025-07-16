@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('[data-bs-target="#modalNuevoCliente"]').addEventListener('click', function() {
                 const form = document.getElementById('formNuevoCliente');
                 form.reset();
-                form.clienteId.value = ''; // Esto evita actualizar accidentalmente
+                form.clienteId.value = '';
             });
 
             function mostrarClientes() {
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
                     });
             }
-            //mostrarClientes(); // Llamar al final después del modal
+            //mostrarClientes();
 
             // Mostrar listado
             document.getElementById('btnMostrarClientes').addEventListener('click', mostrarClientes);

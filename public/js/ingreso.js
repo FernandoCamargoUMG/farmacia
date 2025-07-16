@@ -249,15 +249,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 let subtotal = 0;
 
                 filas.forEach(tr => {
-                    subtotal += parseFloat(tr.querySelector('.total').value) || 0; // Ya es sin IVA
+                    subtotal += parseFloat(tr.querySelector('.total').value) || 0; 
                 });
 
                 const iva = subtotal * 0.12;
                 const total = subtotal + iva;
 
                 const form = document.getElementById('formNuevoIngreso');
-                form.subtotal.value = subtotal.toFixed(2); // Subtotal ya sin IVA
-                form.gravada.value = subtotal.toFixed(2);  // Mismo valor
+                form.subtotal.value = subtotal.toFixed(2);
+                form.gravada.value = subtotal.toFixed(2); 
                 form.iva.value = iva.toFixed(2);
                 form.total.value = total.toFixed(2);
             }
@@ -470,7 +470,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                     document.getElementById('detalleBody').innerHTML = '';
                                     proveedorId.value = '';
                                     inputProveedor.value = '';
-                                    // Si el modal está oculto, mostrarlo (normalmente ya está abierto)
                                     if (!modal._isShown) {
                                         modal.show();
                                     }

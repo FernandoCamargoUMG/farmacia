@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function () {
         mainContent.classList.remove('shifted');
     });
 
-    // Manejar apertura/cierre de submenú "Activos Fijos"
     document.querySelectorAll('.activos-toggle').forEach(function (toggle) {
         toggle.addEventListener('click', function (e) {
             e.preventDefault();

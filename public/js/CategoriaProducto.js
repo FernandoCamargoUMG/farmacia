@@ -2,49 +2,49 @@ document.addEventListener('DOMContentLoaded', function() {
             function loadproducto() {
                 const content = document.getElementById('dynamic-content');
                 content.innerHTML = `
-        <div class="producto-view">
-            <h2 class="mb-4"><i class="bi bi-layers"></i> Tipo de productos</h2>
-            <div class="card shadow" style="max-width: 1000px; margin: 0 auto;">
-                <div class="card-body">
-                    <h5 class="card-title">Listado</h5>
-                    <button id="btnMostrarproducto" class="btn btn-outline-primary mb-3">
-                        <i class="bi bi-eye"></i> Mostrar productos
-                    </button>
-                    <button class="btn btn-success mb-3 float-end" data-bs-toggle="modal" data-bs-target="#modalNuevoproducto">
-                        <i class="bi bi-plus-circle"></i> Nuevo Registro
-                    </button>
+                <div class="producto-view">
+                    <h2 class="mb-4"><i class="bi bi-layers"></i> Tipo de productos</h2>
+                    <div class="card shadow" style="max-width: 1000px; margin: 0 auto;">
+                        <div class="card-body">
+                            <h5 class="card-title">Listado</h5>
+                            <button id="btnMostrarproducto" class="btn btn-outline-primary mb-3">
+                                <i class="bi bi-eye"></i> Mostrar productos
+                            </button>
+                            <button class="btn btn-success mb-3 float-end" data-bs-toggle="modal" data-bs-target="#modalNuevoproducto">
+                                <i class="bi bi-plus-circle"></i> Nuevo Registro
+                            </button>
 
-                    <table id="tablaproducto" class="table table-striped table-bordered" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>Descripcion</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbodyproducto"></tbody>
-                    </table>
+                            <table id="tablaproducto" class="table table-striped table-bordered" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Descripcion</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyproducto"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="modal fade" id="modalNuevoproducto" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content bg-white text-dark">
-                    <form id="formNuevoproducto">
-                        <input type="hidden" name="id" id="productoId">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Nuevo producto</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="modal fade" id="modalNuevoproducto" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content bg-white text-dark">
+                            <form id="formNuevoproducto">
+                                <input type="hidden" name="id" id="productoId">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Nuevo producto</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                    <div class="mb-3"><label>Descripcion</label><input type="text" name="descripcion" class="form-control" required></div
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
+                                </div>
+                            </form>
                         </div>
-                            <div class="mb-3"><label>Descripcion</label><input type="text" name="descripcion" class="form-control" required></div
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Guardar</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>`;
+                    </div>
+                </div>`;
 
                 // Abrir modal
                 document.querySelector('[data-bs-target="#modalNuevoproducto"]').addEventListener('click', function() {
