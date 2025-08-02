@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-        function loadUsuarios() {
-            const content = document.getElementById('dynamic-content');
-            content.innerHTML = `
+            function loadUsuarios() {
+                const content = document.getElementById('dynamic-content');
+                content.innerHTML = `
         <div class="Usuarios-view">
             <h2 class="mb-4"><i class="bi bi-truck"></i> Módulo de Usuarios</h2>
             <div class="card shadow" style="max-width: 1000px; margin: 0 auto;">
@@ -66,57 +66,57 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         </div>`;
 
-            // Función para cargar categorías
-            function cargarRoles() {
-                fetch('/controllers/categoriaUsuariosController.php?action=listar')
-                    .then(res => res.json())
-                    .then(data => {
-                        const select = document.getElementById('selectRol');
-                        select.innerHTML = '<option value="">Seleccione una categoría</option>';
-                        data.forEach(cat => {
-                            const option = document.createElement('option');
-                            option.value = cat.id;
-                            option.textContent = cat.nombre;
-                            select.appendChild(option);
+                // Función para cargar categorías
+                function cargarRoles() {
+                    fetch('/controllers/categoriaUsuariosController.php?action=listar')
+                        .then(res => res.json())
+                        .then(data => {
+                            const select = document.getElementById('selectRol');
+                            select.innerHTML = '<option value="">Seleccione una categoría</option>';
+                            data.forEach(cat => {
+                                const option = document.createElement('option');
+                                option.value = cat.id;
+                                option.textContent = cat.nombre;
+                                select.appendChild(option);
+                            });
                         });
-                    });
-            }
+                }
 
-            function cargarSucursales() {
-                fetch('/controllers/SucUsuariosController.php?action=listar')
-                    .then(res => res.json())
-                    .then(data => {
-                        const select = document.getElementById('selectSucursal');
-                        select.innerHTML = '<option value="">Seleccione una categoría</option>';
-                        data.forEach(cat => {
-                            const option = document.createElement('option');
-                            option.value = cat.id;
-                            option.textContent = cat.nombre_sucursal;
-                            select.appendChild(option);
+                function cargarSucursales() {
+                    fetch('/controllers/SucUsuariosController.php?action=listar')
+                        .then(res => res.json())
+                        .then(data => {
+                            const select = document.getElementById('selectSucursal');
+                            select.innerHTML = '<option value="">Seleccione una categoría</option>';
+                            data.forEach(cat => {
+                                const option = document.createElement('option');
+                                option.value = cat.id;
+                                option.textContent = cat.nombre_sucursal;
+                                select.appendChild(option);
+                            });
                         });
-                    });
-            }
+                }
 
-            // Abrir modal
-            document.querySelector('[data-bs-target="#modalNuevoUsuarios"]').addEventListener('click', function() {
-                const form = document.getElementById('formNuevoUsuarios');
-                form.reset();
-                form.UsuariosId.value = '';
-                cargarRoles();
-                cargarSucursales();
-            });
+                // Abrir modal
+                document.querySelector('[data-bs-target="#modalNuevoUsuarios"]').addEventListener('click', function() {
+                    const form = document.getElementById('formNuevoUsuarios');
+                    form.reset();
+                    form.UsuariosId.value = '';
+                    cargarRoles();
+                    cargarSucursales();
+                });
 
-            // Mostrar listado de Usuarios
-            function mostrarUsuarios() {
-                fetch('/controllers/UsuariosController.php?action=listar')
-                    .then(res => res.json())
-                    .then(data => {
-                        if ($.fn.DataTable.isDataTable('#tablaUsuarios')) {
-                            $('#tablaUsuarios').DataTable().clear().destroy();
-                        }
+                // Mostrar listado de Usuarios
+                function mostrarUsuarios() {
+                    fetch('/controllers/UsuariosController.php?action=listar')
+                        .then(res => res.json())
+                        .then(data => {
+                            if ($.fn.DataTable.isDataTable('#tablaUsuarios')) {
+                                $('#tablaUsuarios').DataTable().clear().destroy();
+                            }
 
-            const tbody = document.getElementById('tbodyUsuarios');
-            tbody.innerHTML = data.map(usuario => `
+                            const tbody = document.getElementById('tbodyUsuarios');
+                            tbody.innerHTML = data.map(usuario => `
                 <tr>
                     <td>${usuario.nombre || ''}</td>
                     <td>${usuario.correo || ''}</td>
@@ -127,124 +127,124 @@ document.addEventListener('DOMContentLoaded', function() {
                 </tr>
             `).join('');
 
-                        $('#tablaUsuarios').DataTable({
-                            language: {
-                                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
-                            },
-                            pageLength: 5,
-                            lengthMenu: [5, 10, 25, 50, 100]
-                        });
-                        // para editar
-                        document.querySelectorAll('.btnEditar').forEach(btn => {
-                            btn.addEventListener('click', function() {
-                                const id = this.dataset.id;
-                                fetch(`/controllers/UsuariosController.php?action=ver&id=${id}`)
-                                    .then(res => res.json())
-                                    .then(Usuarios => {
-                                        const form = document.getElementById('formNuevoUsuarios');
-                                        form.UsuariosId.value = Usuarios.id;
-                                        form.nombre.value = Usuarios.nombre;
-                                        form.correo.value = Usuarios.correo;
-                                        cargarRoles();
-                                        cargarSucursales();
-                                        setTimeout(() => {
-                                            form.sucursal_id.value = Usuarios.sucursal_id;
-                                            form.rol_id.value = Usuarios.rol_id;
-                                        }, 300);
-                                        new bootstrap.Modal(document.getElementById('modalNuevoUsuarios')).show();
-                                    });
+                            $('#tablaUsuarios').DataTable({
+                                language: {
+                                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+                                },
+                                pageLength: 5,
+                                lengthMenu: [5, 10, 25, 50, 100]
                             });
-                        });
-                        //para eliminar
-                        document.querySelectorAll('.btnEliminar').forEach(btn => {
-                            btn.addEventListener('click', function() {
-                                const id = this.dataset.id;
-                                Swal.fire({
-                                    title: '¿Eliminar Usuarios?',
-                                    text: 'Esta acción no se puede deshacer.',
-                                    icon: 'warning',
-                                    showCancelButton: true,
-                                    confirmButtonText: 'Sí, eliminar',
-                                    cancelButtonText: 'Cancelar'
-                                }).then(result => {
-                                    if (result.isConfirmed) {
-                                        fetch('/controllers/UsuariosController.php?action=eliminar', {
-                                                method: 'POST',
-                                                headers: {
-                                                    'Content-Type': 'application/x-www-form-urlencoded'
-                                                },
-                                                body: `id=${id}`
-                                            })
-                                            .then(res => res.json())
-                                            .then(data => {
-                                                if (data.success) {
-                                                    Swal.fire('Eliminado', 'Usuarios eliminado correctamente.', 'success');
-                                                    mostrarUsuarios();
-                                                } else {
-                                                    Swal.fire('Error', 'No se pudo eliminar.', 'error');
-                                                }
-                                            });
-                                    }
+                            // para editar
+                            document.querySelectorAll('.btnEditar').forEach(btn => {
+                                btn.addEventListener('click', function() {
+                                    const id = this.dataset.id;
+                                    fetch(`/controllers/UsuariosController.php?action=ver&id=${id}`)
+                                        .then(res => res.json())
+                                        .then(Usuarios => {
+                                            const form = document.getElementById('formNuevoUsuarios');
+                                            form.UsuariosId.value = Usuarios.id;
+                                            form.nombre.value = Usuarios.nombre;
+                                            form.correo.value = Usuarios.correo;
+                                            cargarRoles();
+                                            cargarSucursales();
+                                            setTimeout(() => {
+                                                form.sucursal_id.value = Usuarios.sucursal_id;
+                                                form.rol_id.value = Usuarios.rol_id;
+                                            }, 300);
+                                            new bootstrap.Modal(document.getElementById('modalNuevoUsuarios')).show();
+                                        });
+                                });
+                            });
+                            //para eliminar
+                            document.querySelectorAll('.btnEliminar').forEach(btn => {
+                                btn.addEventListener('click', function() {
+                                    const id = this.dataset.id;
+                                    Swal.fire({
+                                        title: '¿Eliminar Usuarios?',
+                                        text: 'Esta acción no se puede deshacer.',
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Sí, eliminar',
+                                        cancelButtonText: 'Cancelar'
+                                    }).then(result => {
+                                        if (result.isConfirmed) {
+                                            fetch('/controllers/UsuariosController.php?action=eliminar', {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/x-www-form-urlencoded'
+                                                    },
+                                                    body: `id=${id}`
+                                                })
+                                                .then(res => res.json())
+                                                .then(data => {
+                                                    if (data.success) {
+                                                        Swal.fire('Eliminado', 'Usuarios eliminado correctamente.', 'success');
+                                                        mostrarUsuarios();
+                                                    } else {
+                                                        Swal.fire('Error', 'No se pudo eliminar.', 'error');
+                                                    }
+                                                });
+                                        }
+                                    });
                                 });
                             });
                         });
-                    });
+                }
+
+                document.getElementById('btnMostrarUsuarios').addEventListener('click', mostrarUsuarios);
+
+                // Guardar Usuarios
+                const form = document.getElementById('formNuevoUsuarios');
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    const formData = new FormData(form);
+                    const id = formData.get("id");
+                    const action = id ? 'actualizar' : 'guardar';
+
+                    fetch(`/controllers/UsuariosController.php?action=${action}`, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire({
+                                    title: '¡Usuarios guardado!',
+                                    text: '¿Qué deseas hacer ahora?',
+                                    icon: 'success',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Agregar otro',
+                                    cancelButtonText: 'Ver listado'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        form.reset();
+                                        form.UsuariosId.value = '';
+                                        cargarRoles();
+                                        cargarSucursales();
+                                    } else {
+                                        const modal = bootstrap.Modal.getInstance(document.getElementById('modalNuevoUsuarios'));
+                                        modal.hide();
+                                        setTimeout(() => {
+                                            document.body.classList.remove('modal-open');
+                                            document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                                        }, 300);
+                                        mostrarUsuarios();
+                                    }
+                                });
+                            } else {
+                                Swal.fire('Error', 'Ocurrió un error al guardar.', 'error');
+                            }
+                        });
+                });
             }
 
-            document.getElementById('btnMostrarUsuarios').addEventListener('click', mostrarUsuarios);
 
-            // Guardar Usuarios
-            const form = document.getElementById('formNuevoUsuarios');
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                const formData = new FormData(form);
-                const id = formData.get("id");
-                const action = id ? 'actualizar' : 'guardar';
-
-                fetch(`/controllers/UsuariosController.php?action=${action}`, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            Swal.fire({
-                                title: '¡Usuarios guardado!',
-                                text: '¿Qué deseas hacer ahora?',
-                                icon: 'success',
-                                showCancelButton: true,
-                                confirmButtonText: 'Agregar otro',
-                                cancelButtonText: 'Ver listado'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    form.reset();
-                                    form.UsuariosId.value = '';
-                                    cargarRoles();
-                                    cargarSucursales();
-                                } else {
-                                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalNuevoUsuarios'));
-                                    modal.hide();
-                                    setTimeout(() => {
-                                        document.body.classList.remove('modal-open');
-                                        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
-                                    }, 300);
-                                    mostrarUsuarios();
-                                }
-                            });
-                        } else {
-                            Swal.fire('Error', 'Ocurrió un error al guardar.', 'error');
-                        }
-                    });
-            });
-        }
-
-
-        const UsuariosLink = document.querySelector('a[href="#Usuarios"]');
-        if (UsuariosLink) {
-            UsuariosLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                loadUsuarios();
-            });
-        }
-    });
+            const UsuariosLink = document.querySelector('a[href="#Usuarios"]');
+            if (UsuariosLink) {
+                UsuariosLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    loadUsuarios();
+                });
+            }
+        });
