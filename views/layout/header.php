@@ -73,6 +73,7 @@ if (isset($_SESSION['sucursal_id'])) {
     <div id="sidebar">
         <ul class="nav flex-column">
             <li><a href="/?route=dashboard.php"><i class="bi bi-house-door"></i> Inicio</a></li>
+            <li><a class="nav-link" href="#Usuarios"><i class="bi bi-people"></i> Mantenimiento de Usuarios</a></li>
             <li><a class="nav-link" href="#clientes"><i class="bi bi-people"></i> Clientes</a></li>
             <li><a class="nav-link" href="#proveedores"><i class="bi bi-truck"></i> Proveedores</a></li>
             <li><a class="nav-link" href="#producto"><i class="bi bi-capsule-pill"></i> Productos</a></li>
@@ -154,6 +155,7 @@ if (isset($_SESSION['sucursal_id'])) {
     <script src="/public/js/depreciacion.js"></script>
     <script src="/public/js/inventario.js"></script>
     <script src="/public/js/caja.js"></script>
+    <script src="/public/js/usuario.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>

@@ -63,6 +63,17 @@ body,
     transition: left 0.3s ease;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
     padding-top: 60px;
+    overflow-y: auto;           /* scroll vertical automático */
+    overflow-x: hidden; 
+}
+
+#sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+#sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
 }
 
 #sidebar.active {
