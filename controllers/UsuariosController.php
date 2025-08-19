@@ -13,12 +13,15 @@ if ($action === 'listar') {
 
 
 if ($action === 'guardar') {
+
+    $sucursal_id = isset($_POST['sucursal_id']) ? $_POST['sucursal_id'] : 1;
+    $rol_id      = isset($_POST['rol_id']) ? $_POST['rol_id'] : 1;
     $exito = Usuario::guardar(
         $_POST['nombre'],
         $_POST['correo'],
         $_POST['password'], // se encripta en el modelo con MD5
-        $_POST['sucursal_id'], // ahora lo recibimos por POST
-        $_POST['rol_id']
+        $sucursal_id,
+        $rol_id
     );
 
     echo json_encode(['success' => $exito]);

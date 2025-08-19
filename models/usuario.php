@@ -29,11 +29,11 @@ class Usuario
 {
     $conn = Conexion::conectar();
     $passwordMd5 = md5($password); // encriptar desde PHP
-    $stmt = $conn->prepare("
-        INSERT INTO usuario (nombre, correo, password, sucursal_id, rol_id)
-        VALUES (?, ?, ?, ?, ?)
-    ");
+    $stmt = $conn->prepare("INSERT INTO usuario (nombre, correo, password, rol_id, sucursal_id)
+                       VALUES (?, ?, ?, ?, ?)
+                       ON DUPLICATE KEY UPDATE nombre = VALUES(nombre), password = VALUES(password)");
     return $stmt->execute([$nombre, $correo, $passwordMd5, $sucursal_id, $rol_id]);
+
 }
 
 

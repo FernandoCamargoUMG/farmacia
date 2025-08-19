@@ -9,6 +9,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="card-body">
                     <h5 class="card-title">Listado de Usuarios</h5>
 
+                    <button id="btnImportarUsuarios" class="btn btn-outline-success mb-3 ms-2">
+                        <i class="bi bi-download"></i> Importar desde Sistema A
+                    </button>
+
                     <button id="btnMostrarUsuarios" class="btn btn-outline-primary mb-3">
                         <i class="bi bi-eye"></i> Mostrar Usuarios
                     </button>
@@ -65,6 +69,46 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
         </div>`;
+
+        function importarUsuariosSistemaA() {
+            fetch('http://localhost/project-api/api/users.php') // URL de tu API REST del Sistema A
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.length) {
+                        Swal.fire('Aviso', 'No se encontraron usuarios en Sistema A', 'info');
+                        return;
+                    }
+
+                    // Recorrer cada usuario y enviarlo al backend de Sistema B para guardar
+                    data.forEach(usuario => {
+                        const formData = new FormData();
+                        formData.append('nombre', usuario.nombre);
+                        formData.append('correo', usuario.email); // tu columna en Sistema B
+                        formData.append('password', btoa(Math.random().toString(36).substring(2,10)));
+                        formData.append('rol_id', 1);        // valor por defecto
+                        formData.append('sucursal_id', 1);   // valor por defecto // password aleatoria base64
+
+                        fetch('/controllers/UsuariosController.php?action=guardar', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(res => res.json())
+                        .then(resp => {
+                            console.log('Usuario importado:', resp);
+                        });
+                    });
+
+                    Swal.fire('Éxito', 'Usuarios importados desde Sistema A', 'success')
+                        .then(() => mostrarUsuarios()); // refrescar tabla
+                })
+                .catch(err => {
+                    console.error(err);
+                    Swal.fire('Error', 'No se pudo conectar con Sistema A', 'error');
+                });
+            }
+            document.getElementById('btnImportarUsuarios').addEventListener('click', importarUsuariosSistemaA);
+
+
 
             // Función para cargar categorías
             function cargarRoles() {
