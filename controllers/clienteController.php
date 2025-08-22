@@ -6,7 +6,7 @@ $action = $_GET['action'] ?? '';
 
 if ($action === 'listar') {
     header('Content-Type: application/json');
-    $clientes = Usuario::obtenerPorSucursal($_SESSION['sucursal_id']);
+    $clientes = Cliente::obtenerPorSucursal($_SESSION['sucursal_id']);
     echo json_encode($clientes);
     exit;
 }

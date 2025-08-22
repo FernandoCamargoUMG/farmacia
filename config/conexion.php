@@ -3,10 +3,10 @@ class Conexion {
     // conexion a bd
     public static function conectar() {
         // Obtener datos desde variables de entorno
-        $host = getenv('DB_HOST') ?: '82.197.82.175';
-        $dbname = getenv('DB_NAME') ?: 'u834187355_farmacia';
-        $user = getenv('DB_USER') ?: 'u834187355_fcamargo';
-        $pass = getenv('DB_PASS') ?: 'Pldb2610200';
+        $host = "srv1928.hstgr.io"; // IP pública del servidor MySQL de Hostinger
+        $dbname = "u834187355_farmacia"; // Nombre de la base de datos
+        $user = "u834187355_fcamargo";   // Usuario de la base de datos
+        $pass = "Pldb2610200";  
 
         try {
             $pdo = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
