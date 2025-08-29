@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>`;
 
         function importarUsuariosSistemaA() {
-            fetch('http://localhost/project-api/api/users.php') // URL de tu API REST del Sistema A
+            fetch('http://localhost/project-api/public/index.php?path=users') // URL de tu API REST del Sistema A
                 .then(res => res.json())
                 .then(data => {
                     if (!data.length) {
