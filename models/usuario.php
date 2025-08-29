@@ -32,7 +32,7 @@ class Usuario
     $stmt = $conn->prepare("INSERT INTO usuario (nombre, correo, password, rol_id, sucursal_id)
                        VALUES (?, ?, ?, ?, ?)
                        ON DUPLICATE KEY UPDATE nombre = VALUES(nombre), password = VALUES(password)");
-    return $stmt->execute([$nombre, $correo, $passwordMd5, $sucursal_id, $rol_id]);
+    return $stmt->execute([$nombre, $correo, $passwordMd5, $rol_id, $sucursal_id]);
 
 }
 

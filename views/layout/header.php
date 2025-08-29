@@ -80,24 +80,24 @@ if (isset($_SESSION['sucursal_id'])) {
 
     // Roles
     define('ADMIN', 1);
-    define('FARMACEUTICO', 2);
+    define('Bodeguero', 2);
     define('CAJERO', 3);
 
     // arreglos para roles
     $menu = [
-        'inicio' => ['label' => 'Inicio', 'icon' => 'house-door', 'link' => '/?route=dashboard.php', 'roles' => [ADMIN, FARMACEUTICO, CAJERO]],
+        'inicio' => ['label' => 'Inicio', 'icon' => 'house-door', 'link' => '/?route=dashboard.php', 'roles' => [ADMIN, Bodeguero, CAJERO]],
         'usuarios' => ['label' => 'Mantenimiento de Usuarios', 'icon' => 'people', 'link' => '#Usuarios', 'roles' => [ADMIN]],
-        'clientes' => ['label' => 'Clientes', 'icon' => 'people', 'link' => '#clientes', 'roles' => [ADMIN, FARMACEUTICO]],
-        'proveedores' => ['label' => 'Proveedores', 'icon' => 'truck', 'link' => '#proveedores', 'roles' => [ADMIN, FARMACEUTICO]],
-        'productos' => ['label' => 'Productos', 'icon' => 'capsule-pill', 'link' => '#producto', 'roles' => [ADMIN, FARMACEUTICO]],
-        'bodegas' => ['label' => 'Bodegas', 'icon' => 'box-seam', 'link' => '#bodega', 'roles' => [ADMIN, FARMACEUTICO]],
+        'clientes' => ['label' => 'Clientes', 'icon' => 'people', 'link' => '#clientes', 'roles' => [ADMIN, Bodeguero]],
+        'proveedores' => ['label' => 'Proveedores', 'icon' => 'truck', 'link' => '#proveedores', 'roles' => [ADMIN, Bodeguero]],
+        'productos' => ['label' => 'Productos', 'icon' => 'capsule-pill', 'link' => '#producto', 'roles' => [ADMIN, Bodeguero]],
+        'bodegas' => ['label' => 'Bodegas', 'icon' => 'box-seam', 'link' => '#bodega', 'roles' => [ADMIN, Bodeguero]],
         'planilla' => ['label' => 'Planilla', 'icon' => 'file-earmark-text', 'link' => '#planilla', 'roles' => [ADMIN]],
-        'caja' => ['label' => 'Movimiento Caja', 'icon' => 'file-earmark-text', 'link' => '#caja', 'roles' => [ADMIN, FARMACEUTICO, CAJERO]],
+        'caja' => ['label' => 'Movimiento Caja', 'icon' => 'file-earmark-text', 'link' => '#caja', 'roles' => [ADMIN, Bodeguero, CAJERO]],
         'inventario' => [
             'label' => 'Inventario', 
             'icon' => 'arrow-down-square', 
             'link' => '#', 
-            'roles' => [ADMIN, FARMACEUTICO],
+            'roles' => [ADMIN, Bodeguero],
             'submenu' => [
                 ['label' => 'Ingreso a Inventario', 'link' => '#ingreso', 'icon' => 'arrow-down-square'],
                 ['label' => 'Ventas', 'link' => '#venta', 'icon' => 'currency-dollar'],
