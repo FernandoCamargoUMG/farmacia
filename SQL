@@ -8,19 +8,19 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- Schema mydb
 -- -----------------------------------------------------
 -- -----------------------------------------------------
--- Schema farmacia
+-- Schema ferreteria
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema farmacia
+-- Schema ferreteria
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS farmacia DEFAULT CHARACTER SET utf8 ;
-USE farmacia ;
+CREATE SCHEMA IF NOT EXISTS ferreteria DEFAULT CHARACTER SET utf8 ;
+USE ferreteria ;
 
 -- -----------------------------------------------------
--- Table farmacia.sucursal
+-- Table ferreteria.sucursal
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.sucursal (
+CREATE TABLE IF NOT EXISTS ferreteria.sucursal (
   id INT(11) NOT NULL AUTO_INCREMENT,
   nombre_sucursal VARCHAR(255) NULL DEFAULT NULL,
   direccion_sucursal VARCHAR(255) NULL DEFAULT NULL,
@@ -34,9 +34,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.tipo_activo
+-- Table ferreteria.tipo_activo
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.tipo_activo (
+CREATE TABLE IF NOT EXISTS ferreteria.tipo_activo (
   id INT(11) NOT NULL AUTO_INCREMENT,
   nombre VARCHAR(100) NOT NULL,
   categoria_depreciacion ENUM('Edificios', 'Mobiliario y Equipo', 'Vehiculos', 'Tecnologia') NOT NULL,
@@ -48,9 +48,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.responsable
+-- Table ferreteria.responsable
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.responsable (
+CREATE TABLE IF NOT EXISTS ferreteria.responsable (
   id INT(11) NOT NULL AUTO_INCREMENT,
   codigo VARCHAR(50) NULL DEFAULT NULL,
   nombre VARCHAR(50) NULL DEFAULT NULL,
@@ -62,9 +62,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.activo_fijo
+-- Table ferreteria.activo_fijo
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.activo_fijo (
+CREATE TABLE IF NOT EXISTS ferreteria.activo_fijo (
   id INT(11) NOT NULL AUTO_INCREMENT,
   sucursal_id INT(11) NOT NULL,
   tipo_activo_id INT(11) NOT NULL,
@@ -83,17 +83,17 @@ CREATE TABLE IF NOT EXISTS farmacia.activo_fijo (
   INDEX fk_responsable_activo_idx (responsable ASC) ,
   CONSTRAINT fk_activo_sucursal
     FOREIGN KEY (sucursal_id)
-    REFERENCES farmacia.sucursal (id)
+    REFERENCES ferreteria.sucursal (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT fk_activo_tipo
     FOREIGN KEY (tipo_activo_id)
-    REFERENCES farmacia.tipo_activo (id)
+    REFERENCES ferreteria.tipo_activo (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT fk_responsable_activo
     FOREIGN KEY (responsable)
-    REFERENCES farmacia.responsable (id)
+    REFERENCES ferreteria.responsable (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -102,9 +102,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.bodega
+-- Table ferreteria.bodega
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.bodega (
+CREATE TABLE IF NOT EXISTS ferreteria.bodega (
   id INT(11) NOT NULL AUTO_INCREMENT,
   sucursal_id INT(11) NOT NULL,
   nombre VARCHAR(255) NULL DEFAULT NULL,
@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS farmacia.bodega (
   INDEX fk_sucursal_bodega (sucursal_id ASC) ,
   CONSTRAINT fk_sucursal_bodega_constraint
     FOREIGN KEY (sucursal_id)
-    REFERENCES farmacia.sucursal (id)
+    REFERENCES ferreteria.sucursal (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -122,9 +122,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.categoria
+-- Table ferreteria.categoria
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.categoria (
+CREATE TABLE IF NOT EXISTS ferreteria.categoria (
   id INT(11) NOT NULL AUTO_INCREMENT,
   descripcion VARCHAR(50) NULL DEFAULT NULL,
   PRIMARY KEY (id))
@@ -134,9 +134,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.categoria_producto
+-- Table ferreteria.categoria_producto
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.categoria_producto (
+CREATE TABLE IF NOT EXISTS ferreteria.categoria_producto (
   id INT(11) NOT NULL AUTO_INCREMENT,
   descripcion VARCHAR(50) NULL DEFAULT NULL,
   PRIMARY KEY (id))
@@ -146,9 +146,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.clientes
+-- Table ferreteria.clientes
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.clientes (
+CREATE TABLE IF NOT EXISTS ferreteria.clientes (
   id INT(11) NOT NULL AUTO_INCREMENT,
   sucursal_id INT(11) NOT NULL,
   nombre VARCHAR(50) NULL DEFAULT NULL,
@@ -162,7 +162,7 @@ CREATE TABLE IF NOT EXISTS farmacia.clientes (
   INDEX index_sucursal_clientes (sucursal_id ASC) ,
   CONSTRAINT fk_sucursal_clientes
     FOREIGN KEY (sucursal_id)
-    REFERENCES farmacia.sucursal (id)
+    REFERENCES ferreteria.sucursal (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -171,9 +171,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.depreciacion_activo
+-- Table ferreteria.depreciacion_activo
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.depreciacion_activo (
+CREATE TABLE IF NOT EXISTS ferreteria.depreciacion_activo (
   id INT(11) NOT NULL AUTO_INCREMENT,
   activo_id INT(11) NOT NULL,
   fecha_calculo DATE NOT NULL,
@@ -185,7 +185,7 @@ CREATE TABLE IF NOT EXISTS farmacia.depreciacion_activo (
   INDEX fk_depreciacion_activo_idx (activo_id ASC) ,
   CONSTRAINT fk_depreciacion_activo
     FOREIGN KEY (activo_id)
-    REFERENCES farmacia.activo_fijo (id)
+    REFERENCES ferreteria.activo_fijo (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -194,9 +194,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.forma_pago
+-- Table ferreteria.forma_pago
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.forma_pago (
+CREATE TABLE IF NOT EXISTS ferreteria.forma_pago (
   id INT(11) NOT NULL AUTO_INCREMENT,
   descripcion VARCHAR(45) NULL DEFAULT NULL,
   PRIMARY KEY (id))
@@ -206,9 +206,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.egreso_cab
+-- Table ferreteria.egreso_cab
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.egreso_cab (
+CREATE TABLE IF NOT EXISTS ferreteria.egreso_cab (
   id INT(11) NOT NULL AUTO_INCREMENT,
   sucursal_id INT(11) NOT NULL,
   cliente_id INT(11) NOT NULL,
@@ -228,17 +228,17 @@ CREATE TABLE IF NOT EXISTS farmacia.egreso_cab (
   INDEX fk_forma_pago_egreso_idx (forma_pago ASC) ,
   CONSTRAINT fk_cliente_egreso
     FOREIGN KEY (cliente_id)
-    REFERENCES farmacia.clientes (id)
+    REFERENCES ferreteria.clientes (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT fk_forma_pago_egreso
     FOREIGN KEY (forma_pago)
-    REFERENCES farmacia.forma_pago (id)
+    REFERENCES ferreteria.forma_pago (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT fk_sucursal_egreso
     FOREIGN KEY (sucursal_id)
-    REFERENCES farmacia.sucursal (id)
+    REFERENCES ferreteria.sucursal (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -247,9 +247,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.producto
+-- Table ferreteria.producto
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.producto (
+CREATE TABLE IF NOT EXISTS ferreteria.producto (
   id INT(11) NOT NULL AUTO_INCREMENT,
   categoria_id INT(11) NOT NULL,
   codigo VARCHAR(50) NULL DEFAULT NULL,
@@ -260,7 +260,7 @@ CREATE TABLE IF NOT EXISTS farmacia.producto (
   INDEX fk_categoria_producto_idx (categoria_id ASC) ,
   CONSTRAINT fk_categoria_producto
     FOREIGN KEY (categoria_id)
-    REFERENCES farmacia.categoria_producto (id)
+    REFERENCES ferreteria.categoria_producto (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -269,9 +269,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.egreso_det
+-- Table ferreteria.egreso_det
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.egreso_det (
+CREATE TABLE IF NOT EXISTS ferreteria.egreso_det (
   id INT(11) NOT NULL AUTO_INCREMENT,
   sucursal_id INT(11) NOT NULL,
   egreso_cab_id INT(11) NOT NULL,
@@ -287,22 +287,22 @@ CREATE TABLE IF NOT EXISTS farmacia.egreso_det (
   INDEX fk_bodega_det (bodega_id ASC) ,
   CONSTRAINT fk_bodega_egreso_det
     FOREIGN KEY (bodega_id)
-    REFERENCES farmacia.bodega (id)
+    REFERENCES ferreteria.bodega (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT fk_egreso_cab_egreso_det
     FOREIGN KEY (egreso_cab_id)
-    REFERENCES farmacia.egreso_cab (id)
+    REFERENCES ferreteria.egreso_cab (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT fk_producto_egreso_det
     FOREIGN KEY (producto_id)
-    REFERENCES farmacia.producto (id)
+    REFERENCES ferreteria.producto (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT fk_sucursal_egreso_det
     FOREIGN KEY (sucursal_id)
-    REFERENCES farmacia.sucursal (id)
+    REFERENCES ferreteria.sucursal (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -311,9 +311,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.proveedor
+-- Table ferreteria.proveedor
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.proveedor (
+CREATE TABLE IF NOT EXISTS ferreteria.proveedor (
   id INT(11) NOT NULL AUTO_INCREMENT,
   categoria_id INT(11) NOT NULL,
   codigo VARCHAR(45) NULL DEFAULT NULL,
@@ -326,7 +326,7 @@ CREATE TABLE IF NOT EXISTS farmacia.proveedor (
   INDEX fk_categoria_idx (categoria_id ASC) ,
   CONSTRAINT fk_categoria
     FOREIGN KEY (categoria_id)
-    REFERENCES farmacia.categoria (id)
+    REFERENCES ferreteria.categoria (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -335,9 +335,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.ingreso_cab
+-- Table ferreteria.ingreso_cab
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.ingreso_cab (
+CREATE TABLE IF NOT EXISTS ferreteria.ingreso_cab (
   id INT(11) NOT NULL AUTO_INCREMENT,
   sucursal_id INT(11) NOT NULL,
   proveedor_id INT(11) NOT NULL,
@@ -354,12 +354,12 @@ CREATE TABLE IF NOT EXISTS farmacia.ingreso_cab (
   INDEX fk_sucursal_idx (sucursal_id ASC) ,
   CONSTRAINT fk_proveedor
     FOREIGN KEY (proveedor_id)
-    REFERENCES farmacia.proveedor (id)
+    REFERENCES ferreteria.proveedor (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT fk_sucursal_ingreso_cab
     FOREIGN KEY (sucursal_id)
-    REFERENCES farmacia.sucursal (id)
+    REFERENCES ferreteria.sucursal (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -368,9 +368,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.ingreso_det
+-- Table ferreteria.ingreso_det
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.ingreso_det (
+CREATE TABLE IF NOT EXISTS ferreteria.ingreso_det (
   id INT(11) NOT NULL AUTO_INCREMENT,
   sucursal_id INT(11) NOT NULL,
   ingreso_cab_id INT(11) NOT NULL,
@@ -385,22 +385,22 @@ CREATE TABLE IF NOT EXISTS farmacia.ingreso_det (
   INDEX fk_bodega_ingreso_idx (bodega_id ASC) ,
   CONSTRAINT fk_bodega_ingreso
     FOREIGN KEY (bodega_id)
-    REFERENCES farmacia.bodega (id)
+    REFERENCES ferreteria.bodega (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT fk_ingreso_cab
     FOREIGN KEY (ingreso_cab_id)
-    REFERENCES farmacia.ingreso_cab (id)
+    REFERENCES ferreteria.ingreso_cab (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT fk_ingreso_producto
     FOREIGN KEY (producto_id)
-    REFERENCES farmacia.producto (id)
+    REFERENCES ferreteria.producto (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT fk_sucursal_ingreso_det
     FOREIGN KEY (sucursal_id)
-    REFERENCES farmacia.sucursal (id)
+    REFERENCES ferreteria.sucursal (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -409,9 +409,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.inventario
+-- Table ferreteria.inventario
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.inventario (
+CREATE TABLE IF NOT EXISTS ferreteria.inventario (
   id INT(11) NOT NULL AUTO_INCREMENT,
   sucursal_id INT(11) NOT NULL,
   bodega_id INT(11) NOT NULL,
@@ -428,17 +428,17 @@ CREATE TABLE IF NOT EXISTS farmacia.inventario (
   INDEX fk_producto_bodega (sucursal_id ASC, bodega_id ASC, producto_id ASC) ,
   CONSTRAINT fk_inventario_bodega
     FOREIGN KEY (bodega_id)
-    REFERENCES farmacia.bodega (id)
+    REFERENCES ferreteria.bodega (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT fk_producto_inventario
     FOREIGN KEY (producto_id)
-    REFERENCES farmacia.producto (id)
+    REFERENCES ferreteria.producto (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT fk_sucursal_inventario
     FOREIGN KEY (sucursal_id)
-    REFERENCES farmacia.sucursal (id)
+    REFERENCES ferreteria.sucursal (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -447,9 +447,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.mantenimiento_activo
+-- Table ferreteria.mantenimiento_activo
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.mantenimiento_activo (
+CREATE TABLE IF NOT EXISTS ferreteria.mantenimiento_activo (
   id INT(11) NOT NULL AUTO_INCREMENT,
   activo_id INT(11) NOT NULL,
   fecha DATE NOT NULL,
@@ -462,7 +462,7 @@ CREATE TABLE IF NOT EXISTS farmacia.mantenimiento_activo (
   INDEX fk_mantenimiento_activo_idx (activo_id ASC) ,
   CONSTRAINT fk_mantenimiento_activo
     FOREIGN KEY (activo_id)
-    REFERENCES farmacia.activo_fijo (id)
+    REFERENCES ferreteria.activo_fijo (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -470,9 +470,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.planilla
+-- Table ferreteria.planilla
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.planilla (
+CREATE TABLE IF NOT EXISTS ferreteria.planilla (
   id INT(11) NOT NULL AUTO_INCREMENT,
   sucursal_id INT(11) NULL DEFAULT NULL,
   fecha DATETIME NULL DEFAULT NULL,
@@ -484,7 +484,7 @@ CREATE TABLE IF NOT EXISTS farmacia.planilla (
   INDEX fk_sucursal_planilla_idx (sucursal_id ASC) ,
   CONSTRAINT fk_sucursal_planilla
     FOREIGN KEY (sucursal_id)
-    REFERENCES farmacia.sucursal (id)
+    REFERENCES ferreteria.sucursal (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -493,9 +493,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.movimiento_caja
+-- Table ferreteria.movimiento_caja
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.movimiento_caja (
+CREATE TABLE IF NOT EXISTS ferreteria.movimiento_caja (
   id INT(11) NOT NULL AUTO_INCREMENT,
   sucursal_id INT(11) NULL DEFAULT NULL,
   fecha DATETIME NULL DEFAULT NULL,
@@ -512,17 +512,17 @@ CREATE TABLE IF NOT EXISTS farmacia.movimiento_caja (
   INDEX fk_planilla_caja_idx (planilla_id ASC) ,
   CONSTRAINT fk_egreso_caja
     FOREIGN KEY (egreso_id)
-    REFERENCES farmacia.egreso_cab (id)
+    REFERENCES ferreteria.egreso_cab (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT fk_planilla_caja
     FOREIGN KEY (planilla_id)
-    REFERENCES farmacia.planilla (id)
+    REFERENCES ferreteria.planilla (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT fk_sucural_caja
     FOREIGN KEY (sucursal_id)
-    REFERENCES farmacia.sucursal (id)
+    REFERENCES ferreteria.sucursal (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -531,9 +531,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.rol
+-- Table ferreteria.rol
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.rol (
+CREATE TABLE IF NOT EXISTS ferreteria.rol (
   id INT(11) NOT NULL AUTO_INCREMENT,
   nombre VARCHAR(100) NOT NULL,
   PRIMARY KEY (id))
@@ -543,9 +543,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.traslado_cab
+-- Table ferreteria.traslado_cab
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.traslado_cab (
+CREATE TABLE IF NOT EXISTS ferreteria.traslado_cab (
   id INT(11) NOT NULL,
   sucursal_id INT(11) NOT NULL,
   fecha DATETIME NULL DEFAULT NULL,
@@ -556,7 +556,7 @@ CREATE TABLE IF NOT EXISTS farmacia.traslado_cab (
   INDEX fk_traslado_cab_sucursal_idx (sucursal_id ASC) ,
   CONSTRAINT fk_traslado_cab_sucursal
     FOREIGN KEY (sucursal_id)
-    REFERENCES farmacia.sucursal (id)
+    REFERENCES ferreteria.sucursal (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -564,9 +564,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.traslado_det
+-- Table ferreteria.traslado_det
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.traslado_det (
+CREATE TABLE IF NOT EXISTS ferreteria.traslado_det (
   id INT(11) NOT NULL AUTO_INCREMENT,
   traslado_cab_id INT(11) NOT NULL,
   producto_id INT(11) NOT NULL,
@@ -586,32 +586,32 @@ CREATE TABLE IF NOT EXISTS farmacia.traslado_det (
   INDEX fk_traslado_cab_id_idx (traslado_cab_id ASC) ,
   CONSTRAINT fk_bodega_traslado_in
     FOREIGN KEY (bodega_id_in)
-    REFERENCES farmacia.bodega (id)
+    REFERENCES ferreteria.bodega (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT fk_bodega_traslado_out
     FOREIGN KEY (bodega_id_out)
-    REFERENCES farmacia.bodega (id)
+    REFERENCES ferreteria.bodega (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT fk_producto_traslado
     FOREIGN KEY (producto_id)
-    REFERENCES farmacia.producto (id)
+    REFERENCES ferreteria.producto (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT fk_sucursal_traslado_in
     FOREIGN KEY (sucursal_id_in)
-    REFERENCES farmacia.sucursal (id)
+    REFERENCES ferreteria.sucursal (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT fk_sucursal_traslado_out
     FOREIGN KEY (sucursal_id_out)
-    REFERENCES farmacia.sucursal (id)
+    REFERENCES ferreteria.sucursal (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT fk_traslado_cab_id
     FOREIGN KEY (traslado_cab_id)
-    REFERENCES farmacia.traslado_cab (id)
+    REFERENCES ferreteria.traslado_cab (id)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -620,9 +620,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table farmacia.usuario
+-- Table ferreteria.usuario
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS farmacia.usuario (
+CREATE TABLE IF NOT EXISTS ferreteria.usuario (
   id INT(11) NOT NULL AUTO_INCREMENT,
   nombre VARCHAR(100) NOT NULL,
   correo VARCHAR(100) NOT NULL,
@@ -635,22 +635,22 @@ CREATE TABLE IF NOT EXISTS farmacia.usuario (
   INDEX rol_id (rol_id ASC) ,
   CONSTRAINT usuario_ibfk_1
     FOREIGN KEY (sucursal_id)
-    REFERENCES farmacia.sucursal (id),
+    REFERENCES ferreteria.sucursal (id),
   CONSTRAINT usuario_ibfk_2
     FOREIGN KEY (rol_id)
-    REFERENCES farmacia.rol (id))
+    REFERENCES ferreteria.rol (id))
 ENGINE = InnoDB
 AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = utf8;
 
-USE farmacia ;
+USE ferreteria ;
 
 -- -----------------------------------------------------
 -- procedure calcular_depreciacion
 -- -----------------------------------------------------
 
 DELIMITER $$
-USE farmacia$$
+USE ferreteria$$
 CREATE DEFINER=root@localhost PROCEDURE calcular_depreciacion(IN p_activo_id INT)
 BEGIN
     DECLARE v_costo DECIMAL(12,2);
@@ -721,7 +721,7 @@ DELIMITER ;
 -- -----------------------------------------------------
 
 DELIMITER $$
-USE farmacia$$
+USE ferreteria$$
 CREATE DEFINER=root@localhost PROCEDURE sp_inventario(IN p_sucursal_id INT)
 BEGIN
     SELECT 
@@ -764,14 +764,14 @@ BEGIN
 END$$
 
 DELIMITER ;
-USE farmacia;
+USE ferreteria;
 
 DELIMITER $$
-USE farmacia$$
+USE ferreteria$$
 CREATE
 DEFINER=root@localhost
-TRIGGER farmacia.trg_delete_movimiento_caja_venta
-AFTER DELETE ON farmacia.egreso_cab
+TRIGGER ferreteria.trg_delete_movimiento_caja_venta
+AFTER DELETE ON ferreteria.egreso_cab
 FOR EACH ROW
 BEGIN
   -- Si la venta eliminada era contado y activa, se borra de movimiento_caja
@@ -781,11 +781,11 @@ BEGIN
   END IF;
 END$$
 
-USE farmacia$$
+USE ferreteria$$
 CREATE
 DEFINER=root@localhost
-TRIGGER farmacia.trg_insert_movimiento_caja_venta
-AFTER INSERT ON farmacia.egreso_cab
+TRIGGER ferreteria.trg_insert_movimiento_caja_venta
+AFTER INSERT ON ferreteria.egreso_cab
 FOR EACH ROW
 BEGIN
   -- Registrar solo ventas al contado (forma_pago = 1) y que estén activas (sta = 1)
@@ -813,11 +813,11 @@ BEGIN
   END IF;
 END$$
 
-USE farmacia$$
+USE ferreteria$$
 CREATE
 DEFINER=root@localhost
-TRIGGER farmacia.trg_update_movimiento_caja_venta
-AFTER UPDATE ON farmacia.egreso_cab
+TRIGGER ferreteria.trg_update_movimiento_caja_venta
+AFTER UPDATE ON ferreteria.egreso_cab
 FOR EACH ROW
 BEGIN
   -- Si era contado y activo (ANTES) y ya no lo es (DESPUÉS), eliminamos el movimiento
@@ -857,11 +857,11 @@ BEGIN
   END IF;
 END$$
 
-USE farmacia$$
+USE ferreteria$$
 CREATE
 DEFINER=root@localhost
-TRIGGER farmacia.egreso_det_AFTER_DELETE
-AFTER DELETE ON farmacia.egreso_det
+TRIGGER ferreteria.egreso_det_AFTER_DELETE
+AFTER DELETE ON ferreteria.egreso_det
 FOR EACH ROW
 BEGIN
     DECLARE v_sta TINYINT;
@@ -878,11 +878,11 @@ BEGIN
     END IF;
 END$$
 
-USE farmacia$$
+USE ferreteria$$
 CREATE
 DEFINER=root@localhost
-TRIGGER farmacia.egreso_det_AFTER_INSERT
-AFTER INSERT ON farmacia.egreso_det
+TRIGGER ferreteria.egreso_det_AFTER_INSERT
+AFTER INSERT ON ferreteria.egreso_det
 FOR EACH ROW
 BEGIN
     DECLARE v_sta TINYINT;
@@ -915,11 +915,11 @@ BEGIN
     END IF;
 END$$
 
-USE farmacia$$
+USE ferreteria$$
 CREATE
 DEFINER=root@localhost
-TRIGGER farmacia.egreso_det_AFTER_UPDATE
-AFTER UPDATE ON farmacia.egreso_det
+TRIGGER ferreteria.egreso_det_AFTER_UPDATE
+AFTER UPDATE ON ferreteria.egreso_det
 FOR EACH ROW
 BEGIN
     DECLARE v_sta TINYINT;
@@ -962,11 +962,11 @@ BEGIN
     END IF;
 END$$
 
-USE farmacia$$
+USE ferreteria$$
 CREATE
 DEFINER=root@localhost
-TRIGGER farmacia.ingreso_det_AFTER_DELETE
-AFTER DELETE ON farmacia.ingreso_det
+TRIGGER ferreteria.ingreso_det_AFTER_DELETE
+AFTER DELETE ON ferreteria.ingreso_det
 FOR EACH ROW
 BEGIN
     DELETE FROM inventario
@@ -975,11 +975,11 @@ BEGIN
     AND cab_id = OLD.ingreso_cab_id;
 END$$
 
-USE farmacia$$
+USE ferreteria$$
 CREATE
 DEFINER=root@localhost
-TRIGGER farmacia.ingreso_det_AFTER_INSERT
-AFTER INSERT ON farmacia.ingreso_det
+TRIGGER ferreteria.ingreso_det_AFTER_INSERT
+AFTER INSERT ON ferreteria.ingreso_det
 FOR EACH ROW
 BEGIN
     INSERT INTO inventario (
@@ -1004,11 +1004,11 @@ BEGIN
     );
 END$$
 
-USE farmacia$$
+USE ferreteria$$
 CREATE
 DEFINER=root@localhost
-TRIGGER farmacia.ingreso_det_AFTER_UPDATE
-AFTER UPDATE ON farmacia.ingreso_det
+TRIGGER ferreteria.ingreso_det_AFTER_UPDATE
+AFTER UPDATE ON ferreteria.ingreso_det
 FOR EACH ROW
 BEGIN
     -- Verifica si cambió algo relevante
@@ -1046,22 +1046,22 @@ BEGIN
     END IF;
 END$$
 
-USE farmacia$$
+USE ferreteria$$
 CREATE
 DEFINER=root@localhost
-TRIGGER farmacia.trg_delete_movimiento_caja_planilla
-AFTER DELETE ON farmacia.planilla
+TRIGGER ferreteria.trg_delete_movimiento_caja_planilla
+AFTER DELETE ON ferreteria.planilla
 FOR EACH ROW
 BEGIN
   DELETE FROM movimiento_caja
   WHERE planilla_id = OLD.id AND tipo = 'egreso';
 END$$
 
-USE farmacia$$
+USE ferreteria$$
 CREATE
 DEFINER=root@localhost
-TRIGGER farmacia.trg_movimiento_caja_planilla
-AFTER INSERT ON farmacia.planilla
+TRIGGER ferreteria.trg_movimiento_caja_planilla
+AFTER INSERT ON ferreteria.planilla
 FOR EACH ROW
 BEGIN
   INSERT INTO movimiento_caja (
@@ -1079,11 +1079,11 @@ BEGIN
   );
 END$$
 
-USE farmacia$$
+USE ferreteria$$
 CREATE
 DEFINER=root@localhost
-TRIGGER farmacia.trg_update_movimiento_caja_planilla
-AFTER UPDATE ON farmacia.planilla
+TRIGGER ferreteria.trg_update_movimiento_caja_planilla
+AFTER UPDATE ON ferreteria.planilla
 FOR EACH ROW
 BEGIN
   INSERT INTO movimiento_caja (
