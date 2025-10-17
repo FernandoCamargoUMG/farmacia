@@ -48,6 +48,14 @@ if (isset($_SESSION['sucursal_id'])) {
     .bi-chevron-down {
         transition: transform 0.3s ease;
     }
+
+    /* Ocultar submenús por defecto */
+    .submenu {
+        display: none;
+    }
+    .submenu.show {
+        display: block;
+    }
 </style>
 
 <body>
@@ -135,12 +143,13 @@ if (isset($_SESSION['sucursal_id'])) {
         <?php foreach ($menu as $item): ?>
             <?php if (in_array($rol_id, $item['roles'])): ?>
                 <?php if (isset($item['submenu'])): ?>
+                    <?php $submenuId = 'submenu' . str_replace(' ', '_', $item['label']); ?>
                     <li class="nav-item">
-                        <a class="nav-link d-flex justify-content-between align-items-center activos-toggle" href="#" data-target="#submenu<?= $item['label'] ?>">
+                        <a class="nav-link d-flex justify-content-between align-items-center activos-toggle" href="#" data-target="#<?= $submenuId ?>">
                             <span><i class="bi bi-<?= $item['icon'] ?>"></i> <?= $item['label'] ?></span>
                             <i class="bi bi-chevron-down toggle-icon"></i>
                         </a>
-                        <ul class="collapse list-unstyled ps-3" id="submenu<?= $item['label'] ?>">
+                        <ul class="submenu list-unstyled ps-3" id="<?= $submenuId ?>">
                             <?php foreach ($item['submenu'] as $sub): ?>
                                 <li><a class="nav-link" href="<?= $sub['link'] ?>"><i class="bi bi-<?= $sub['icon'] ?? 'dash' ?>"></i> <?= $sub['label'] ?></a></li>
                             <?php endforeach; ?>

@@ -472,12 +472,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
 
-
             // --- EVENTOS ---
             document.getElementById('btnMostrarEgresos').addEventListener('click', mostrarEgresos);
             document.getElementById('btnAgregarDetalleEgreso').addEventListener('click', agregarFilaDetalleEgreso);
 
-            // Submit formulario (Guardar o Emitir)
             // SUBMIT FORMULARIO (GUARDAR O EDITAR)
             document.getElementById('formNuevoEgreso').addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -546,7 +544,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             form.reset();
                             document.getElementById('detalleBodyEgreso').innerHTML = '';
                             mostrarEgresos();
-                            bootstrap.Modal.getInstance(document.getElementById('modalNuevoEgreso')).hide();
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('modalNuevoEgreso'));
+                            modal.hide();
+                            setTimeout(() => {
+                                document.body.classList.remove('modal-open');
+                                document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                            }, 300);
                         } else {
                             Swal.fire('Error', data.message || 'Error al guardar.', 'error');
                         }

@@ -23,12 +23,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const submenu = document.querySelector(targetSelector);
             const icon = this.querySelector('.toggle-icon');
 
-            if (submenu.classList.contains('show')) {
-                submenu.classList.remove('show');
-                if (icon) icon.style.transform = 'rotate(0deg)';
-            } else {
-                submenu.classList.add('show');
-                if (icon) icon.style.transform = 'rotate(180deg)';
+            if (submenu) {
+                if (submenu.classList.contains('show')) {
+                    submenu.classList.remove('show');
+                    if (icon) icon.style.transform = 'rotate(0deg)';
+                } else {
+                    submenu.classList.add('show');
+                    if (icon) icon.style.transform = 'rotate(180deg)';
+                }
             }
         });
     });
