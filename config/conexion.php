@@ -4,9 +4,9 @@ class Conexion {
     public static function conectar() {
         // Obtener datos desde variables de entorno
         $host = "srv1928.hstgr.io"; // IP pública del servidor MySQL de Hostinger
-        $dbname = "u834187355_farmacia"; // Nombre de la base de datos
-        $user = "u834187355_fcamargo";   // Usuario de la base de datos
-        $pass = "Pldb2610200";  
+        $dbname = "u834187355_ferreteria"; // Nombre de la base de datos
+        $user = "u834187355_katerin";  // Usuario de la base de datos
+        $pass = "4l]JgZCMFzU";  
 
         try {
             $pdo = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
