@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <h2 class="mb-4"><i class="bi bi-building"></i> Módulo de Activos Fijos</h2>
             <div class="card shadow" style="max-width: 2000px; margin: 0 auto;">
                 <div class="card-body">
-                    <h5 class="card-title">Listado de Activos</h5>
+                    <h5 class="card-title">Listado de Activos.</h5>
 
                     <button id="btnMostrarActivos" class="btn btn-outline-primary mb-3">
                         <i class="bi bi-eye"></i> Mostrar Activos
