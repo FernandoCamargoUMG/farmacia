@@ -17,7 +17,7 @@
                     <div class="card-header bg-primary text-white">Iniciar Sesión</div>
                     <div class="card-body">
                         <?php if (isset($_GET['error'])): ?>
-                            <div class="alert alert-danger">Credenciales inválidas.</div>
+                            <div class="alert alert-danger">Credenciales inválidas..</div>
                         <?php endif; ?>
                         <form method="POST" action="/?route=login">
                             <div class="mb-3">
