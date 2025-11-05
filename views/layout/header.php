@@ -807,7 +807,7 @@ if (isset($_SESSION['sucursal_id'])) {
                         <h1 class="dashboard-title">
                             <i class="bi bi-speedometer2"></i> Dashboard
                         </h1>
-                        <p class="dashboard-subtitle">Panel de control en tiempo real</p>
+                        <p class="dashboard-subtitle">Panel de control</p>
                     </div>
                     <div class="col-md-4 text-end">
                         <div class="d-flex align-items-center justify-content-end gap-3">
@@ -991,14 +991,11 @@ if (isset($_SESSION['sucursal_id'])) {
                                     <tr>
                                         <th>Producto</th>
                                         <th>Stock Actual</th>
-                                        <th>Stock Mínimo</th>
-                                        <th>Estado</th>
-                                        <th>Acción</th>
                                     </tr>
                                 </thead>
                                 <tbody id="low-stock-tbody">
                                     <tr>
-                                        <td colspan="5" class="text-center">
+                                        <td colspan="2" class="text-center">
                                             <div class="spinner-border spinner-border-sm" role="status">
                                                 <span class="visually-hidden">Cargando...</span>
                                             </div>

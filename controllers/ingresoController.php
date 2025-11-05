@@ -1,5 +1,9 @@
 <?php
 require_once __DIR__ . '/../models/ingreso.php';
+
+// Establecer zona horaria para Guatemala
+date_default_timezone_set('America/Guatemala');
+
 session_start();
 
 $action = $_GET['action'] ?? '';
@@ -41,11 +45,14 @@ if ($action === 'obtener') {
 if ($action === 'guardar') {
     $datos = $_POST;
 
+    // Si viene fecha_local del cliente (JavaScript), usarla; si no, usar fecha del servidor
+    $fecha = !empty($datos['fecha_local']) ? $datos['fecha_local'] : date('Y-m-d H:i:s');
+
     // Guardar cabecera
     $cabId = Ingreso::guardarCabecera(
         $_SESSION['sucursal_id'],
         $datos['proveedor_id'],
-        $datos['fecha'],
+        $fecha, // Usar fecha del cliente o servidor
         $datos['numero'],
         $datos['subtotal'],
         $datos['gravada'],
@@ -80,12 +87,15 @@ if ($action === 'editar') {
         exit;
     }
 
+    // Para edición, mantener fecha original o usar actual si se especifica
+    $fecha = !empty($datos['fecha']) ? $datos['fecha'] : date('Y-m-d H:i:s');
+
     // Actualizar cabecera
     $exito = Ingreso::actualizarCabecera(
         $id,
         $_SESSION['sucursal_id'],
         $datos['proveedor_id'],
-        $datos['fecha'],
+        $fecha,
         $datos['numero'],
         $datos['subtotal'],
         $datos['gravada'],

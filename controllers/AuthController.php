@@ -18,8 +18,10 @@ class AuthController {
 
         if ($usuario) {
             $_SESSION['usuario_id'] = $usuario['id'];
+            $_SESSION['usuario_nombre'] = $usuario['nombre']; // Agregar nombre del usuario
             $_SESSION['sucursal_id'] = $sucursal_id;
             $_SESSION['rol_id'] = $usuario['rol_id'];
+            $_SESSION['rol_nombre'] = $usuario['rol_nombre']; // Agregar nombre del rol
             $_SESSION['correo'] = $usuario['correo'];
 
             header("Location: /?route=dashboard");

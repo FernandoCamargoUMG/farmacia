@@ -1,6 +1,10 @@
 <?php
 require_once __DIR__ . '/../models/egreso.php';
 require_once __DIR__ . '/../config/shutdown.php';
+
+// Establecer zona horaria para Guatemala
+date_default_timezone_set('America/Guatemala');
+
 session_start();
 
 $action = $_GET['action'] ?? '';
@@ -63,11 +67,14 @@ if ($action === 'guardar') {
         exit;
     }
 
+    // Si viene fecha_local del cliente (JavaScript), usarla; si no, usar fecha del servidor
+    $fecha = !empty($datos['fecha_local']) ? $datos['fecha_local'] : date('Y-m-d H:i:s');
+
     $cabId = Egreso::guardarCabecera(
         $_SESSION['sucursal_id'],
         $datos['cliente_id'],
         $datos['forma_pago'],
-        $datos['fecha'],
+        $fecha, // Usar fecha del cliente o servidor
         $datos['numero'],
         $datos['subtotal'],
         $datos['gravada'],

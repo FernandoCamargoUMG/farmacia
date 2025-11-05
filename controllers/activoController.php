@@ -1,5 +1,9 @@
 <?php
 require_once __DIR__ . '/../models/activo_fijo.php';
+
+// Establecer zona horaria para Guatemala
+date_default_timezone_set('America/Guatemala');
+
 session_start();
 
 $action = $_GET['action'] ?? '';
@@ -18,12 +22,15 @@ if ($action === 'guardar') {
         exit;
     }
 
+    // Si no se especifica fecha de adquisición, usar la actual
+    $fechaAdquisicion = !empty($_POST['fecha_adquisicion']) ? $_POST['fecha_adquisicion'] : date('Y-m-d');
+
     $datos = [
         'sucursal_id' => $_SESSION['sucursal_id'],
         'codigo' => $_POST['codigo'] ?? '',
         'nombre' => $_POST['nombre'] ?? '',
         'descripcion' => $_POST['descripcion'] ?? '',
-        'fecha_adquisicion' => $_POST['fecha_adquisicion'] ?? null,
+        'fecha_adquisicion' => $fechaAdquisicion, // Usar fecha validada
         'tipo_activo_id' => $_POST['tipo_activo_id'] ?? null,
         'responsable' => $_POST['responsable'] ?? null,
         'costo' => $_POST['costo'] ?? 0,

@@ -7,7 +7,12 @@ class Usuario
     public static function login($correo, $password)
     {
         $pdo = Conexion::conectar();
-        $stmt = $pdo->prepare("SELECT * FROM usuario WHERE correo = ? AND password = ?");
+        $stmt = $pdo->prepare("
+            SELECT u.*, r.nombre as rol_nombre 
+            FROM usuario u 
+            LEFT JOIN rol r ON u.rol_id = r.id 
+            WHERE u.correo = ? AND u.password = ?
+        ");
         $stmt->execute([$correo, md5($password)]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }

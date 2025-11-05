@@ -46,24 +46,61 @@ function getBodegaNombre($conn, $id) {
 
 if ($action === 'low_stock') {
     header('Content-Type: application/json');
-    require_once __DIR__ . '/../models/producto.php';
     
-    $productos = Producto::obtenerStockBajo();
-    
-    // Agregar información adicional para cada producto
-    $productosFormateados = [];
-    foreach ($productos as $producto) {
-        $productosFormateados[] = [
-            'id' => $producto['id'],
-            'nombre' => $producto['nombre'],
-            'codigo' => $producto['codigo'] ?? 'N/A',
-            'stock_actual' => $producto['stock_actual'] ?? 0,
-            'stock_minimo' => $producto['stock_minimo'] ?? 5,
-            'categoria' => $producto['categoria'] ?? 'Sin categoría',
-            'precio' => $producto['precio'] ?? 0
-        ];
+    try {
+        $conn = Conexion::conectar();
+        
+        // Calcular stock actual por producto usando la tabla inventario
+        $stmt = $conn->prepare("
+            SELECT 
+                p.id,
+                p.nombre,
+                p.codigo,
+                p.precio,
+                cp.descripcion as categoria,
+                COALESCE(stock_calc.stock_actual, 0) as stock_actual,
+                5 as stock_minimo
+            FROM producto p
+            LEFT JOIN categoria_producto cp ON p.categoria_id = cp.id
+            LEFT JOIN (
+                SELECT 
+                    producto_id,
+                    SUM(CASE 
+                        WHEN movimiento = 'ingreso' THEN cantidad 
+                        WHEN movimiento = 'egreso' THEN -cantidad 
+                        ELSE 0 
+                    END) as stock_actual
+                FROM inventario 
+                WHERE sucursal_id = ?
+                GROUP BY producto_id
+            ) stock_calc ON p.id = stock_calc.producto_id
+            HAVING stock_actual <= stock_minimo
+            ORDER BY stock_actual ASC
+        ");
+        
+        $sucursal_id = $_SESSION['sucursal_id'] ?? 1;
+        $stmt->execute([$sucursal_id]);
+        $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Formatear los datos
+        $productosFormateados = [];
+        foreach ($productos as $producto) {
+            $productosFormateados[] = [
+                'id' => $producto['id'],
+                'nombre' => $producto['nombre'],
+                'codigo' => $producto['codigo'] ?? 'N/A',
+                'stock_actual' => (int)$producto['stock_actual'],
+                'stock_minimo' => 5, // Stock mínimo fijo por ahora
+                'categoria' => $producto['categoria'] ?? 'Sin categoría',
+                'precio' => (float)$producto['precio']
+            ];
+        }
+        
+        echo json_encode($productosFormateados);
+        
+    } catch (Exception $e) {
+        error_log("Error en low_stock: " . $e->getMessage());
+        echo json_encode(['error' => 'Error al obtener productos con stock bajo: ' . $e->getMessage()]);
     }
-    
-    echo json_encode($productosFormateados);
     exit;
 }

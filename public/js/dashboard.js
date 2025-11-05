@@ -115,23 +115,12 @@ class DashboardManager {
                                 ${product.stock_actual}
                             </span>
                         </td>
-                        <td>${product.stock_minimo}</td>
-                        <td>
-                            <span class="badge ${product.stock_actual <= 5 ? 'badge-danger' : 'badge-warning'}">
-                                ${product.stock_actual <= 5 ? 'Crítico' : 'Bajo'}
-                            </span>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary" onclick="window.location.href='#ingreso'">
-                                <i class="bi bi-plus-circle"></i> Reabastecer
-                            </button>
-                        </td>
                     </tr>
                 `).join('');
             } else {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="5" class="text-center py-4">
+                        <td colspan="2" class="text-center py-4">
                             <div class="text-success">
                                 <i class="bi bi-check-circle-fill fs-2"></i>
                                 <p class="mt-2 mb-0">Todos los productos tienen stock suficiente</p>

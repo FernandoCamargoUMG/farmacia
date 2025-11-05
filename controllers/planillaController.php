@@ -1,5 +1,9 @@
 <?php
 require_once __DIR__ . '/../models/planilla.php';
+
+// Establecer zona horaria para Guatemala
+date_default_timezone_set('America/Guatemala');
+
 session_start();
 
 $action = $_GET['action'] ?? '';
@@ -18,9 +22,12 @@ if ($action === 'guardar') {
         exit;
     }
 
+    // Si viene fecha_local del cliente (JavaScript), usarla; si no, usar fecha del servidor
+    $fecha = !empty($_POST['fecha_local']) ? $_POST['fecha_local'] : date('Y-m-d H:i:s');
+
     $exito = Planilla::guardar(
         $_SESSION['sucursal_id'],
-        $_POST['fecha'] ?? '',
+        $fecha, // Usar fecha del cliente o servidor
         $_POST['descripcion'] ?? '',
         $_POST['monto'] ?? '',
         $_POST['metodopago'] ?? '',

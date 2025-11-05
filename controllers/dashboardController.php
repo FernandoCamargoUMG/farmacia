@@ -3,6 +3,9 @@ header('Content-Type: application/json');
 require_once __DIR__ . '/../config/conexion.php';
 require_once __DIR__ . '/../config/shutdown.php';
 
+// Establecer zona horaria para Guatemala
+date_default_timezone_set('America/Guatemala');
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -44,7 +47,7 @@ function getRecentActivity($conn) {
         // Últimas ventas (egresos) - últimos 7 días
         $stmt = $conn->prepare("
             SELECT 'sale' as type, 
-                   CONCAT('Nueva venta #', numero, ' por $', ROUND(total, 2)) as description, 
+                   CONCAT('Nueva venta #', numero, ' por Q', ROUND(total, 2)) as description, 
                    fecha,
                    TIMESTAMPDIFF(MINUTE, fecha, NOW()) as minutes_ago
             FROM egreso_cab 
@@ -62,12 +65,20 @@ function getRecentActivity($conn) {
             $ahora = new DateTime();
             $diff = $ahora->diff($fecha_venta);
             
+            // Calcular minutos totales transcurridos
             $minutes_ago = ($diff->days * 24 * 60) + ($diff->h * 60) + $diff->i;
+            
+            // Si es muy reciente (menos de 2 minutos), considerar como "ahora mismo"
+            if ($minutes_ago < 2) {
+                $time_display = 'Ahora mismo';
+            } else {
+                $time_display = formatTimeAgo($minutes_ago);
+            }
             
             $activities[] = [
                 'type' => $sale['type'],
                 'description' => $sale['description'],
-                'time_ago' => formatTimeAgo($minutes_ago)
+                'time_ago' => $time_display
             ];
         }
         
@@ -93,10 +104,17 @@ function getRecentActivity($conn) {
             
             $minutes_ago = ($diff->days * 24 * 60) + ($diff->h * 60) + $diff->i;
             
+            // Si es muy reciente, mostrar como "ahora mismo"
+            if ($minutes_ago < 2) {
+                $time_display = 'Ahora mismo';
+            } else {
+                $time_display = formatTimeAgo($minutes_ago);
+            }
+            
             $activities[] = [
                 'type' => $ingreso['type'],
                 'description' => $ingreso['description'],
-                'time_ago' => formatTimeAgo($minutes_ago)
+                'time_ago' => $time_display
             ];
         }
         
@@ -121,10 +139,17 @@ function getRecentActivity($conn) {
             
             $minutes_ago = ($diff->days * 24 * 60) + ($diff->h * 60) + $diff->i;
             
+            // Si es muy reciente, mostrar como "ahora mismo"
+            if ($minutes_ago < 2) {
+                $time_display = 'Ahora mismo';
+            } else {
+                $time_display = formatTimeAgo($minutes_ago);
+            }
+            
             $activities[] = [
                 'type' => $movimiento['type'],
                 'description' => $movimiento['description'],
-                'time_ago' => formatTimeAgo($minutes_ago)
+                'time_ago' => $time_display
             ];
         }
         
