@@ -106,8 +106,45 @@ class Egreso
     public static function eliminarCabecera($id)
     {
         $conn = Conexion::conectar();
-        $stmt = $conn->prepare("DELETE FROM egreso_cab WHERE id = ?");
-        return $stmt->execute([$id]);
+        
+        try {
+            // Iniciar transacción
+            $conn->beginTransaction();
+            
+            // Verificar si la venta está emitida para manejar inventario manualmente
+            $stmt = $conn->prepare("SELECT sta FROM egreso_cab WHERE id = ?");
+            $stmt->execute([$id]);
+            $egreso = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($egreso && $egreso['sta'] == 1) {
+                // Si está emitida, eliminar inventario manualmente antes de eliminar detalles
+                $stmt = $conn->prepare("DELETE FROM inventario WHERE movimiento = 'egreso' AND cab_id = ?");
+                $stmt->execute([$id]);
+            }
+            
+            // 1. Eliminar movimientos de caja relacionados (manualmente porque el trigger puede fallar)
+            $stmt = $conn->prepare("DELETE FROM movimiento_caja WHERE egreso_id = ?");
+            $stmt->execute([$id]);
+            
+            // 2. Eliminar registros de egreso_det 
+            $stmt = $conn->prepare("DELETE FROM egreso_det WHERE egreso_cab_id = ?");
+            $stmt->execute([$id]);
+            
+            // 3. Eliminar la cabecera
+            $stmt = $conn->prepare("DELETE FROM egreso_cab WHERE id = ?");
+            $result = $stmt->execute([$id]);
+            
+            // Confirmar transacción
+            $conn->commit();
+            
+            return $result;
+            
+        } catch (Exception $e) {
+            // Revertir transacción en caso de error
+            $conn->rollback();
+            error_log("Error al eliminar egreso: " . $e->getMessage());
+            return false;
+        }
     }
 
     // Contar ventas de hoy

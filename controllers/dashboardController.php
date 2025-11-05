@@ -41,12 +41,15 @@ function getRecentActivity($conn) {
     $activities = [];
     
     try {
-        // Últimas ventas (egresos)
+        // Últimas ventas (egresos) - últimos 7 días
         $stmt = $conn->prepare("
-            SELECT 'sale' as type, CONCAT('Nueva venta #', numero, ' por $', ROUND(total, 2)) as description, 
+            SELECT 'sale' as type, 
+                   CONCAT('Nueva venta #', numero, ' por $', ROUND(total, 2)) as description, 
+                   fecha,
                    TIMESTAMPDIFF(MINUTE, fecha, NOW()) as minutes_ago
             FROM egreso_cab 
-            WHERE DATE(fecha) = CURDATE() 
+            WHERE fecha >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+            AND sta = 1
             ORDER BY fecha DESC 
             LIMIT 3
         ");
@@ -54,30 +57,74 @@ function getRecentActivity($conn) {
         $sales = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         foreach ($sales as $sale) {
+            // Calcular tiempo transcurrido en PHP para mayor precisión
+            $fecha_venta = new DateTime($sale['fecha']);
+            $ahora = new DateTime();
+            $diff = $ahora->diff($fecha_venta);
+            
+            $minutes_ago = ($diff->days * 24 * 60) + ($diff->h * 60) + $diff->i;
+            
             $activities[] = [
                 'type' => $sale['type'],
                 'description' => $sale['description'],
-                'time_ago' => formatTimeAgo($sale['minutes_ago'])
+                'time_ago' => formatTimeAgo($minutes_ago)
             ];
         }
         
-        // Productos con stock bajo
+        // Últimos ingresos de productos
         $stmt = $conn->prepare("
-            SELECT 'warning' as type, CONCAT('Stock bajo: ', nombre) as description, 
-                   5 as minutes_ago
-            FROM producto 
-            WHERE stock_actual <= stock_minimo 
-            ORDER BY stock_actual ASC 
+            SELECT 'success' as type, 
+                   CONCAT('Ingreso de productos #', numero) as description, 
+                   fecha
+            FROM ingreso_cab 
+            WHERE fecha >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+            AND sta = 1
+            ORDER BY fecha DESC 
             LIMIT 2
         ");
         $stmt->execute();
-        $lowStock = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $ingresos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        foreach ($lowStock as $item) {
+        foreach ($ingresos as $ingreso) {
+            // Calcular tiempo transcurrido en PHP
+            $fecha_ingreso = new DateTime($ingreso['fecha']);
+            $ahora = new DateTime();
+            $diff = $ahora->diff($fecha_ingreso);
+            
+            $minutes_ago = ($diff->days * 24 * 60) + ($diff->h * 60) + $diff->i;
+            
             $activities[] = [
-                'type' => $item['type'],
-                'description' => $item['description'],
-                'time_ago' => 'Detectado recientemente'
+                'type' => $ingreso['type'],
+                'description' => $ingreso['description'],
+                'time_ago' => formatTimeAgo($minutes_ago)
+            ];
+        }
+        
+        // Movimientos de caja recientes
+        $stmt = $conn->prepare("
+            SELECT 'info' as type, 
+                   CONCAT('Movimiento de caja: ', descripcion) as description, 
+                   fecha
+            FROM movimiento_caja 
+            WHERE fecha >= DATE_SUB(NOW(), INTERVAL 3 DAY)
+            ORDER BY fecha DESC 
+            LIMIT 2
+        ");
+        $stmt->execute();
+        $movimientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        foreach ($movimientos as $movimiento) {
+            // Calcular tiempo transcurrido en PHP
+            $fecha_movimiento = new DateTime($movimiento['fecha']);
+            $ahora = new DateTime();
+            $diff = $ahora->diff($fecha_movimiento);
+            
+            $minutes_ago = ($diff->days * 24 * 60) + ($diff->h * 60) + $diff->i;
+            
+            $activities[] = [
+                'type' => $movimiento['type'],
+                'description' => $movimiento['description'],
+                'time_ago' => formatTimeAgo($minutes_ago)
             ];
         }
         
@@ -115,20 +162,24 @@ function getDashboardStats($conn) {
     
     try {
         // Total productos
-        $stmt = $conn->query("SELECT COUNT(*) as total FROM producto WHERE activo = 1");
+        $stmt = $conn->query("SELECT COUNT(*) as total FROM producto");
         $stats['total_productos'] = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
         
-        // Ventas de hoy
-        $stmt = $conn->query("SELECT COUNT(*) as total FROM egreso_cab WHERE DATE(fecha) = CURDATE()");
+        // Ventas de hoy (egresos emitidos)
+        $stmt = $conn->query("SELECT COUNT(*) as total FROM egreso_cab WHERE DATE(fecha) = CURDATE() AND sta = 1");
         $stats['ventas_hoy'] = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
         
         // Total clientes
-        $stmt = $conn->query("SELECT COUNT(*) as total FROM clientes WHERE activo = 1");
+        $stmt = $conn->query("SELECT COUNT(*) as total FROM clientes");
         $stats['total_clientes'] = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
         
-        // Stock bajo
-        $stmt = $conn->query("SELECT COUNT(*) as total FROM producto WHERE stock_actual <= stock_minimo");
-        $stats['stock_bajo'] = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+        // Total de productos con movimientos (usando inventario)
+        $stmt = $conn->query("
+            SELECT COUNT(DISTINCT producto_id) as total 
+            FROM inventario 
+            WHERE sucursal_id = 1
+        ");
+        $stats['productos_activos'] = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
         
     } catch (Exception $e) {
         error_log("Error en getDashboardStats: " . $e->getMessage());
@@ -136,7 +187,7 @@ function getDashboardStats($conn) {
             'total_productos' => 0,
             'ventas_hoy' => 0,
             'total_clientes' => 0,
-            'stock_bajo' => 0
+            'productos_activos' => 0
         ];
     }
     
@@ -144,8 +195,10 @@ function getDashboardStats($conn) {
 }
 
 function formatTimeAgo($minutes) {
-    if ($minutes < 1) {
+    if ($minutes < 0) {
         return 'Ahora mismo';
+    } elseif ($minutes < 1) {
+        return 'Hace menos de un minuto';
     } elseif ($minutes < 60) {
         return "Hace $minutes minuto" . ($minutes != 1 ? 's' : '');
     } elseif ($minutes < 1440) {

@@ -58,7 +58,30 @@ class Planilla
     public static function eliminar($id)
     {
         $conn = Conexion::conectar();
-        $stmt = $conn->prepare("DELETE FROM planilla WHERE id = ?");
-        return $stmt->execute([$id]);
+        
+        try {
+            // Iniciar transacción
+            $conn->beginTransaction();
+            
+            // No hay trigger de DELETE para planilla, manejarlo manualmente
+            // 1. Eliminar movimientos de caja relacionados con esta planilla
+            $stmt = $conn->prepare("DELETE FROM movimiento_caja WHERE planilla_id = ?");
+            $stmt->execute([$id]);
+            
+            // 2. Eliminar la planilla
+            $stmt = $conn->prepare("DELETE FROM planilla WHERE id = ?");
+            $result = $stmt->execute([$id]);
+            
+            // Confirmar transacción
+            $conn->commit();
+            
+            return $result;
+            
+        } catch (Exception $e) {
+            // Revertir transacción en caso de error
+            $conn->rollback();
+            error_log("Error al eliminar planilla: " . $e->getMessage());
+            return false;
+        }
     }
 }
