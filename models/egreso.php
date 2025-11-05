@@ -109,4 +109,94 @@ class Egreso
         $stmt = $conn->prepare("DELETE FROM egreso_cab WHERE id = ?");
         return $stmt->execute([$id]);
     }
+
+    // Contar ventas de hoy
+    public static function contarVentasHoy($sucursalId = null)
+    {
+        $conn = Conexion::conectar();
+        
+        if ($sucursalId) {
+            $stmt = $conn->prepare("SELECT COUNT(*) as total FROM egreso_cab 
+                                   WHERE sucursal_id = ? AND DATE(fecha) = CURDATE()");
+            $stmt->execute([$sucursalId]);
+        } else {
+            // Si no hay sucursal específica, contar todas las ventas de hoy
+            $stmt = $conn->prepare("SELECT COUNT(*) as total FROM egreso_cab 
+                                   WHERE DATE(fecha) = CURDATE()");
+            $stmt->execute();
+        }
+        
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null; // Cerrar conexión PDO
+        return $result['total'];
+    }
+
+    // Obtener ventas de los últimos 7 días
+    public static function obtenerVentasSemanales($sucursalId = null)
+    {
+        $conn = Conexion::conectar();
+        
+        if ($sucursalId) {
+            $stmt = $conn->prepare("
+                SELECT 
+                    DATE_FORMAT(fecha, '%a') as dia,
+                    DATE(fecha) as fecha,
+                    COUNT(*) as ventas,
+                    ROUND(SUM(total), 2) as monto
+                FROM egreso_cab 
+                WHERE sucursal_id = ? 
+                AND fecha >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+                GROUP BY DATE(fecha)
+                ORDER BY fecha ASC
+            ");
+            $stmt->execute([$sucursalId]);
+        } else {
+            $stmt = $conn->prepare("
+                SELECT 
+                    DATE_FORMAT(fecha, '%a') as dia,
+                    DATE(fecha) as fecha,
+                    COUNT(*) as ventas,
+                    ROUND(SUM(total), 2) as monto
+                FROM egreso_cab 
+                WHERE fecha >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+                GROUP BY DATE(fecha)
+                ORDER BY fecha ASC
+            ");
+            $stmt->execute();
+        }
+        $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Preparar datos para el gráfico
+        $labels = [];
+        $values = [];
+        
+        // Crear array con los últimos 7 días
+        for ($i = 6; $i >= 0; $i--) {
+            $fecha = date('Y-m-d', strtotime("-$i days"));
+            $dia = date('D', strtotime($fecha));
+            
+            $labels[] = $dia;
+            
+            // Buscar si hay datos para este día
+            $encontrado = false;
+            foreach ($resultados as $resultado) {
+                if (date('Y-m-d', strtotime($resultado['fecha'] ?? $fecha)) === $fecha) {
+                    $values[] = (int)$resultado['ventas'];
+                    $encontrado = true;
+                    break;
+                }
+            }
+            
+            if (!$encontrado) {
+                $values[] = 0;
+            }
+        }
+
+        $conn = null; // Cerrar conexión PDO
+        
+        return [
+            'labels' => $labels,
+            'values' => $values
+        ];
+    }
 }

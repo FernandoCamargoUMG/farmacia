@@ -46,4 +46,21 @@ class Cliente
         $stmt = $conn->prepare("DELETE FROM clientes WHERE id = ?");
         return $stmt->execute([$id]);
     }
+
+    public static function contarTotal($sucursalId = null)
+    {
+        $conn = Conexion::conectar();
+        
+        if ($sucursalId) {
+            $stmt = $conn->prepare("SELECT COUNT(*) as total FROM clientes WHERE sucursal_id = ?");
+            $stmt->execute([$sucursalId]);
+        } else {
+            $stmt = $conn->prepare("SELECT COUNT(*) as total FROM clientes");
+            $stmt->execute();
+        }
+        
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null; // Cerrar conexión PDO
+        return $result['total'];
+    }
 }

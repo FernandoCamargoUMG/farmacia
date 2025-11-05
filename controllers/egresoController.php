@@ -1,18 +1,22 @@
 <?php
 require_once __DIR__ . '/../models/egreso.php';
+require_once __DIR__ . '/../config/shutdown.php';
 session_start();
 
 $action = $_GET['action'] ?? '';
 
-if (!isset($_SESSION['sucursal_id'])) {
+if (!isset($_SESSION['usuario_id'])) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'No autorizado']);
     exit;
 }
 
+// Si no hay sucursal específica, usar 1 por defecto o todas
+$sucursalId = $_SESSION['sucursal_id'] ?? 1;
+
 if ($action === 'listar') {
     header('Content-Type: application/json');
-    $egresos = Egreso::obtenerPorSucursal($_SESSION['sucursal_id']);
+    $egresos = Egreso::obtenerPorSucursal($sucursalId);
     echo json_encode($egresos);
     exit;
 }
@@ -184,5 +188,19 @@ if ($action === 'eliminar') {
     Egreso::eliminarDetalles($id);
     $exito = Egreso::eliminarCabecera($id);
     echo json_encode(['success' => $exito]);
+    exit;
+}
+
+if ($action === 'today_stats') {
+    header('Content-Type: application/json');
+    $total = Egreso::contarVentasHoy($sucursalId);
+    echo json_encode(['total' => $total]);
+    exit;
+}
+
+if ($action === 'weekly_sales') {
+    header('Content-Type: application/json');
+    $data = Egreso::obtenerVentasSemanales($sucursalId);
+    echo json_encode($data);
     exit;
 }

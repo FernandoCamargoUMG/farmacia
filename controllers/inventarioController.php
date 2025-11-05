@@ -43,3 +43,27 @@ function getBodegaNombre($conn, $id) {
     $stmt->execute([$id]);
     return $stmt->fetchColumn();
 }
+
+if ($action === 'low_stock') {
+    header('Content-Type: application/json');
+    require_once __DIR__ . '/../models/producto.php';
+    
+    $productos = Producto::obtenerStockBajo();
+    
+    // Agregar información adicional para cada producto
+    $productosFormateados = [];
+    foreach ($productos as $producto) {
+        $productosFormateados[] = [
+            'id' => $producto['id'],
+            'nombre' => $producto['nombre'],
+            'codigo' => $producto['codigo'] ?? 'N/A',
+            'stock_actual' => $producto['stock_actual'] ?? 0,
+            'stock_minimo' => $producto['stock_minimo'] ?? 5,
+            'categoria' => $producto['categoria'] ?? 'Sin categoría',
+            'precio' => $producto['precio'] ?? 0
+        ];
+    }
+    
+    echo json_encode($productosFormateados);
+    exit;
+}

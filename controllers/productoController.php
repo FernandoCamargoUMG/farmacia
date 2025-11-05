@@ -47,3 +47,9 @@ if ($action === 'eliminar') {
     $exito = Producto::eliminar($id);
     echo json_encode(['success' => $exito]);
 }
+
+if ($action === 'count') {
+    header('Content-Type: application/json');
+    $total = Producto::contarTotal();
+    echo json_encode(['total' => $total]);
+}

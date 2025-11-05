@@ -32,7 +32,8 @@ if ($route === 'login' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Ruta por defecto
 if (isset($_SESSION['usuario_id'])) {
-    header('Location: /?route=dashboard');
+    // En lugar de redireccionar, cargar directamente el dashboard
+    require_once __DIR__ . '/views/dashboard.php';
     exit;
 }
 

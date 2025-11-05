@@ -16,7 +16,9 @@ class Producto
         $conn = Conexion::conectar();
         $stmt = $conn->prepare("SELECT * FROM producto WHERE id = ?");
         $stmt->execute([$id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null; // Cerrar conexión PDO
+        return $result;
     }
     public static function obtenerTodos()
     {
@@ -25,7 +27,9 @@ class Producto
                             FROM producto pr
                             LEFT JOIN categoria_producto cp ON pr.categoria_id = cp.id
                             ");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $conn = null; // Cerrar conexión PDO
+        return $result;
     }
 
     public static function guardar($categoria_id, $codigo, $nombre, $descripcion, $precio)
@@ -57,6 +61,35 @@ class Producto
         $conn = Conexion::conectar();
         $stmt = $conn->prepare("DELETE FROM producto WHERE id = ?");
         return $stmt->execute([$id]);
+    }
+
+    public static function contarTotal()
+    {
+        $conn = Conexion::conectar();
+        $stmt = $conn->query("SELECT COUNT(*) as total FROM producto");
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null; // Cerrar conexión PDO
+        return $result['total'];
+    }
+
+    public static function obtenerStockBajo()
+    {
+        $conn = Conexion::conectar();
+        $stmt = $conn->query("SELECT *, 
+                            CASE 
+                                WHEN stock_actual IS NULL THEN 10
+                                ELSE stock_actual 
+                            END as stock_actual,
+                            CASE 
+                                WHEN stock_minimo IS NULL THEN 5
+                                ELSE stock_minimo 
+                            END as stock_minimo
+                            FROM producto 
+                            WHERE (stock_actual IS NULL OR stock_actual <= COALESCE(stock_minimo, 5))
+                            ORDER BY stock_actual ASC");
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $conn = null; // Cerrar conexión PDO
+        return $result;
     }
 }
 

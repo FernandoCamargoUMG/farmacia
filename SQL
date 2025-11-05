@@ -1,657 +1,1176 @@
--- MySQL Workbench Forward Engineering
+CREATE DATABASE  IF NOT EXISTS `farmacia` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */;
+USE `farmacia`;
+-- MariaDB dump 10.19  Distrib 10.4.32-MariaDB, for Win64 (AMD64)
+--
+-- Host: 82.197.82.175    Database: u834187355_ferreteria
+-- ------------------------------------------------------
+-- Server version	11.8.3-MariaDB-log
 
-SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
-SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
--- -----------------------------------------------------
--- Schema mydb
--- -----------------------------------------------------
--- -----------------------------------------------------
--- Schema ferreteria
--- -----------------------------------------------------
+--
+-- Table structure for table `activo_fijo`
+--
 
--- -----------------------------------------------------
--- Schema ferreteria
--- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS ferreteria DEFAULT CHARACTER SET utf8 ;
-USE ferreteria ;
+DROP TABLE IF EXISTS `activo_fijo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `activo_fijo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sucursal_id` int(11) NOT NULL,
+  `tipo_activo_id` int(11) NOT NULL,
+  `codigo` varchar(50) DEFAULT NULL,
+  `nombre` varchar(255) NOT NULL,
+  `descripcion` text DEFAULT NULL,
+  `fecha_adquisicion` date NOT NULL,
+  `costo` decimal(12,2) NOT NULL,
+  `valor_residual` decimal(12,2) DEFAULT 0.00,
+  `estado` enum('Activo','En mantenimiento','Dado de baja','Vendido') NOT NULL DEFAULT 'Activo',
+  `ubicacion` varchar(255) DEFAULT NULL,
+  `responsable` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_activo_sucursal_idx` (`sucursal_id`),
+  KEY `fk_activo_tipo_idx` (`tipo_activo_id`),
+  KEY `fk_responsable_activo_idx` (`responsable`),
+  CONSTRAINT `fk_activo_sucursal` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursal` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_activo_tipo` FOREIGN KEY (`tipo_activo_id`) REFERENCES `tipo_activo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_responsable_activo` FOREIGN KEY (`responsable`) REFERENCES `responsable` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- -----------------------------------------------------
--- Table ferreteria.sucursal
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.sucursal (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  nombre_sucursal VARCHAR(255) NULL DEFAULT NULL,
-  direccion_sucursal VARCHAR(255) NULL DEFAULT NULL,
-  departamento VARCHAR(255) NULL DEFAULT NULL,
-  telefono VARCHAR(50) NULL DEFAULT NULL,
-  porc_iva FLOAT NOT NULL DEFAULT 12,
-  PRIMARY KEY (id))
-ENGINE = InnoDB
-AUTO_INCREMENT = 34
-DEFAULT CHARACTER SET = utf8;
+--
+-- Dumping data for table `activo_fijo`
+--
 
+LOCK TABLES `activo_fijo` WRITE;
+/*!40000 ALTER TABLE `activo_fijo` DISABLE KEYS */;
+/*!40000 ALTER TABLE `activo_fijo` ENABLE KEYS */;
+UNLOCK TABLES;
 
--- -----------------------------------------------------
--- Table ferreteria.tipo_activo
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.tipo_activo (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  nombre VARCHAR(100) NOT NULL,
-  categoria_depreciacion ENUM('Edificios', 'Mobiliario y Equipo', 'Vehiculos', 'Tecnologia') NOT NULL,
-  porcentaje_depreciacion DECIMAL(5,2) NOT NULL,
-  PRIMARY KEY (id))
-ENGINE = InnoDB
-AUTO_INCREMENT = 12
-DEFAULT CHARACTER SET = utf8;
+--
+-- Table structure for table `bodega`
+--
 
+DROP TABLE IF EXISTS `bodega`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `bodega` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sucursal_id` int(11) NOT NULL,
+  `nombre` varchar(255) DEFAULT NULL,
+  `ubicacion` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_sucursal_bodega` (`sucursal_id`),
+  CONSTRAINT `fk_sucursal_bodega_constraint` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursal` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- -----------------------------------------------------
--- Table ferreteria.responsable
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.responsable (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  codigo VARCHAR(50) NULL DEFAULT NULL,
-  nombre VARCHAR(50) NULL DEFAULT NULL,
-  apellido VARCHAR(50) NULL DEFAULT NULL,
-  PRIMARY KEY (id))
-ENGINE = InnoDB
-AUTO_INCREMENT = 2
-DEFAULT CHARACTER SET = utf8;
+--
+-- Dumping data for table `bodega`
+--
 
+LOCK TABLES `bodega` WRITE;
+/*!40000 ALTER TABLE `bodega` DISABLE KEYS */;
+INSERT INTO `bodega` VALUES (10,1,'ALMACEN 2','SANTA LUCIA'),(11,1,'BODEGA CENTRAL','SANTA LUCIA');
+/*!40000 ALTER TABLE `bodega` ENABLE KEYS */;
+UNLOCK TABLES;
 
--- -----------------------------------------------------
--- Table ferreteria.activo_fijo
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.activo_fijo (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  sucursal_id INT(11) NOT NULL,
-  tipo_activo_id INT(11) NOT NULL,
-  codigo VARCHAR(50) NULL DEFAULT NULL,
-  nombre VARCHAR(255) NOT NULL,
-  descripcion TEXT NULL DEFAULT NULL,
-  fecha_adquisicion DATE NOT NULL,
-  costo DECIMAL(12,2) NOT NULL,
-  valor_residual DECIMAL(12,2) NULL DEFAULT 0.00,
-  estado ENUM('Activo', 'En mantenimiento', 'Dado de baja', 'Vendido') NOT NULL DEFAULT 'Activo',
-  ubicacion VARCHAR(255) NULL DEFAULT NULL,
-  responsable INT(11) NULL DEFAULT NULL,
-  PRIMARY KEY (id),
-  INDEX fk_activo_sucursal_idx (sucursal_id ASC) ,
-  INDEX fk_activo_tipo_idx (tipo_activo_id ASC) ,
-  INDEX fk_responsable_activo_idx (responsable ASC) ,
-  CONSTRAINT fk_activo_sucursal
-    FOREIGN KEY (sucursal_id)
-    REFERENCES ferreteria.sucursal (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT fk_activo_tipo
-    FOREIGN KEY (tipo_activo_id)
-    REFERENCES ferreteria.tipo_activo (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT fk_responsable_activo
-    FOREIGN KEY (responsable)
-    REFERENCES ferreteria.responsable (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-AUTO_INCREMENT = 26
-DEFAULT CHARACTER SET = utf8;
+--
+-- Table structure for table `categoria`
+--
 
+DROP TABLE IF EXISTS `categoria`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `categoria` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `descripcion` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- -----------------------------------------------------
--- Table ferreteria.bodega
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.bodega (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  sucursal_id INT(11) NOT NULL,
-  nombre VARCHAR(255) NULL DEFAULT NULL,
-  ubicacion VARCHAR(100) NULL DEFAULT NULL,
-  PRIMARY KEY (id),
-  INDEX fk_sucursal_bodega (sucursal_id ASC) ,
-  CONSTRAINT fk_sucursal_bodega_constraint
-    FOREIGN KEY (sucursal_id)
-    REFERENCES ferreteria.sucursal (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-AUTO_INCREMENT = 10
-DEFAULT CHARACTER SET = utf8;
+--
+-- Dumping data for table `categoria`
+--
 
+LOCK TABLES `categoria` WRITE;
+/*!40000 ALTER TABLE `categoria` DISABLE KEYS */;
+INSERT INTO `categoria` VALUES (7,'LOCALES'),(12,'IMPORTACION');
+/*!40000 ALTER TABLE `categoria` ENABLE KEYS */;
+UNLOCK TABLES;
 
--- -----------------------------------------------------
--- Table ferreteria.categoria
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.categoria (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  descripcion VARCHAR(50) NULL DEFAULT NULL,
-  PRIMARY KEY (id))
-ENGINE = InnoDB
-AUTO_INCREMENT = 7
-DEFAULT CHARACTER SET = utf8;
+--
+-- Table structure for table `categoria_producto`
+--
 
+DROP TABLE IF EXISTS `categoria_producto`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `categoria_producto` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `descripcion` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- -----------------------------------------------------
--- Table ferreteria.categoria_producto
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.categoria_producto (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  descripcion VARCHAR(50) NULL DEFAULT NULL,
-  PRIMARY KEY (id))
-ENGINE = InnoDB
-AUTO_INCREMENT = 12
-DEFAULT CHARACTER SET = utf8;
+--
+-- Dumping data for table `categoria_producto`
+--
 
+LOCK TABLES `categoria_producto` WRITE;
+/*!40000 ALTER TABLE `categoria_producto` DISABLE KEYS */;
+INSERT INTO `categoria_producto` VALUES (12,'MECANICO'),(15,'HIDRAULICO'),(16,'CHASIS'),(17,'ELECTRICO');
+/*!40000 ALTER TABLE `categoria_producto` ENABLE KEYS */;
+UNLOCK TABLES;
 
--- -----------------------------------------------------
--- Table ferreteria.clientes
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.clientes (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  sucursal_id INT(11) NOT NULL,
-  nombre VARCHAR(50) NULL DEFAULT NULL,
-  apellido VARCHAR(50) NULL DEFAULT NULL,
-  dpi VARCHAR(13) NULL DEFAULT NULL,
-  email VARCHAR(100) NULL DEFAULT NULL,
-  direccion VARCHAR(255) NULL DEFAULT NULL,
-  telefono VARCHAR(50) NULL DEFAULT NULL,
-  nit VARCHAR(100) NULL DEFAULT NULL,
-  PRIMARY KEY (id),
-  INDEX index_sucursal_clientes (sucursal_id ASC) ,
-  CONSTRAINT fk_sucursal_clientes
-    FOREIGN KEY (sucursal_id)
-    REFERENCES ferreteria.sucursal (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-AUTO_INCREMENT = 17
-DEFAULT CHARACTER SET = utf8;
+--
+-- Table structure for table `clientes`
+--
 
+DROP TABLE IF EXISTS `clientes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `clientes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sucursal_id` int(11) NOT NULL,
+  `nombre` varchar(50) DEFAULT NULL,
+  `apellido` varchar(50) DEFAULT NULL,
+  `dpi` varchar(13) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `direccion` varchar(255) DEFAULT NULL,
+  `telefono` varchar(50) DEFAULT NULL,
+  `nit` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_sucursal_clientes` (`sucursal_id`),
+  CONSTRAINT `fk_sucursal_clientes` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursal` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- -----------------------------------------------------
--- Table ferreteria.depreciacion_activo
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.depreciacion_activo (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  activo_id INT(11) NOT NULL,
-  fecha_calculo DATE NOT NULL,
-  monto_depreciado DECIMAL(12,2) NOT NULL,
-  valor_actual DECIMAL(12,2) NOT NULL,
-  periodo_mes INT(11) NOT NULL,
-  periodo_anio INT(11) NOT NULL,
-  PRIMARY KEY (id),
-  INDEX fk_depreciacion_activo_idx (activo_id ASC) ,
-  CONSTRAINT fk_depreciacion_activo
-    FOREIGN KEY (activo_id)
-    REFERENCES ferreteria.activo_fijo (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-AUTO_INCREMENT = 88
-DEFAULT CHARACTER SET = utf8;
+--
+-- Dumping data for table `clientes`
+--
 
+LOCK TABLES `clientes` WRITE;
+/*!40000 ALTER TABLE `clientes` DISABLE KEYS */;
+INSERT INTO `clientes` VALUES (17,1,'JUAN','SOL','2546321118546','JUAN@GMAIL.COM','SA','45813245','25468285'),(18,1,'JUANA','SANCHEZ','2546987770501','JUANA@GMAIL.COM','SANTA LUCIA','85467821','21658792'),(19,1,'KEVIN','GARCIA','8579456660502','KEVIN@GMAIL.COM','santa lucia','20214585','75462');
+/*!40000 ALTER TABLE `clientes` ENABLE KEYS */;
+UNLOCK TABLES;
 
--- -----------------------------------------------------
--- Table ferreteria.forma_pago
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.forma_pago (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  descripcion VARCHAR(45) NULL DEFAULT NULL,
-  PRIMARY KEY (id))
-ENGINE = InnoDB
-AUTO_INCREMENT = 8
-DEFAULT CHARACTER SET = utf8;
+--
+-- Table structure for table `depreciacion_activo`
+--
 
+DROP TABLE IF EXISTS `depreciacion_activo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `depreciacion_activo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `activo_id` int(11) NOT NULL,
+  `fecha_calculo` date NOT NULL,
+  `monto_depreciado` decimal(12,2) NOT NULL,
+  `valor_actual` decimal(12,2) NOT NULL,
+  `periodo_mes` int(11) NOT NULL,
+  `periodo_anio` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_depreciacion_activo_idx` (`activo_id`),
+  CONSTRAINT `fk_depreciacion_activo` FOREIGN KEY (`activo_id`) REFERENCES `activo_fijo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=88 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- -----------------------------------------------------
--- Table ferreteria.egreso_cab
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.egreso_cab (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  sucursal_id INT(11) NOT NULL,
-  cliente_id INT(11) NOT NULL,
-  forma_pago INT(11) NULL DEFAULT NULL COMMENT 'Efectivo\\nCheque\\nDeposito\\nTarjeta de Crédito\\nTarjeta de Débito\\nTransferencia Bancaria\\n',
-  fecha DATETIME NULL DEFAULT NULL,
-  numero VARCHAR(50) NULL DEFAULT NULL,
-  gravada DECIMAL(12,2) NULL DEFAULT 0.00,
-  subtotal DECIMAL(12,2) NULL DEFAULT 0.00,
-  total DECIMAL(12,2) NULL DEFAULT 0.00,
-  iva DECIMAL(12,2) NULL DEFAULT 0.00,
-  sta TINYINT(4) NOT NULL DEFAULT 0 COMMENT '0=borrador/1=emitido',
-  observaciones VARCHAR(255) NULL DEFAULT NULL,
-  opcionpago TINYINT(4) NULL DEFAULT 0 COMMENT 'credito//contado',
-  PRIMARY KEY (id),
-  INDEX index_sucursal_egreso (sucursal_id ASC) ,
-  INDEX index_cliente_egreso (cliente_id ASC) ,
-  INDEX fk_forma_pago_egreso_idx (forma_pago ASC) ,
-  CONSTRAINT fk_cliente_egreso
-    FOREIGN KEY (cliente_id)
-    REFERENCES ferreteria.clientes (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT fk_forma_pago_egreso
-    FOREIGN KEY (forma_pago)
-    REFERENCES ferreteria.forma_pago (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT fk_sucursal_egreso
-    FOREIGN KEY (sucursal_id)
-    REFERENCES ferreteria.sucursal (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-AUTO_INCREMENT = 24
-DEFAULT CHARACTER SET = utf8;
+--
+-- Dumping data for table `depreciacion_activo`
+--
 
+LOCK TABLES `depreciacion_activo` WRITE;
+/*!40000 ALTER TABLE `depreciacion_activo` DISABLE KEYS */;
+/*!40000 ALTER TABLE `depreciacion_activo` ENABLE KEYS */;
+UNLOCK TABLES;
 
--- -----------------------------------------------------
--- Table ferreteria.producto
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.producto (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  categoria_id INT(11) NOT NULL,
-  codigo VARCHAR(50) NULL DEFAULT NULL,
-  nombre VARCHAR(255) NULL DEFAULT NULL,
-  descripcion VARCHAR(255) NULL DEFAULT NULL,
-  precio DECIMAL(12,2) NULL DEFAULT NULL,
-  PRIMARY KEY (id),
-  INDEX fk_categoria_producto_idx (categoria_id ASC) ,
-  CONSTRAINT fk_categoria_producto
-    FOREIGN KEY (categoria_id)
-    REFERENCES ferreteria.categoria_producto (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-AUTO_INCREMENT = 21
-DEFAULT CHARACTER SET = utf8;
+--
+-- Table structure for table `egreso_cab`
+--
 
+DROP TABLE IF EXISTS `egreso_cab`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `egreso_cab` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sucursal_id` int(11) NOT NULL,
+  `cliente_id` int(11) NOT NULL,
+  `forma_pago` int(11) DEFAULT NULL COMMENT 'Efectivo\\nCheque\\nDeposito\\nTarjeta de Crédito\\nTarjeta de Débito\\nTransferencia Bancaria\\n',
+  `fecha` datetime DEFAULT NULL,
+  `numero` varchar(50) DEFAULT NULL,
+  `gravada` decimal(12,2) DEFAULT 0.00,
+  `subtotal` decimal(12,2) DEFAULT 0.00,
+  `total` decimal(12,2) DEFAULT 0.00,
+  `iva` decimal(12,2) DEFAULT 0.00,
+  `sta` tinyint(4) NOT NULL DEFAULT 0 COMMENT '0=borrador/1=emitido',
+  `observaciones` varchar(255) DEFAULT NULL,
+  `opcionpago` tinyint(4) DEFAULT 0 COMMENT 'credito//contado',
+  PRIMARY KEY (`id`),
+  KEY `index_sucursal_egreso` (`sucursal_id`),
+  KEY `index_cliente_egreso` (`cliente_id`),
+  KEY `fk_forma_pago_egreso_idx` (`forma_pago`),
+  CONSTRAINT `fk_cliente_egreso` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_forma_pago_egreso` FOREIGN KEY (`forma_pago`) REFERENCES `forma_pago` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sucursal_egreso` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursal` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- -----------------------------------------------------
--- Table ferreteria.egreso_det
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.egreso_det (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  sucursal_id INT(11) NOT NULL,
-  egreso_cab_id INT(11) NOT NULL,
-  producto_id INT(11) NOT NULL,
-  bodega_id INT(11) NOT NULL,
-  cantidad INT(11) NULL DEFAULT 0,
-  precio DECIMAL(12,2) NULL DEFAULT 0.00,
-  descuento DECIMAL(12,2) NULL DEFAULT 0.00,
-  PRIMARY KEY (id),
-  INDEX fk_sucursal_det (sucursal_id ASC) ,
-  INDEX fk_producto_det (producto_id ASC) ,
-  INDEX fk_egreso_cab_det (egreso_cab_id ASC) ,
-  INDEX fk_bodega_det (bodega_id ASC) ,
-  CONSTRAINT fk_bodega_egreso_det
-    FOREIGN KEY (bodega_id)
-    REFERENCES ferreteria.bodega (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT fk_egreso_cab_egreso_det
-    FOREIGN KEY (egreso_cab_id)
-    REFERENCES ferreteria.egreso_cab (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT fk_producto_egreso_det
-    FOREIGN KEY (producto_id)
-    REFERENCES ferreteria.producto (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT fk_sucursal_egreso_det
-    FOREIGN KEY (sucursal_id)
-    REFERENCES ferreteria.sucursal (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-AUTO_INCREMENT = 44
-DEFAULT CHARACTER SET = utf8;
+--
+-- Dumping data for table `egreso_cab`
+--
 
+LOCK TABLES `egreso_cab` WRITE;
+/*!40000 ALTER TABLE `egreso_cab` DISABLE KEYS */;
+INSERT INTO `egreso_cab` VALUES (39,1,17,1,'2025-10-17 00:00:00','002',75.89,75.89,85.00,9.11,0,'',0),(40,1,17,1,'2025-10-29 00:00:00','1278',50.00,50.00,56.00,6.00,1,'PAGO CONTRA ENTREGA',0);
+/*!40000 ALTER TABLE `egreso_cab` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `trg_insert_movimiento_caja_venta`
+AFTER INSERT ON `egreso_cab`
+FOR EACH ROW
+BEGIN
+  IF NEW.forma_pago = 1 AND NEW.sta = 1 THEN
+    INSERT INTO movimiento_caja (
+      sucursal_id, tipo, descripcion, monto,
+      metodo_pago, egreso_id, observaciones, fecha
+    )
+    VALUES (
+      NEW.sucursal_id, 'ingreso',
+      CONCAT('Venta al contado #', NEW.numero),
+      NEW.total, NEW.opcionpago,
+      NEW.id, NEW.observaciones, NEW.fecha
+    );
+  END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `trg_update_movimiento_caja_venta`
+AFTER UPDATE ON `egreso_cab`
+FOR EACH ROW
+BEGIN
+  IF OLD.forma_pago = 1 AND OLD.sta = 1 AND (NEW.forma_pago != 1 OR NEW.sta != 1) THEN
+    DELETE FROM movimiento_caja
+    WHERE egreso_id = OLD.id AND tipo = 'ingreso';
+  END IF;
 
--- -----------------------------------------------------
--- Table ferreteria.proveedor
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.proveedor (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  categoria_id INT(11) NOT NULL,
-  codigo VARCHAR(45) NULL DEFAULT NULL,
-  nombre VARCHAR(45) NULL DEFAULT NULL,
-  nit VARCHAR(45) NULL DEFAULT NULL,
-  direccion VARCHAR(45) NULL DEFAULT NULL,
-  telefono VARCHAR(45) NULL DEFAULT NULL,
-  email VARCHAR(45) NULL DEFAULT NULL,
-  PRIMARY KEY (id),
-  INDEX fk_categoria_idx (categoria_id ASC) ,
-  CONSTRAINT fk_categoria
-    FOREIGN KEY (categoria_id)
-    REFERENCES ferreteria.categoria (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-AUTO_INCREMENT = 6
-DEFAULT CHARACTER SET = utf8;
+  IF NEW.forma_pago = 1 AND NEW.sta = 1 THEN
+    INSERT INTO movimiento_caja (
+      sucursal_id, tipo, descripcion, monto,
+      metodo_pago, egreso_id, observaciones, fecha
+    )
+    VALUES (
+      NEW.sucursal_id, 'ingreso',
+      CONCAT('Venta al contado #', NEW.numero),
+      NEW.total, NEW.opcionpago,
+      NEW.id, NEW.observaciones, NEW.fecha
+    )
+    ON DUPLICATE KEY UPDATE
+      monto = VALUES(monto),
+      descripcion = VALUES(descripcion),
+      metodo_pago = VALUES(metodo_pago),
+      observaciones = VALUES(observaciones),
+      fecha = VALUES(fecha);
+  END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `trg_delete_movimiento_caja_venta`
+AFTER DELETE ON `egreso_cab`
+FOR EACH ROW
+BEGIN
+  IF OLD.forma_pago = 1 AND OLD.sta = 1 THEN
+    DELETE FROM movimiento_caja
+    WHERE egreso_id = OLD.id AND tipo = 'ingreso';
+  END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
+--
+-- Table structure for table `egreso_det`
+--
 
--- -----------------------------------------------------
--- Table ferreteria.ingreso_cab
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.ingreso_cab (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  sucursal_id INT(11) NOT NULL,
-  proveedor_id INT(11) NOT NULL,
-  fecha DATETIME NULL DEFAULT NULL,
-  numero VARCHAR(50) NULL DEFAULT NULL,
-  subtotal DECIMAL(12,2) NULL DEFAULT 0.00,
-  gravada DECIMAL(12,2) NULL DEFAULT 0.00,
-  total DECIMAL(12,2) NULL DEFAULT 0.00,
-  iva DECIMAL(12,2) NULL DEFAULT 0.00,
-  sta TINYINT(4) NOT NULL DEFAULT 0,
-  observaciones VARCHAR(255) NULL DEFAULT NULL,
-  PRIMARY KEY (id),
-  INDEX fk_proveedor_idx (proveedor_id ASC) ,
-  INDEX fk_sucursal_idx (sucursal_id ASC) ,
-  CONSTRAINT fk_proveedor
-    FOREIGN KEY (proveedor_id)
-    REFERENCES ferreteria.proveedor (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT fk_sucursal_ingreso_cab
-    FOREIGN KEY (sucursal_id)
-    REFERENCES ferreteria.sucursal (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-AUTO_INCREMENT = 19
-DEFAULT CHARACTER SET = utf8;
+DROP TABLE IF EXISTS `egreso_det`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `egreso_det` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sucursal_id` int(11) NOT NULL,
+  `egreso_cab_id` int(11) NOT NULL,
+  `producto_id` int(11) NOT NULL,
+  `bodega_id` int(11) NOT NULL,
+  `cantidad` int(11) DEFAULT 0,
+  `precio` decimal(12,2) DEFAULT 0.00,
+  `descuento` decimal(12,2) DEFAULT 0.00,
+  PRIMARY KEY (`id`),
+  KEY `fk_sucursal_det` (`sucursal_id`),
+  KEY `fk_producto_det` (`producto_id`),
+  KEY `fk_egreso_cab_det` (`egreso_cab_id`),
+  KEY `fk_bodega_det` (`bodega_id`),
+  CONSTRAINT `fk_bodega_egreso_det` FOREIGN KEY (`bodega_id`) REFERENCES `bodega` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_egreso_cab_egreso_det` FOREIGN KEY (`egreso_cab_id`) REFERENCES `egreso_cab` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_producto_egreso_det` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sucursal_egreso_det` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursal` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `egreso_det`
+--
 
--- -----------------------------------------------------
--- Table ferreteria.ingreso_det
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.ingreso_det (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  sucursal_id INT(11) NOT NULL,
-  ingreso_cab_id INT(11) NOT NULL,
-  bodega_id INT(11) NULL DEFAULT NULL,
-  producto_id INT(11) NULL DEFAULT NULL,
-  cantidad INT(11) NULL DEFAULT NULL,
-  precio DECIMAL(12,2) NULL DEFAULT NULL,
-  PRIMARY KEY (id),
-  INDEX fk_sucursal_ingreso_det_idx (sucursal_id ASC) ,
-  INDEX fk_ingreso_cab_idx (ingreso_cab_id ASC) ,
-  INDEX fk_ingreso_producto_idx (producto_id ASC) ,
-  INDEX fk_bodega_ingreso_idx (bodega_id ASC) ,
-  CONSTRAINT fk_bodega_ingreso
-    FOREIGN KEY (bodega_id)
-    REFERENCES ferreteria.bodega (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT fk_ingreso_cab
-    FOREIGN KEY (ingreso_cab_id)
-    REFERENCES ferreteria.ingreso_cab (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT fk_ingreso_producto
-    FOREIGN KEY (producto_id)
-    REFERENCES ferreteria.producto (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT fk_sucursal_ingreso_det
-    FOREIGN KEY (sucursal_id)
-    REFERENCES ferreteria.sucursal (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-AUTO_INCREMENT = 100
-DEFAULT CHARACTER SET = utf8;
+LOCK TABLES `egreso_det` WRITE;
+/*!40000 ALTER TABLE `egreso_det` DISABLE KEYS */;
+INSERT INTO `egreso_det` VALUES (46,1,39,22,10,1,85.00,0.00),(47,1,40,21,10,1,56.00,0.00);
+/*!40000 ALTER TABLE `egreso_det` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `egreso_det_AFTER_INSERT`
+AFTER INSERT ON `egreso_det`
+FOR EACH ROW
+BEGIN
+  DECLARE v_sta TINYINT;
 
+  SELECT sta INTO v_sta
+  FROM egreso_cab
+  WHERE id = NEW.egreso_cab_id;
 
--- -----------------------------------------------------
--- Table ferreteria.inventario
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.inventario (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  sucursal_id INT(11) NOT NULL,
-  bodega_id INT(11) NOT NULL,
-  producto_id INT(11) NOT NULL,
-  cantidad INT(11) NOT NULL DEFAULT 0,
-  fecha DATETIME NOT NULL,
-  movimiento ENUM('ingreso', 'egreso', 'traslado') NOT NULL,
-  cab_id INT(11) NOT NULL,
-  det_id INT(11) NOT NULL,
-  PRIMARY KEY (id),
-  INDEX index_producto (producto_id ASC) ,
-  INDEX index_sucursal (sucursal_id ASC) ,
-  INDEX fk_inventario_bodega_idx (bodega_id ASC) ,
-  INDEX fk_producto_bodega (sucursal_id ASC, bodega_id ASC, producto_id ASC) ,
-  CONSTRAINT fk_inventario_bodega
-    FOREIGN KEY (bodega_id)
-    REFERENCES ferreteria.bodega (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT fk_producto_inventario
-    FOREIGN KEY (producto_id)
-    REFERENCES ferreteria.producto (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT fk_sucursal_inventario
-    FOREIGN KEY (sucursal_id)
-    REFERENCES ferreteria.sucursal (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-AUTO_INCREMENT = 64
-DEFAULT CHARACTER SET = utf8;
+  IF v_sta = 1 THEN
+    INSERT INTO inventario (
+      sucursal_id, bodega_id, producto_id,
+      cantidad, fecha, movimiento, cab_id, det_id
+    )
+    VALUES (
+      NEW.sucursal_id, NEW.bodega_id, NEW.producto_id,
+      NEW.cantidad, NOW(), 'egreso', NEW.egreso_cab_id, NEW.id
+    );
+  END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `egreso_det_AFTER_UPDATE`
+AFTER UPDATE ON `egreso_det`
+FOR EACH ROW
+BEGIN
+  DECLARE v_sta TINYINT;
 
+  SELECT sta INTO v_sta
+  FROM egreso_cab
+  WHERE id = NEW.egreso_cab_id;
 
--- -----------------------------------------------------
--- Table ferreteria.mantenimiento_activo
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.mantenimiento_activo (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  activo_id INT(11) NOT NULL,
-  fecha DATE NOT NULL,
-  descripcion TEXT NOT NULL,
-  costo DECIMAL(12,2) NOT NULL,
-  proveedor VARCHAR(100) NULL DEFAULT NULL,
-  responsable VARCHAR(100) NULL DEFAULT NULL,
-  tipo ENUM('Preventivo', 'Correctivo', 'Predictivo') NOT NULL,
-  PRIMARY KEY (id),
-  INDEX fk_mantenimiento_activo_idx (activo_id ASC) ,
-  CONSTRAINT fk_mantenimiento_activo
-    FOREIGN KEY (activo_id)
-    REFERENCES ferreteria.activo_fijo (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+  IF v_sta = 1 AND (
+    OLD.cantidad != NEW.cantidad
+    OR OLD.producto_id != NEW.producto_id
+    OR OLD.bodega_id != NEW.bodega_id
+  ) THEN
 
+    DELETE FROM inventario
+    WHERE movimiento = 'egreso'
+      AND det_id = OLD.id
+      AND cab_id = OLD.egreso_cab_id;
 
--- -----------------------------------------------------
--- Table ferreteria.planilla
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.planilla (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  sucursal_id INT(11) NULL DEFAULT NULL,
-  fecha DATETIME NULL DEFAULT NULL,
-  descripcion VARCHAR(255) NULL DEFAULT NULL,
-  monto DECIMAL(12,2) NULL DEFAULT NULL,
-  metodopago TINYINT(4) NULL DEFAULT NULL,
-  observaciones VARCHAR(255) NULL DEFAULT NULL,
-  PRIMARY KEY (id),
-  INDEX fk_sucursal_planilla_idx (sucursal_id ASC) ,
-  CONSTRAINT fk_sucursal_planilla
-    FOREIGN KEY (sucursal_id)
-    REFERENCES ferreteria.sucursal (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-AUTO_INCREMENT = 7
-DEFAULT CHARACTER SET = utf8;
+    INSERT INTO inventario (
+      sucursal_id, bodega_id, producto_id,
+      cantidad, fecha, movimiento, cab_id, det_id
+    )
+    VALUES (
+      NEW.sucursal_id, NEW.bodega_id, NEW.producto_id,
+      NEW.cantidad, NOW(), 'egreso', NEW.egreso_cab_id, NEW.id
+    );
+  END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `egreso_det_AFTER_DELETE`
+AFTER DELETE ON `egreso_det`
+FOR EACH ROW
+BEGIN
+  DECLARE v_sta TINYINT;
 
+  SELECT sta INTO v_sta
+  FROM egreso_cab
+  WHERE id = OLD.egreso_cab_id;
 
--- -----------------------------------------------------
--- Table ferreteria.movimiento_caja
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.movimiento_caja (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  sucursal_id INT(11) NULL DEFAULT NULL,
-  fecha DATETIME NULL DEFAULT NULL,
-  tipo ENUM('ingreso', 'egreso') NULL DEFAULT NULL,
-  descripcion VARCHAR(255) NULL DEFAULT NULL,
-  monto DECIMAL(12,2) NULL DEFAULT NULL,
-  metodo_pago TINYINT(4) NULL DEFAULT NULL,
-  egreso_id INT(11) NULL DEFAULT NULL,
-  planilla_id INT(11) NULL DEFAULT NULL,
-  observaciones VARCHAR(255) NULL DEFAULT NULL,
-  PRIMARY KEY (id),
-  INDEX fk_sucural_caja_idx (sucursal_id ASC) ,
-  INDEX fk_egreso_caja_idx (egreso_id ASC) ,
-  INDEX fk_planilla_caja_idx (planilla_id ASC) ,
-  CONSTRAINT fk_egreso_caja
-    FOREIGN KEY (egreso_id)
-    REFERENCES ferreteria.egreso_cab (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT fk_planilla_caja
-    FOREIGN KEY (planilla_id)
-    REFERENCES ferreteria.planilla (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT fk_sucural_caja
-    FOREIGN KEY (sucursal_id)
-    REFERENCES ferreteria.sucursal (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-AUTO_INCREMENT = 19
-DEFAULT CHARACTER SET = utf8;
+  IF v_sta = 1 THEN
+    DELETE FROM inventario
+    WHERE movimiento = 'egreso'
+      AND det_id = OLD.id
+      AND cab_id = OLD.egreso_cab_id;
+  END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
+--
+-- Table structure for table `forma_pago`
+--
 
--- -----------------------------------------------------
--- Table ferreteria.rol
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.rol (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  nombre VARCHAR(100) NOT NULL,
-  PRIMARY KEY (id))
-ENGINE = InnoDB
-AUTO_INCREMENT = 4
-DEFAULT CHARACTER SET = utf8;
+DROP TABLE IF EXISTS `forma_pago`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `forma_pago` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `descripcion` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `forma_pago`
+--
 
--- -----------------------------------------------------
--- Table ferreteria.traslado_cab
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.traslado_cab (
-  id INT(11) NOT NULL,
-  sucursal_id INT(11) NOT NULL,
-  fecha DATETIME NULL DEFAULT NULL,
-  numero VARCHAR(50) NULL DEFAULT NULL,
-  sta TINYINT(4) NULL DEFAULT NULL,
-  observaciones VARCHAR(255) NULL DEFAULT NULL,
-  PRIMARY KEY (id),
-  INDEX fk_traslado_cab_sucursal_idx (sucursal_id ASC) ,
-  CONSTRAINT fk_traslado_cab_sucursal
-    FOREIGN KEY (sucursal_id)
-    REFERENCES ferreteria.sucursal (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+LOCK TABLES `forma_pago` WRITE;
+/*!40000 ALTER TABLE `forma_pago` DISABLE KEYS */;
+INSERT INTO `forma_pago` VALUES (1,'Efectivo'),(2,'Cheque'),(3,'Depósito'),(4,'Tarjeta de Crédito'),(5,'Tarjeta de Débito'),(6,'Transferencia Bancaria');
+/*!40000 ALTER TABLE `forma_pago` ENABLE KEYS */;
+UNLOCK TABLES;
 
+--
+-- Table structure for table `ingreso_cab`
+--
 
--- -----------------------------------------------------
--- Table ferreteria.traslado_det
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.traslado_det (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  traslado_cab_id INT(11) NOT NULL,
-  producto_id INT(11) NOT NULL,
-  bodega_id_in INT(11) NOT NULL,
-  bodega_id_out INT(11) NOT NULL,
-  sucursal_id_in INT(11) NOT NULL,
-  sucursal_id_out INT(11) NOT NULL,
-  descrip VARCHAR(255) NULL DEFAULT NULL,
-  observaciones VARCHAR(255) NULL DEFAULT NULL,
-  cantidad INT(11) NULL DEFAULT NULL,
-  PRIMARY KEY (id, traslado_cab_id),
-  INDEX fk_sucursal_traslado_idx (sucursal_id_in ASC) ,
-  INDEX fk_sucursal_traslado_out_idx (sucursal_id_out ASC) ,
-  INDEX fk_producto_traslado_idx (producto_id ASC) ,
-  INDEX fk_bodega_traslado_in_idx (bodega_id_in ASC) ,
-  INDEX fk_bodega_traslado_out_idx (bodega_id_out ASC) ,
-  INDEX fk_traslado_cab_id_idx (traslado_cab_id ASC) ,
-  CONSTRAINT fk_bodega_traslado_in
-    FOREIGN KEY (bodega_id_in)
-    REFERENCES ferreteria.bodega (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT fk_bodega_traslado_out
-    FOREIGN KEY (bodega_id_out)
-    REFERENCES ferreteria.bodega (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT fk_producto_traslado
-    FOREIGN KEY (producto_id)
-    REFERENCES ferreteria.producto (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT fk_sucursal_traslado_in
-    FOREIGN KEY (sucursal_id_in)
-    REFERENCES ferreteria.sucursal (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT fk_sucursal_traslado_out
-    FOREIGN KEY (sucursal_id_out)
-    REFERENCES ferreteria.sucursal (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT fk_traslado_cab_id
-    FOREIGN KEY (traslado_cab_id)
-    REFERENCES ferreteria.traslado_cab (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-AUTO_INCREMENT = 5
-DEFAULT CHARACTER SET = utf8;
+DROP TABLE IF EXISTS `ingreso_cab`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ingreso_cab` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sucursal_id` int(11) NOT NULL,
+  `proveedor_id` int(11) NOT NULL,
+  `fecha` datetime DEFAULT NULL,
+  `numero` varchar(50) DEFAULT NULL,
+  `subtotal` decimal(12,2) DEFAULT 0.00,
+  `gravada` decimal(12,2) DEFAULT 0.00,
+  `total` decimal(12,2) DEFAULT 0.00,
+  `iva` decimal(12,2) DEFAULT 0.00,
+  `sta` tinyint(4) NOT NULL DEFAULT 0,
+  `observaciones` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_proveedor_idx` (`proveedor_id`),
+  KEY `fk_sucursal_idx` (`sucursal_id`),
+  CONSTRAINT `fk_proveedor` FOREIGN KEY (`proveedor_id`) REFERENCES `proveedor` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sucursal_ingreso_cab` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursal` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `ingreso_cab`
+--
 
--- -----------------------------------------------------
--- Table ferreteria.usuario
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS ferreteria.usuario (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  nombre VARCHAR(100) NOT NULL,
-  correo VARCHAR(100) NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  sucursal_id INT(11) NULL DEFAULT NULL,
-  rol_id INT(11) NULL DEFAULT NULL,
-  PRIMARY KEY (id),
-  UNIQUE INDEX correo (correo ASC) ,
-  INDEX sucursal_id (sucursal_id ASC) ,
-  INDEX rol_id (rol_id ASC) ,
-  CONSTRAINT usuario_ibfk_1
-    FOREIGN KEY (sucursal_id)
-    REFERENCES ferreteria.sucursal (id),
-  CONSTRAINT usuario_ibfk_2
-    FOREIGN KEY (rol_id)
-    REFERENCES ferreteria.rol (id))
-ENGINE = InnoDB
-AUTO_INCREMENT = 4
-DEFAULT CHARACTER SET = utf8;
+LOCK TABLES `ingreso_cab` WRITE;
+/*!40000 ALTER TABLE `ingreso_cab` DISABLE KEYS */;
+INSERT INTO `ingreso_cab` VALUES (19,1,6,'2025-09-07 00:00:00','1',50.00,50.00,56.00,6.00,1,''),(20,1,7,'2025-10-08 00:00:00','2',3035.72,3035.72,3400.01,364.29,1,''),(21,1,8,'2025-10-29 00:00:00','1',75.89,75.89,85.00,9.11,1,'');
+/*!40000 ALTER TABLE `ingreso_cab` ENABLE KEYS */;
+UNLOCK TABLES;
 
-USE ferreteria ;
+--
+-- Table structure for table `ingreso_det`
+--
 
--- -----------------------------------------------------
--- procedure calcular_depreciacion
--- -----------------------------------------------------
+DROP TABLE IF EXISTS `ingreso_det`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ingreso_det` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sucursal_id` int(11) NOT NULL,
+  `ingreso_cab_id` int(11) NOT NULL,
+  `bodega_id` int(11) DEFAULT NULL,
+  `producto_id` int(11) DEFAULT NULL,
+  `cantidad` int(11) DEFAULT NULL,
+  `precio` decimal(12,2) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_sucursal_ingreso_det_idx` (`sucursal_id`),
+  KEY `fk_ingreso_cab_idx` (`ingreso_cab_id`),
+  KEY `fk_ingreso_producto_idx` (`producto_id`),
+  KEY `fk_bodega_ingreso_idx` (`bodega_id`),
+  CONSTRAINT `fk_bodega_ingreso` FOREIGN KEY (`bodega_id`) REFERENCES `bodega` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ingreso_cab` FOREIGN KEY (`ingreso_cab_id`) REFERENCES `ingreso_cab` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ingreso_producto` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sucursal_ingreso_det` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursal` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=104 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-DELIMITER $$
-USE ferreteria$$
-CREATE DEFINER=root@localhost PROCEDURE calcular_depreciacion(IN p_activo_id INT)
+--
+-- Dumping data for table `ingreso_det`
+--
+
+LOCK TABLES `ingreso_det` WRITE;
+/*!40000 ALTER TABLE `ingreso_det` DISABLE KEYS */;
+INSERT INTO `ingreso_det` VALUES (100,1,19,10,21,1,56.00),(101,1,20,10,22,20,85.00),(102,1,20,10,23,20,85.00),(103,1,21,10,23,1,85.00);
+/*!40000 ALTER TABLE `ingreso_det` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `ingreso_det_AFTER_INSERT`
+AFTER INSERT ON `ingreso_det`
+FOR EACH ROW
+BEGIN
+  INSERT INTO inventario (
+    sucursal_id, bodega_id, producto_id,
+    cantidad, fecha, movimiento, cab_id, det_id
+  )
+  VALUES (
+    NEW.sucursal_id, NEW.bodega_id, NEW.producto_id,
+    NEW.cantidad, NOW(), 'ingreso', NEW.ingreso_cab_id, NEW.id
+  );
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `ingreso_det_AFTER_UPDATE`
+AFTER UPDATE ON `ingreso_det`
+FOR EACH ROW
+BEGIN
+  IF OLD.cantidad != NEW.cantidad
+    OR OLD.producto_id != NEW.producto_id
+    OR OLD.bodega_id != NEW.bodega_id THEN
+
+    DELETE FROM inventario
+    WHERE movimiento = 'ingreso'
+      AND det_id = OLD.id
+      AND cab_id = OLD.ingreso_cab_id;
+
+    INSERT INTO inventario (
+      sucursal_id, bodega_id, producto_id,
+      cantidad, fecha, movimiento, cab_id, det_id
+    )
+    VALUES (
+      NEW.sucursal_id, NEW.bodega_id, NEW.producto_id,
+      NEW.cantidad, NOW(), 'ingreso', NEW.ingreso_cab_id, NEW.id
+    );
+  END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `ingreso_det_AFTER_DELETE`
+AFTER DELETE ON `ingreso_det`
+FOR EACH ROW
+BEGIN
+  DELETE FROM inventario
+  WHERE movimiento = 'ingreso'
+    AND det_id = OLD.id
+    AND cab_id = OLD.ingreso_cab_id;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
+-- Table structure for table `inventario`
+--
+
+DROP TABLE IF EXISTS `inventario`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `inventario` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sucursal_id` int(11) NOT NULL,
+  `bodega_id` int(11) NOT NULL,
+  `producto_id` int(11) NOT NULL,
+  `cantidad` int(11) NOT NULL DEFAULT 0,
+  `fecha` datetime NOT NULL,
+  `movimiento` enum('ingreso','egreso','traslado') NOT NULL,
+  `cab_id` int(11) NOT NULL,
+  `det_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_producto` (`producto_id`),
+  KEY `index_sucursal` (`sucursal_id`),
+  KEY `fk_inventario_bodega_idx` (`bodega_id`),
+  KEY `fk_producto_bodega` (`sucursal_id`,`bodega_id`,`producto_id`),
+  CONSTRAINT `fk_inventario_bodega` FOREIGN KEY (`bodega_id`) REFERENCES `bodega` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_producto_inventario` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sucursal_inventario` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursal` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `inventario`
+--
+
+LOCK TABLES `inventario` WRITE;
+/*!40000 ALTER TABLE `inventario` DISABLE KEYS */;
+INSERT INTO `inventario` VALUES (64,1,10,21,1,'2025-09-07 13:47:35','ingreso',19,100),(65,1,10,22,20,'2025-10-09 04:39:13','ingreso',20,101),(66,1,10,23,20,'2025-10-09 04:39:14','ingreso',20,102),(67,1,10,21,1,'2025-10-17 10:16:19','egreso',39,45),(68,1,10,21,1,'2025-10-29 18:36:35','egreso',40,47),(69,1,10,23,1,'2025-10-30 02:43:22','ingreso',21,103);
+/*!40000 ALTER TABLE `inventario` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `mantenimiento_activo`
+--
+
+DROP TABLE IF EXISTS `mantenimiento_activo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `mantenimiento_activo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `activo_id` int(11) NOT NULL,
+  `fecha` date NOT NULL,
+  `descripcion` text NOT NULL,
+  `costo` decimal(12,2) NOT NULL,
+  `proveedor` varchar(100) DEFAULT NULL,
+  `responsable` varchar(100) DEFAULT NULL,
+  `tipo` enum('Preventivo','Correctivo','Predictivo') NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_mantenimiento_activo_idx` (`activo_id`),
+  CONSTRAINT `fk_mantenimiento_activo` FOREIGN KEY (`activo_id`) REFERENCES `activo_fijo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `mantenimiento_activo`
+--
+
+LOCK TABLES `mantenimiento_activo` WRITE;
+/*!40000 ALTER TABLE `mantenimiento_activo` DISABLE KEYS */;
+/*!40000 ALTER TABLE `mantenimiento_activo` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `movimiento_caja`
+--
+
+DROP TABLE IF EXISTS `movimiento_caja`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `movimiento_caja` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sucursal_id` int(11) DEFAULT NULL,
+  `fecha` datetime DEFAULT NULL,
+  `tipo` enum('ingreso','egreso') DEFAULT NULL,
+  `descripcion` varchar(255) DEFAULT NULL,
+  `monto` decimal(12,2) DEFAULT NULL,
+  `metodo_pago` tinyint(4) DEFAULT NULL,
+  `egreso_id` int(11) DEFAULT NULL,
+  `planilla_id` int(11) DEFAULT NULL,
+  `observaciones` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_sucural_caja_idx` (`sucursal_id`),
+  KEY `fk_egreso_caja_idx` (`egreso_id`),
+  KEY `fk_planilla_caja_idx` (`planilla_id`),
+  CONSTRAINT `fk_egreso_caja` FOREIGN KEY (`egreso_id`) REFERENCES `egreso_cab` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_planilla_caja` FOREIGN KEY (`planilla_id`) REFERENCES `planilla` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sucural_caja` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursal` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `movimiento_caja`
+--
+
+LOCK TABLES `movimiento_caja` WRITE;
+/*!40000 ALTER TABLE `movimiento_caja` DISABLE KEYS */;
+INSERT INTO `movimiento_caja` VALUES (19,1,'2025-09-07 00:00:00','egreso','SANDRA',3500.00,3,NULL,7,'CAJERA'),(21,1,'2025-10-29 00:00:00','ingreso','Venta al contado #1278',56.00,0,40,NULL,'PAGO CONTRA ENTREGA'),(22,1,'2025-10-29 00:00:00','egreso','JUANA LOPEZ',3500.00,1,NULL,8,'AUXILIAR DE CAJA');
+/*!40000 ALTER TABLE `movimiento_caja` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `planilla`
+--
+
+DROP TABLE IF EXISTS `planilla`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `planilla` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sucursal_id` int(11) DEFAULT NULL,
+  `fecha` datetime DEFAULT NULL,
+  `descripcion` varchar(255) DEFAULT NULL,
+  `monto` decimal(12,2) DEFAULT NULL,
+  `metodopago` tinyint(4) DEFAULT NULL,
+  `observaciones` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_sucursal_planilla_idx` (`sucursal_id`),
+  CONSTRAINT `fk_sucursal_planilla` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursal` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `planilla`
+--
+
+LOCK TABLES `planilla` WRITE;
+/*!40000 ALTER TABLE `planilla` DISABLE KEYS */;
+INSERT INTO `planilla` VALUES (7,1,'2025-09-07 00:00:00','SANDRA',3500.00,3,'CAJERA'),(8,1,'2025-10-29 00:00:00','JUANA LOPEZ',3500.00,1,'AUXILIAR DE CAJA');
+/*!40000 ALTER TABLE `planilla` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `trg_movimiento_caja_planilla`
+AFTER INSERT ON `planilla`
+FOR EACH ROW
+BEGIN
+  INSERT INTO movimiento_caja (
+    sucursal_id, fecha, tipo, descripcion,
+    monto, metodo_pago, planilla_id, observaciones
+  ) VALUES (
+    NEW.sucursal_id, NEW.fecha, 'egreso', NEW.descripcion,
+    NEW.monto, NEW.metodopago, NEW.id, NEW.observaciones
+  );
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `trg_update_movimiento_caja_planilla`
+AFTER UPDATE ON `planilla`
+FOR EACH ROW
+BEGIN
+  INSERT INTO movimiento_caja (
+    sucursal_id, fecha, tipo, descripcion,
+    monto, metodo_pago, planilla_id, observaciones
+  )
+  VALUES (
+    NEW.sucursal_id, NEW.fecha, 'egreso', NEW.descripcion,
+    NEW.monto, NEW.metodopago, NEW.id, NEW.observaciones
+  )
+  ON DUPLICATE KEY UPDATE
+    fecha = VALUES(fecha),
+    descripcion = VALUES(descripcion),
+    monto = VALUES(monto),
+    metodo_pago = VALUES(metodo_pago),
+    observaciones = VALUES(observaciones);
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `trg_delete_movimiento_caja_planilla`
+AFTER DELETE ON `planilla`
+FOR EACH ROW
+BEGIN
+  DELETE FROM movimiento_caja
+  WHERE planilla_id = OLD.id AND tipo = 'egreso';
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
+-- Table structure for table `producto`
+--
+
+DROP TABLE IF EXISTS `producto`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `producto` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `categoria_id` int(11) NOT NULL,
+  `codigo` varchar(50) DEFAULT NULL,
+  `nombre` varchar(255) DEFAULT NULL,
+  `descripcion` varchar(255) DEFAULT NULL,
+  `precio` decimal(12,2) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_categoria_producto_idx` (`categoria_id`),
+  CONSTRAINT `fk_categoria_producto` FOREIGN KEY (`categoria_id`) REFERENCES `categoria_producto` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `producto`
+--
+
+LOCK TABLES `producto` WRITE;
+/*!40000 ALTER TABLE `producto` DISABLE KEYS */;
+INSERT INTO `producto` VALUES (21,16,'3','MARTILLO CABEZA PLANA','MAR',56.00),(22,12,'2','DESTORNILLADOR','DESTORNILLADOR PLANO',85.00),(23,12,'1','DESTORNILLADOR','DESTORNILLADOR DE CRUZ',85.00);
+/*!40000 ALTER TABLE `producto` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `proveedor`
+--
+
+DROP TABLE IF EXISTS `proveedor`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `proveedor` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `categoria_id` int(11) NOT NULL,
+  `codigo` varchar(45) DEFAULT NULL,
+  `nombre` varchar(45) DEFAULT NULL,
+  `nit` varchar(45) DEFAULT NULL,
+  `direccion` varchar(45) DEFAULT NULL,
+  `telefono` varchar(45) DEFAULT NULL,
+  `email` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_categoria_idx` (`categoria_id`),
+  CONSTRAINT `fk_categoria` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `proveedor`
+--
+
+LOCK TABLES `proveedor` WRITE;
+/*!40000 ALTER TABLE `proveedor` DISABLE KEYS */;
+INSERT INTO `proveedor` VALUES (6,12,'3','ELECTROMAN','578954','SANTA LUCIA','45789632','ELECTROMAN@GMAIL.COM'),(7,7,'2','EL MARTILLO','785462145','SANTA LUCIA','78542334','EL_MARTILLO@GMAIL.COM'),(8,7,'1','EL ESFUERZO','54789658','SANTA LUCIA','54876213','ESFUERZO@GMAIL.COM');
+/*!40000 ALTER TABLE `proveedor` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `responsable`
+--
+
+DROP TABLE IF EXISTS `responsable`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `responsable` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `codigo` varchar(50) DEFAULT NULL,
+  `nombre` varchar(50) DEFAULT NULL,
+  `apellido` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `responsable`
+--
+
+LOCK TABLES `responsable` WRITE;
+/*!40000 ALTER TABLE `responsable` DISABLE KEYS */;
+/*!40000 ALTER TABLE `responsable` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `rol`
+--
+
+DROP TABLE IF EXISTS `rol`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `rol` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `rol`
+--
+
+LOCK TABLES `rol` WRITE;
+/*!40000 ALTER TABLE `rol` DISABLE KEYS */;
+INSERT INTO `rol` VALUES (1,'Administrador'),(2,'Bodeguero'),(3,'Cajero');
+/*!40000 ALTER TABLE `rol` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `sucursal`
+--
+
+DROP TABLE IF EXISTS `sucursal`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sucursal` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre_sucursal` varchar(255) DEFAULT NULL,
+  `direccion_sucursal` varchar(255) DEFAULT NULL,
+  `departamento` varchar(255) DEFAULT NULL,
+  `telefono` varchar(50) DEFAULT NULL,
+  `porc_iva` float NOT NULL DEFAULT 12,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sucursal`
+--
+
+LOCK TABLES `sucursal` WRITE;
+/*!40000 ALTER TABLE `sucursal` DISABLE KEYS */;
+INSERT INTO `sucursal` VALUES (1,'Ferreteria ','Escuintla','Escuintla','1234544',12);
+/*!40000 ALTER TABLE `sucursal` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tipo_activo`
+--
+
+DROP TABLE IF EXISTS `tipo_activo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tipo_activo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  `categoria_depreciacion` enum('Edificios','Mobiliario y Equipo','Vehiculos','Tecnologia') NOT NULL,
+  `porcentaje_depreciacion` decimal(5,2) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tipo_activo`
+--
+
+LOCK TABLES `tipo_activo` WRITE;
+/*!40000 ALTER TABLE `tipo_activo` DISABLE KEYS */;
+/*!40000 ALTER TABLE `tipo_activo` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `traslado_cab`
+--
+
+DROP TABLE IF EXISTS `traslado_cab`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `traslado_cab` (
+  `id` int(11) NOT NULL,
+  `sucursal_id` int(11) NOT NULL,
+  `fecha` datetime DEFAULT NULL,
+  `numero` varchar(50) DEFAULT NULL,
+  `sta` tinyint(4) DEFAULT NULL,
+  `observaciones` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_traslado_cab_sucursal_idx` (`sucursal_id`),
+  CONSTRAINT `fk_traslado_cab_sucursal` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursal` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `traslado_cab`
+--
+
+LOCK TABLES `traslado_cab` WRITE;
+/*!40000 ALTER TABLE `traslado_cab` DISABLE KEYS */;
+/*!40000 ALTER TABLE `traslado_cab` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `traslado_det`
+--
+
+DROP TABLE IF EXISTS `traslado_det`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `traslado_det` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `traslado_cab_id` int(11) NOT NULL,
+  `producto_id` int(11) NOT NULL,
+  `bodega_id_in` int(11) NOT NULL,
+  `bodega_id_out` int(11) NOT NULL,
+  `sucursal_id_in` int(11) NOT NULL,
+  `sucursal_id_out` int(11) NOT NULL,
+  `descrip` varchar(255) DEFAULT NULL,
+  `observaciones` varchar(255) DEFAULT NULL,
+  `cantidad` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`,`traslado_cab_id`),
+  KEY `fk_sucursal_traslado_idx` (`sucursal_id_in`),
+  KEY `fk_sucursal_traslado_out_idx` (`sucursal_id_out`),
+  KEY `fk_producto_traslado_idx` (`producto_id`),
+  KEY `fk_bodega_traslado_in_idx` (`bodega_id_in`),
+  KEY `fk_bodega_traslado_out_idx` (`bodega_id_out`),
+  KEY `fk_traslado_cab_id_idx` (`traslado_cab_id`),
+  CONSTRAINT `fk_bodega_traslado_in` FOREIGN KEY (`bodega_id_in`) REFERENCES `bodega` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_bodega_traslado_out` FOREIGN KEY (`bodega_id_out`) REFERENCES `bodega` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_producto_traslado` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sucursal_traslado_in` FOREIGN KEY (`sucursal_id_in`) REFERENCES `sucursal` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sucursal_traslado_out` FOREIGN KEY (`sucursal_id_out`) REFERENCES `sucursal` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_traslado_cab_id` FOREIGN KEY (`traslado_cab_id`) REFERENCES `traslado_cab` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `traslado_det`
+--
+
+LOCK TABLES `traslado_det` WRITE;
+/*!40000 ALTER TABLE `traslado_det` DISABLE KEYS */;
+/*!40000 ALTER TABLE `traslado_det` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `usuario`
+--
+
+DROP TABLE IF EXISTS `usuario`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `usuario` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  `correo` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `sucursal_id` int(11) DEFAULT NULL,
+  `rol_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `correo` (`correo`),
+  KEY `sucursal_id` (`sucursal_id`),
+  KEY `rol_id` (`rol_id`),
+  CONSTRAINT `usuario_ibfk_1` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursal` (`id`),
+  CONSTRAINT `usuario_ibfk_2` FOREIGN KEY (`rol_id`) REFERENCES `rol` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `usuario`
+--
+
+LOCK TABLES `usuario` WRITE;
+/*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
+INSERT INTO `usuario` VALUES (5,'admin','admin@correo.com','0192023a7bbd73250516f069df18b500',1,1),(9,'Bodeguero 1','bodega1@correo.com','0192023a7bbd73250516f069df18b500',1,2),(12,'Cajero 1','cajero1@correo.com','0192023a7bbd73250516f069df18b500',1,3);
+/*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping events for database 'u834187355_ferreteria'
+--
+
+--
+-- Dumping routines for database 'u834187355_ferreteria'
+--
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `calcular_depreciacion` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `calcular_depreciacion`(IN p_activo_id INT)
 BEGIN
     DECLARE v_costo DECIMAL(12,2);
     DECLARE v_valor_residual DECIMAL(12,2);
@@ -712,17 +1231,23 @@ BEGIN
     ON DUPLICATE KEY UPDATE
         monto_depreciado = VALUES(monto_depreciado),
         valor_actual = VALUES(valor_actual);
-END$$
-
+END ;;
 DELIMITER ;
-
--- -----------------------------------------------------
--- procedure sp_inventario
--- -----------------------------------------------------
-
-DELIMITER $$
-USE ferreteria$$
-CREATE DEFINER=root@localhost PROCEDURE sp_inventario(IN p_sucursal_id INT)
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_inventario` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_inventario`(IN p_sucursal_id INT)
 BEGIN
     SELECT 
         i.id,
@@ -761,355 +1286,20 @@ BEGIN
     LEFT JOIN traslado_cab tc ON i.movimiento = 'traslado' AND i.cab_id = tc.id
     WHERE i.sucursal_id = p_sucursal_id
     ORDER BY i.fecha ASC;
-END$$
-
+END ;;
 DELIMITER ;
-USE ferreteria;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
-DELIMITER $$
-USE ferreteria$$
-CREATE
-DEFINER=root@localhost
-TRIGGER ferreteria.trg_delete_movimiento_caja_venta
-AFTER DELETE ON ferreteria.egreso_cab
-FOR EACH ROW
-BEGIN
-  -- Si la venta eliminada era contado y activa, se borra de movimiento_caja
-  IF OLD.forma_pago = 1 AND OLD.sta = 1 THEN
-    DELETE FROM movimiento_caja
-    WHERE egreso_id = OLD.id AND tipo = 'ingreso';
-  END IF;
-END$$
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-USE ferreteria$$
-CREATE
-DEFINER=root@localhost
-TRIGGER ferreteria.trg_insert_movimiento_caja_venta
-AFTER INSERT ON ferreteria.egreso_cab
-FOR EACH ROW
-BEGIN
-  -- Registrar solo ventas al contado (forma_pago = 1) y que estén activas (sta = 1)
-  IF NEW.forma_pago = 1 AND NEW.sta = 1 THEN
-    INSERT INTO movimiento_caja (
-      sucursal_id,
-      tipo,
-      descripcion,
-      monto,
-      metodo_pago,
-      egreso_id,
-      observaciones,
-      fecha
-    )
-    VALUES (
-      NEW.sucursal_id,
-      'ingreso',
-      CONCAT('Venta al contado #', NEW.numero),
-      NEW.total,
-      NEW.opcionpago, -- Esto debería ser 3 según tus datos (Efectivo)
-      NEW.id,
-      NEW.observaciones,
-      NEW.fecha
-    );
-  END IF;
-END$$
-
-USE ferreteria$$
-CREATE
-DEFINER=root@localhost
-TRIGGER ferreteria.trg_update_movimiento_caja_venta
-AFTER UPDATE ON ferreteria.egreso_cab
-FOR EACH ROW
-BEGIN
-  -- Si era contado y activo (ANTES) y ya no lo es (DESPUÉS), eliminamos el movimiento
-  IF OLD.forma_pago = 1 AND OLD.sta = 1 AND (NEW.forma_pago != 1 OR NEW.sta != 1) THEN
-    DELETE FROM movimiento_caja
-    WHERE egreso_id = OLD.id AND tipo = 'ingreso';
-  END IF;
-
-  -- Si sigue siendo contado y activo, actualizamos el monto u otros datos si cambiaron
-  IF NEW.forma_pago = 1 AND NEW.sta = 1 THEN
-    INSERT INTO movimiento_caja (
-      sucursal_id,
-      tipo,
-      descripcion,
-      monto,
-      metodo_pago,
-      egreso_id,
-      observaciones,
-      fecha
-    )
-    VALUES (
-      NEW.sucursal_id,
-      'ingreso',
-      CONCAT('Venta al contado #', NEW.numero),
-      NEW.total,
-      NEW.opcionpago,
-      NEW.id,
-      NEW.observaciones,
-      NEW.fecha
-    )
-    ON DUPLICATE KEY UPDATE
-      monto = VALUES(monto),
-      descripcion = VALUES(descripcion),
-      metodo_pago = VALUES(metodo_pago),
-      observaciones = VALUES(observaciones),
-      fecha = VALUES(fecha);
-  END IF;
-END$$
-
-USE ferreteria$$
-CREATE
-DEFINER=root@localhost
-TRIGGER ferreteria.egreso_det_AFTER_DELETE
-AFTER DELETE ON ferreteria.egreso_det
-FOR EACH ROW
-BEGIN
-    DECLARE v_sta TINYINT;
-
-    SELECT sta INTO v_sta
-    FROM egreso_cab
-    WHERE id = OLD.egreso_cab_id;
-
-    IF v_sta = 1 THEN
-        DELETE FROM inventario
-        WHERE movimiento = 'egreso'
-        AND det_id = OLD.id
-        AND cab_id = OLD.egreso_cab_id;
-    END IF;
-END$$
-
-USE ferreteria$$
-CREATE
-DEFINER=root@localhost
-TRIGGER ferreteria.egreso_det_AFTER_INSERT
-AFTER INSERT ON ferreteria.egreso_det
-FOR EACH ROW
-BEGIN
-    DECLARE v_sta TINYINT;
-
-    SELECT sta INTO v_sta
-    FROM egreso_cab
-    WHERE id = NEW.egreso_cab_id;
-
-    IF v_sta = 1 THEN
-        INSERT INTO inventario (
-            sucursal_id,
-            bodega_id,
-            producto_id,
-            cantidad,
-            fecha,
-            movimiento,
-            cab_id,
-            det_id
-        )
-        VALUES (
-            NEW.sucursal_id,
-            NEW.bodega_id,
-            NEW.producto_id,
-            NEW.cantidad,
-            NOW(),
-            'egreso',
-            NEW.egreso_cab_id,
-            NEW.id
-        );
-    END IF;
-END$$
-
-USE ferreteria$$
-CREATE
-DEFINER=root@localhost
-TRIGGER ferreteria.egreso_det_AFTER_UPDATE
-AFTER UPDATE ON ferreteria.egreso_det
-FOR EACH ROW
-BEGIN
-    DECLARE v_sta TINYINT;
-
-    SELECT sta INTO v_sta
-    FROM egreso_cab
-    WHERE id = NEW.egreso_cab_id;
-
-    IF v_sta = 1 AND (
-        OLD.cantidad != NEW.cantidad
-        OR OLD.producto_id != NEW.producto_id
-        OR OLD.bodega_id != NEW.bodega_id
-    ) THEN
-
-        DELETE FROM inventario
-        WHERE movimiento = 'egreso'
-        AND det_id = OLD.id
-        AND cab_id = OLD.egreso_cab_id;
-
-        INSERT INTO inventario (
-            sucursal_id,
-            bodega_id,
-            producto_id,
-            cantidad,
-            fecha,
-            movimiento,
-            cab_id,
-            det_id
-        )
-        VALUES (
-            NEW.sucursal_id,
-            NEW.bodega_id,
-            NEW.producto_id,
-            NEW.cantidad,
-            NOW(),
-            'egreso',
-            NEW.egreso_cab_id,
-            NEW.id
-        );
-    END IF;
-END$$
-
-USE ferreteria$$
-CREATE
-DEFINER=root@localhost
-TRIGGER ferreteria.ingreso_det_AFTER_DELETE
-AFTER DELETE ON ferreteria.ingreso_det
-FOR EACH ROW
-BEGIN
-    DELETE FROM inventario
-    WHERE movimiento = 'ingreso'
-    AND det_id = OLD.id
-    AND cab_id = OLD.ingreso_cab_id;
-END$$
-
-USE ferreteria$$
-CREATE
-DEFINER=root@localhost
-TRIGGER ferreteria.ingreso_det_AFTER_INSERT
-AFTER INSERT ON ferreteria.ingreso_det
-FOR EACH ROW
-BEGIN
-    INSERT INTO inventario (
-        sucursal_id,
-        bodega_id,
-        producto_id,
-        cantidad,
-        fecha,
-        movimiento,
-        cab_id,
-        det_id
-    )
-    VALUES (
-        NEW.sucursal_id,
-        NEW.bodega_id,
-        NEW.producto_id,
-        NEW.cantidad,
-        NOW(),
-        'ingreso',
-        NEW.ingreso_cab_id,
-        NEW.id
-    );
-END$$
-
-USE ferreteria$$
-CREATE
-DEFINER=root@localhost
-TRIGGER ferreteria.ingreso_det_AFTER_UPDATE
-AFTER UPDATE ON ferreteria.ingreso_det
-FOR EACH ROW
-BEGIN
-    -- Verifica si cambió algo relevante
-    IF OLD.cantidad != NEW.cantidad
-        OR OLD.producto_id != NEW.producto_id
-        OR OLD.bodega_id != NEW.bodega_id THEN
-
-        -- Eliminar el movimiento anterior
-        DELETE FROM inventario
-        WHERE movimiento = 'ingreso'
-        AND det_id = OLD.id
-        AND cab_id = OLD.ingreso_cab_id;
-
-        -- Insertar el nuevo movimiento
-        INSERT INTO inventario (
-            sucursal_id,
-            bodega_id,
-            producto_id,
-            cantidad,
-            fecha,
-            movimiento,
-            cab_id,
-            det_id
-        )
-        VALUES (
-            NEW.sucursal_id,
-            NEW.bodega_id,
-            NEW.producto_id,
-            NEW.cantidad,
-            NOW(),
-            'ingreso',
-            NEW.ingreso_cab_id,
-            NEW.id
-        );
-    END IF;
-END$$
-
-USE ferreteria$$
-CREATE
-DEFINER=root@localhost
-TRIGGER ferreteria.trg_delete_movimiento_caja_planilla
-AFTER DELETE ON ferreteria.planilla
-FOR EACH ROW
-BEGIN
-  DELETE FROM movimiento_caja
-  WHERE planilla_id = OLD.id AND tipo = 'egreso';
-END$$
-
-USE ferreteria$$
-CREATE
-DEFINER=root@localhost
-TRIGGER ferreteria.trg_movimiento_caja_planilla
-AFTER INSERT ON ferreteria.planilla
-FOR EACH ROW
-BEGIN
-  INSERT INTO movimiento_caja (
-    sucursal_id, fecha, tipo, descripcion,
-    monto, metodo_pago, planilla_id, observaciones
-  ) VALUES (
-    NEW.sucursal_id,
-    NEW.fecha,
-    'egreso',
-    NEW.descripcion,
-    NEW.monto,
-    NEW.metodopago,
-    NEW.id,
-    NEW.observaciones
-  );
-END$$
-
-USE ferreteria$$
-CREATE
-DEFINER=root@localhost
-TRIGGER ferreteria.trg_update_movimiento_caja_planilla
-AFTER UPDATE ON ferreteria.planilla
-FOR EACH ROW
-BEGIN
-  INSERT INTO movimiento_caja (
-    sucursal_id, fecha, tipo, descripcion,
-    monto, metodo_pago, planilla_id, observaciones
-  ) VALUES (
-    NEW.sucursal_id,
-    NEW.fecha,
-    'egreso',
-    NEW.descripcion,
-    NEW.monto,
-    NEW.metodopago,
-    NEW.id,
-    NEW.observaciones
-  )
-  ON DUPLICATE KEY UPDATE
-    fecha = VALUES(fecha),
-    descripcion = VALUES(descripcion),
-    monto = VALUES(monto),
-    metodo_pago = VALUES(metodo_pago),
-    observaciones = VALUES(observaciones);
-END$$
-
-
-DELIMITER ;
-
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+-- Dump completed on 2025-11-04 21:55:07

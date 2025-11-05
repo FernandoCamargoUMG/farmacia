@@ -48,3 +48,10 @@ if ($action === 'eliminar') {
     $exito = Cliente::eliminar($id);
     echo json_encode(['success' => $exito]);
 }
+
+if ($action === 'count') {
+    header('Content-Type: application/json');
+    $sucursalId = $_SESSION['sucursal_id'] ?? null;
+    $total = Cliente::contarTotal($sucursalId);
+    echo json_encode(['total' => $total]);
+}
