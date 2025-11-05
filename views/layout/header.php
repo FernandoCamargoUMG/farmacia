@@ -35,7 +35,7 @@ if (isset($_SESSION['sucursal_id'])) {
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- CSS Personalizado -->
-    <link rel="stylesheet" href="/public/css/style.css?v=1">
+    <link rel="stylesheet" href="/public/css/style.css?v=4">
     <link rel="stylesheet" href="/public/css/ingreso.css">
 
 </head>
@@ -739,7 +739,8 @@ if (isset($_SESSION['sucursal_id'])) {
             'submenu' => [
                 ['label' => 'Ingreso a Inventario', 'link' => '#ingreso', 'icon' => 'arrow-down-square'],
                 ['label' => 'Ventas', 'link' => '#venta', 'icon' => 'currency-dollar'],
-                ['label' => 'Reporte', 'link' => '#stock', 'icon' => 'file-earmark-text'],
+                ['label' => 'Movimientos', 'link' => '#stock', 'icon' => 'arrow-left-right'],
+                ['label' => 'Reportes PDF', 'link' => '#reportes', 'icon' => 'file-earmark-pdf'],
             ]
         ],
         'activos' => [
@@ -1026,6 +1027,7 @@ if (isset($_SESSION['sucursal_id'])) {
     <script src="/public/js/activoFijo.js"></script>
     <script src="/public/js/depreciacion.js"></script>
     <script src="/public/js/inventario.js"></script>
+    <script src="/public/js/reportes.js"></script>
     <script src="/public/js/caja.js"></script>
     <script src="/public/js/usuario.js"></script>
     <script src="/public/js/dashboard.js"></script>

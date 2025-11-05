@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const content = document.getElementById('dynamic-content');
             content.innerHTML = `
         <div class="Usuarios-view">
-            <h2 class="mb-4"><i class="bi bi-truck"></i> Módulo de Usuarios</h2>
+            <h2 class="mb-4"><i class="bi bi-people-fill"></i> Módulo de Usuarios</h2>
             <div class="card shadow" style="max-width: 1000px; margin: 0 auto;">
                 <div class="card-body">
                     <h5 class="card-title">Listado de Usuarios</h5>

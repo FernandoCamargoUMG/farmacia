@@ -104,3 +104,82 @@ if ($action === 'low_stock') {
     }
     exit;
 }
+
+if ($action === 'stats' || $action === 'estadisticas') {
+    header('Content-Type: application/json');
+    
+    try {
+        $conn = Conexion::conectar();
+        $sucursal_id = $_SESSION['sucursal_id'] ?? 1;
+        
+        // Total de productos
+        $stmt = $conn->query("SELECT COUNT(*) as total FROM producto");
+        $totalProductos = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+        
+        // Productos con stock bajo usando el cálculo correcto
+        $stmt = $conn->prepare("
+            SELECT COUNT(*) as total
+            FROM (
+                SELECT 
+                    p.id,
+                    COALESCE(SUM(CASE 
+                        WHEN i.movimiento = 'ingreso' THEN i.cantidad 
+                        WHEN i.movimiento = 'egreso' THEN -i.cantidad 
+                        ELSE 0 
+                    END), 0) as stock_actual
+                FROM producto p
+                LEFT JOIN inventario i ON p.id = i.producto_id AND i.sucursal_id = ?
+                GROUP BY p.id
+                HAVING stock_actual <= 5
+            ) as productos_stock_bajo
+        ");
+        $stmt->execute([$sucursal_id]);
+        $stockBajo = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+        
+        // Movimientos de hoy
+        $stmt = $conn->prepare("
+            SELECT COUNT(*) as total 
+            FROM inventario 
+            WHERE DATE(fecha) = CURDATE() AND sucursal_id = ?
+        ");
+        $stmt->execute([$sucursal_id]);
+        $movimientosHoy = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+        
+        // Valor total del inventario
+        $stmt = $conn->prepare("
+            SELECT SUM(stock_actual * precio) as valor_total
+            FROM (
+                SELECT 
+                    p.precio,
+                    COALESCE(SUM(CASE 
+                        WHEN i.movimiento = 'ingreso' THEN i.cantidad 
+                        WHEN i.movimiento = 'egreso' THEN -i.cantidad 
+                        ELSE 0 
+                    END), 0) as stock_actual
+                FROM producto p
+                LEFT JOIN inventario i ON p.id = i.producto_id AND i.sucursal_id = ?
+                GROUP BY p.id, p.precio
+                HAVING stock_actual > 0
+            ) as stock_productos
+        ");
+        $stmt->execute([$sucursal_id]);
+        $valorTotal = $stmt->fetch(PDO::FETCH_ASSOC)['valor_total'] ?? 0;
+        
+        echo json_encode([
+            'totalProductos' => (int)$totalProductos,
+            'productosStockBajo' => (int)$stockBajo,
+            'movimientosHoy' => (int)$movimientosHoy,
+            'valorInventario' => number_format((float)$valorTotal, 2)
+        ]);
+        
+    } catch (Exception $e) {
+        error_log("Error en estadísticas: " . $e->getMessage());
+        echo json_encode([
+            'totalProductos' => 0,
+            'productosStockBajo' => 0,
+            'movimientosHoy' => 0,
+            'valorInventario' => '0.00'
+        ]);
+    }
+    exit;
+}

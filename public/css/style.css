@@ -32,6 +32,34 @@ body,
     z-index: 1000;
 }
 
+/* Estilos para reportes */
+.reportes-view .card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.reportes-view .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.reportes-view .stat-item {
+    padding: 20px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    margin-bottom: 10px;
+}
+
+.reportes-view .stat-item h3 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.reportes-view .stat-item p {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
 .menu-btn {
     background: none;
     border: none;
@@ -166,8 +194,12 @@ body,
         transform: translateY(0);
     }
 }
-/* en style.css o similar 
-#tablaClientes {
-    border: 2px solid red;
-}*/
+/* Estilo para títulos de módulos - visible y centrado */
+#dynamic-content h2 {
+    color: #1a2b4c !important;
+    text-align: center !important;
+    font-weight: 700 !important;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3) !important;
+    margin-bottom: 2rem !important;
+}
 
