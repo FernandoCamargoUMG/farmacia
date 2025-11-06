@@ -6,16 +6,12 @@ $action = $_GET['action'] ?? '';
 
 if ($action === 'listar') {
     header('Content-Type: application/json');
-    $conn = Conexion::conectar();
+    
+    try {
+        $conn = Conexion::conectar();
 
-    // Parámetro sucursal_id: usar el GET si viene, sino la sesión
-    $sucursal_id = $_GET['sucursal_id'] ?? $_SESSION['sucursal_id'] ?? null;
-
-    if (!$sucursal_id) {
-        http_response_code(400);
-        echo json_encode(['error' => 'Sucursal no especificada']);
-        exit;
-    }
+        // Parámetro sucursal_id: usar el GET si viene, sino la sesión
+        $sucursal_id = $_GET['sucursal_id'] ?? $_SESSION['sucursal_id'] ?? 1;
 
     $sql = "SELECT 
             DATE(fecha) AS fecha,
@@ -46,12 +42,16 @@ if ($action === 'listar') {
     $stmt->execute([$sucursal_id]);
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Opcional: si no quieres enviar el id al frontend, puedes quitarlo:
-    // foreach ($result as &$row) {
-    //     unset($row['id']);
-    // }
+        // Opcional: si no quieres enviar el id al frontend, puedes quitarlo:
+        // foreach ($result as &$row) {
+        //     unset($row['id']);
+        // }
 
-    echo json_encode($result);
+        echo json_encode($result);
+    } catch (Exception $e) {
+        error_log("Error en cajaController.php - listar: " . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Error al cargar los movimientos de caja']);
+    }
     exit;
 }
 
