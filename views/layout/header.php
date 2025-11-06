@@ -918,12 +918,6 @@ if (isset($_SESSION['sucursal_id'])) {
                     <div class="chart-card">
                         <div class="chart-header">
                             <h5><i class="bi bi-bar-chart"></i> Ventas de los últimos 7 días</h5>
-                            <div class="chart-actions">
-                                <small class="text-white-50 me-3" id="last-refresh">Actualizando...</small>
-                                <button class="btn btn-sm btn-outline-light" onclick="refreshChart()">
-                                    <i class="bi bi-arrow-clockwise"></i>
-                                </button>
-                            </div>
                         </div>
                         <div class="chart-body">
                             <canvas id="salesChart" width="400" height="150"></canvas>
@@ -954,15 +948,6 @@ if (isset($_SESSION['sucursal_id'])) {
                     <div class="table-card">
                         <div class="table-header">
                             <h5><i class="bi bi-exclamation-triangle-fill text-warning"></i> Productos con Stock Bajo</h5>
-                            <div class="d-flex align-items-center">
-                                <div class="live-indicator me-3">
-                                    <span class="live-dot"></span>
-                                    <small class="text-muted">En vivo</small>
-                                </div>
-                                <button class="btn btn-sm btn-outline-primary" onclick="refreshLowStock()">
-                                    <i class="bi bi-arrow-clockwise"></i> Actualizar
-                                </button>
-                            </div>
                         </div>
                         <div class="table-body">
                             <table class="table table-hover" id="low-stock-table">
