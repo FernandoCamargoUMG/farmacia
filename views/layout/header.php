@@ -1010,25 +1010,8 @@ if (isset($_SESSION['sucursal_id'])) {
             </div>
         </div>
     </div>
-    <!-- JS -->
+    <!-- JS Esenciales -->
     <script src="public/js/menu.js"></script>
-    <script src="public/js/clientes.js"></script>
-    <script src="public/js/proveedor.js"></script>
-    <script src="public/js/producto.js"></script>
-    <script src="public/js/bodega.js"></script>
-    <script src="public/js/ingreso.js"></script>
-    <script src="public/js/venta.js"></script>
-    <script src="public/js/planilla.js"></script>
-    <script src="public/js/CategoriaActivo.js"></script>
-    <script src="public/js/CategoriaProducto.js"></script>
-    <script src="public/js/CategoriaProveedor.js"></script>
-    <script src="public/js/formaPago.js"></script>
-    <script src="public/js/activoFijo.js"></script>
-    <script src="public/js/depreciacion.js"></script>
-    <script src="public/js/inventario.js"></script>
-    <script src="public/js/reportes.js"></script>
-    <script src="public/js/caja.js"></script>
-    <script src="public/js/usuario.js"></script>
     <script src="public/js/dashboard.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
