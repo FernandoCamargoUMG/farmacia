@@ -761,7 +761,6 @@ if (isset($_SESSION['sucursal_id'])) {
             'submenu' => [
                 ['label' => 'Tipo de activos', 'link' => '#activoc'],
                 ['label' => 'Categoria de productos', 'link' => '#productocat'],
-                ['label' => 'Formas de pago', 'link' => '#formapago'],
                 ['label' => 'Categoria de proveedores', 'link' => '#proveedorcat'],
             ]
         ],
