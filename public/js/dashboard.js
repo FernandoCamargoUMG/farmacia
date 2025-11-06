@@ -17,8 +17,8 @@ class DashboardManager {
                 this.loadProductStats(),
                 this.loadSalesStats(),
                 this.loadClientStats(),
-                this.loadLowStockProducts()
-                // loadRecentActivity() se removió porque ahora es estático en HTML
+                this.loadLowStockProducts(),
+                this.loadRecentActivity()
             ]);
         } catch (error) {
             console.error('Error cargando datos del dashboard:', error);
@@ -27,7 +27,7 @@ class DashboardManager {
 
     async loadProductStats() {
         try {
-            const response = await fetch('dashboard_api.php?action=productos_count', {
+            const response = await fetch('./dashboard_api.php?action=productos_count', {
                 credentials: 'same-origin'
             });
             
@@ -52,7 +52,7 @@ class DashboardManager {
 
     async loadSalesStats() {
         try {
-            const response = await fetch('dashboard_api.php?action=ventas_hoy', {
+            const response = await fetch('./dashboard_api.php?action=ventas_hoy', {
                 credentials: 'same-origin'
             });
             const data = await response.json();
@@ -68,7 +68,7 @@ class DashboardManager {
 
     async loadClientStats() {
         try {
-            const response = await fetch('dashboard_api.php?action=clientes_count', {
+            const response = await fetch('./dashboard_api.php?action=clientes_count', {
                 credentials: 'same-origin'
             });
             const data = await response.json();
@@ -84,7 +84,7 @@ class DashboardManager {
 
     async loadLowStockProducts() {
         try {
-            const response = await fetch('dashboard_api.php?action=stock_bajo', {
+            const response = await fetch('./dashboard_api.php?action=stock_bajo', {
                 credentials: 'same-origin'
             });
             const data = await response.json();
@@ -143,7 +143,7 @@ class DashboardManager {
 
     async loadRecentActivity() {
         try {
-            const response = await fetch('dashboard_api.php?action=actividad_reciente', {
+            const response = await fetch('./dashboard_api.php?action=actividad_reciente', {
                 credentials: 'same-origin'
             });
             
@@ -194,7 +194,7 @@ class DashboardManager {
 
     async initSalesChart() {
         try {
-            const response = await fetch('dashboard_api.php?action=ventas_semanales', {
+            const response = await fetch('./dashboard_api.php?action=ventas_semanales', {
                 credentials: 'same-origin'
             });
             const data = await response.json();

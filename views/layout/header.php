@@ -937,32 +937,11 @@ if (isset($_SESSION['sucursal_id'])) {
                             <h5><i class="bi bi-clock"></i> Actividad Reciente</h5>
                         </div>
                         <div class="activity-body" id="recent-activity">
-                            <div class="activity-item">
-                                <div class="activity-icon bg-success">
-                                    <i class="bi bi-check-circle"></i>
+                            <div class="text-center py-4">
+                                <div class="spinner-border spinner-border-sm" role="status">
+                                    <span class="visually-hidden">Cargando...</span>
                                 </div>
-                                <div class="activity-content">
-                                    <p>Sistema funcionando correctamente</p>
-                                    <small>Ahora mismo</small>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="activity-icon bg-info">
-                                    <i class="bi bi-arrow-clockwise"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <p>Dashboard actualizado</p>
-                                    <small>Hace 1 minuto</small>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="activity-icon bg-success">
-                                    <i class="bi bi-currency-dollar"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <p>Nueva venta registrada</p>
-                                    <small>Hace 5 minutos</small>
-                                </div>
+                                <p class="mt-2 mb-0">Cargando actividad reciente...</p>
                             </div>
                         </div>
                     </div>
@@ -1037,7 +1016,7 @@ if (isset($_SESSION['sucursal_id'])) {
         // Configurar ruta base para todos los fetch
         window.BASE_URL = '';
         
-        // Función para corregir rutas
+        // Función para corregir rutas específicamente para Hostinger
         function fixUrl(url) {
             if (typeof url === 'string') {
                 // Si la URL empieza con /farmacia/controllers/, corregir a controllers/
@@ -1063,6 +1042,10 @@ if (isset($_SESSION['sucursal_id'])) {
                 // Si la URL empieza con ./autocomplete/, quitarle el ./
                 else if (url.startsWith('./autocomplete/')) {
                     return url.substring(2);
+                }
+                // Para dashboard_api.php, asegurar que sea relativo
+                else if (url === 'dashboard_api.php') {
+                    return './dashboard_api.php';
                 }
             }
             return url;
