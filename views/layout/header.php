@@ -1040,13 +1040,23 @@ if (isset($_SESSION['sucursal_id'])) {
         // Intercepatar todas las peticiones fetch para corregir rutas
         const originalFetch = window.fetch;
         window.fetch = function(url, options) {
-            // Si la URL empieza con /controllers/, quitarle la barra inicial
-            if (typeof url === 'string' && url.startsWith('/controllers/')) {
-                url = url.substring(1); // Quitar la barra inicial
-            }
-            // Si la URL empieza con /autocomplete/, quitarle la barra inicial
-            if (typeof url === 'string' && url.startsWith('/autocomplete/')) {
-                url = url.substring(1); // Quitar la barra inicial
+            if (typeof url === 'string') {
+                // Si la URL empieza con /controllers/, quitarle la barra inicial
+                if (url.startsWith('/controllers/')) {
+                    url = url.substring(1);
+                }
+                // Si la URL empieza con /autocomplete/, quitarle la barra inicial
+                else if (url.startsWith('/autocomplete/')) {
+                    url = url.substring(1);
+                }
+                // Si la URL empieza con ../controllers/, quitarle el ../
+                else if (url.startsWith('../controllers/')) {
+                    url = url.substring(3);
+                }
+                // Si la URL empieza con ../autocomplete/, quitarle el ../
+                else if (url.startsWith('../autocomplete/')) {
+                    url = url.substring(3);
+                }
             }
             return originalFetch.call(this, url, options);
         };
@@ -1063,6 +1073,11 @@ if (isset($_SESSION['sucursal_id'])) {
                 window.dashboardManager.loadLowStockProducts();
             }
         }
+
+        // Manejar errores de JavaScript globales
+        window.addEventListener('error', function(e) {
+            console.error('Error JS:', e.filename, e.lineno, e.message);
+        });
 
         // Inicializar dashboard automáticamente después de cargar todos los scripts
         setTimeout(() => {
