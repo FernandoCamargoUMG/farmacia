@@ -35,8 +35,8 @@ if (isset($_SESSION['sucursal_id'])) {
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- CSS Personalizado -->
-    <link rel="stylesheet" href="/public/css/style.css?v=4">
-    <link rel="stylesheet" href="/public/css/ingreso.css">
+    <link rel="stylesheet" href="public/css/style.css?v=4">
+    <link rel="stylesheet" href="public/css/ingreso.css">
 
 </head>
 <style>
@@ -698,7 +698,7 @@ if (isset($_SESSION['sucursal_id'])) {
                 </span>
             </div>
             <div>
-                <a href="/controllers/logout.php" class="btn btn-outline-danger btn-sm">
+                <a href="index.php?logout=1" class="btn btn-outline-danger btn-sm">
                     <i class="bi bi-box-arrow-right"></i> Cerrar sesión
                 </a>
             </div>
@@ -838,7 +838,7 @@ if (isset($_SESSION['sucursal_id'])) {
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
-                                        <a class="dropdown-item text-danger" href="/controllers/logout.php">
+                                        <a class="dropdown-item text-danger" href="index.php?logout=1">
                                             <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
                                         </a>
                                     </li>
@@ -1011,25 +1011,25 @@ if (isset($_SESSION['sucursal_id'])) {
         </div>
     </div>
     <!-- JS -->
-    <script src="/public/js/menu.js"></script>
-    <script src="/public/js/clientes.js"></script>
-    <script src="/public/js/proveedor.js"></script>
-    <script src="/public/js/producto.js"></script>
-    <script src="/public/js/bodega.js"></script>
-    <script src="/public/js/ingreso.js"></script>
-    <script src="/public/js/venta.js"></script>
-    <script src="/public/js/planilla.js"></script>
-    <script src="/public/js/CategoriaActivo.js"></script>
-    <script src="/public/js/CategoriaProducto.js"></script>
-    <script src="/public/js/CategoriaProveedor.js"></script>
-    <script src="/public/js/formaPago.js"></script>
-    <script src="/public/js/activoFijo.js"></script>
-    <script src="/public/js/depreciacion.js"></script>
-    <script src="/public/js/inventario.js"></script>
-    <script src="/public/js/reportes.js"></script>
-    <script src="/public/js/caja.js"></script>
-    <script src="/public/js/usuario.js"></script>
-    <script src="/public/js/dashboard.js"></script>
+    <script src="public/js/menu.js"></script>
+    <script src="public/js/clientes.js"></script>
+    <script src="public/js/proveedor.js"></script>
+    <script src="public/js/producto.js"></script>
+    <script src="public/js/bodega.js"></script>
+    <script src="public/js/ingreso.js"></script>
+    <script src="public/js/venta.js"></script>
+    <script src="public/js/planilla.js"></script>
+    <script src="public/js/CategoriaActivo.js"></script>
+    <script src="public/js/CategoriaProducto.js"></script>
+    <script src="public/js/CategoriaProveedor.js"></script>
+    <script src="public/js/formaPago.js"></script>
+    <script src="public/js/activoFijo.js"></script>
+    <script src="public/js/depreciacion.js"></script>
+    <script src="public/js/inventario.js"></script>
+    <script src="public/js/reportes.js"></script>
+    <script src="public/js/caja.js"></script>
+    <script src="public/js/usuario.js"></script>
+    <script src="public/js/dashboard.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

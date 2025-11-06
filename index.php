@@ -42,9 +42,9 @@ if (isset($_GET['logout'])) {
     exit;
 }
 
-// Si está logueado, mostrar dashboard
+// Si está logueado, mostrar dashboard completo desde header
 if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
-    require_once __DIR__ . '/views/dashboard.php';
+    require_once __DIR__ . '/views/layout/header.php';
     exit;
 }
 
