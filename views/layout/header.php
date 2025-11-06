@@ -874,9 +874,9 @@ if (isset($_SESSION['sucursal_id'])) {
                         <div class="stats-content">
                             <h3 id="total-ventas">-</h3>
                             <p>Ventas Hoy</p>
-                            <small class="stats-trend positive">
+                            <!--<small class="stats-trend positive">
                                 <i class="bi bi-arrow-up"></i> +12% vs ayer
-                            </small>
+                            </small>-->
                         </div>
                     </div>
                 </div>
@@ -889,9 +889,9 @@ if (isset($_SESSION['sucursal_id'])) {
                         <div class="stats-content">
                             <h3 id="total-clientes">-</h3>
                             <p>Clientes Activos</p>
-                            <small class="stats-trend positive">
+                            <!--<small class="stats-trend positive">
                                 <i class="bi bi-arrow-up"></i> +3 nuevos
-                            </small>
+                            </small>-->
                         </div>
                     </div>
                 </div>
@@ -904,9 +904,9 @@ if (isset($_SESSION['sucursal_id'])) {
                         <div class="stats-content">
                             <h3 id="stock-bajo">-</h3>
                             <p>Stock Bajo</p>
-                            <small class="stats-trend negative">
+                            <!--<small class="stats-trend negative">
                                 <i class="bi bi-exclamation-triangle"></i> Revisar
-                            </small>
+                            </small>-->
                         </div>
                     </div>
                 </div>
