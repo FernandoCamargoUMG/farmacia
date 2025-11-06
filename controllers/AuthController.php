@@ -45,16 +45,12 @@ class AuthController {
     }
 
     private function redirectToDashboard() {
-        // Múltiples métodos de redirección para compatibilidad con hosting
+        // Redirección directa al dashboard sin rutas para Hostinger
         if (headers_sent()) {
-            echo '<script>window.location.href = "index.php?route=dashboard";</script>';
-            echo '<meta http-equiv="refresh" content="0;url=index.php?route=dashboard">';
+            echo '<script>window.location.href = "views/dashboard.php";</script>';
+            echo '<meta http-equiv="refresh" content="0;url=views/dashboard.php">';
         } else {
-            // Intentar diferentes formatos de URL
-            $baseUrl = $this->getBaseUrl();
-            
-            // Primero intentar con ruta relativa
-            header("Location: index.php?route=dashboard");
+            header("Location: views/dashboard.php");
             exit;
         }
     }
