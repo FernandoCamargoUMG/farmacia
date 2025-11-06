@@ -723,7 +723,7 @@ if (isset($_SESSION['sucursal_id'])) {
 
     // arreglos para roles
     $menu = [
-        'inicio' => ['label' => 'Inicio', 'icon' => 'house-door', 'link' => '/dashboard.php', 'roles' => [ADMIN, Bodeguero, CAJERO]],
+        'inicio' => ['label' => 'Inicio', 'icon' => 'house-door', 'link' => 'dashboard.php', 'roles' => [ADMIN, Bodeguero, CAJERO]],
         'usuarios' => ['label' => 'Mantenimiento de Usuarios', 'icon' => 'people', 'link' => '#Usuarios', 'roles' => [ADMIN]],
         'clientes' => ['label' => 'Clientes', 'icon' => 'people', 'link' => '#clientes', 'roles' => [ADMIN, Bodeguero]],
         'proveedores' => ['label' => 'Proveedores', 'icon' => 'truck', 'link' => '#proveedores', 'roles' => [ADMIN, Bodeguero]],

@@ -34,6 +34,16 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+
+    // Manejar el enlace "Inicio" para mostrar el dashboard
+    const inicioLink = document.querySelector('a[href="dashboard.php"]');
+    if (inicioLink) {
+        inicioLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Recargar la página completa para mostrar el dashboard
+            window.location.href = 'index.php';
+        });
+    }
 });
 
 // Función global para obtener fecha y hora local de la PC del cliente
