@@ -1,13 +1,8 @@
 version: '3.8'
-
 services:
-
-  web:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  app:
+    build: .
     ports:
       - "8080:80"
     volumes:
       - .:/var/www/html
-    restart: always
