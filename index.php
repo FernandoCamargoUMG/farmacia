@@ -24,21 +24,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['correo']) && isset($_
             $_SESSION['correo'] = $usuario['correo'];
             $_SESSION['logged_in'] = true;
             
-            // Recargar la página para mostrar el dashboard
-            echo '<script>window.location.reload();</script>';
+            // Redirección simple sin JavaScript
+            header('Location: index.php');
             exit;
         } else {
             $error = "Credenciales inválidas";
         }
     } catch (Exception $e) {
-        $error = "Error del sistema";
+        $error = "Error del sistema: " . $e->getMessage();
     }
 }
 
 // Si hay logout
 if (isset($_GET['logout'])) {
+    $_SESSION = array();
     session_destroy();
-    echo '<script>window.location.href = "index.php";</script>';
+    header('Location: index.php');
     exit;
 }
 
