@@ -1086,11 +1086,15 @@ if (isset($_SESSION['sucursal_id'])) {
         });
 
         // Inicializar dashboard automáticamente después de cargar todos los scripts
-        setTimeout(() => {
-            if (typeof initDashboard === 'function') {
+        function waitForChart() {
+            if (typeof Chart !== 'undefined' && typeof initDashboard === 'function') {
                 initDashboard();
+            } else {
+                setTimeout(waitForChart, 100);
             }
-        }, 500);
+        }
+        
+        setTimeout(waitForChart, 500);
     </script>
 </body>
 
