@@ -9,9 +9,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="card-body">
                     <h5 class="card-title">Listado de Usuarios</h5>
 
-                    <button id="btnImportarUsuarios" class="btn btn-outline-success mb-3 ms-2">
+                    <!--<button id="btnImportarUsuarios" class="btn btn-outline-success mb-3 ms-2">
                         <i class="bi bi-download"></i> Importar desde Sistema A
-                    </button>
+                    </button>-->
 
                     <button id="btnMostrarUsuarios" class="btn btn-outline-primary mb-3">
                         <i class="bi bi-eye"></i> Mostrar Usuarios
