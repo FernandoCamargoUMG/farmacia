@@ -43,9 +43,9 @@ if (isset($_GET['logout'])) {
     exit;
 }
 
-// Si está logueado, mostrar dashboard completo desde header
+// Si está logueado, mostrar dashboard simple que funciona
 if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
-    require_once __DIR__ . '/views/layout/header.php';
+    require_once __DIR__ . '/dashboard_simple.php';
     exit;
 }
 
