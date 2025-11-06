@@ -142,14 +142,30 @@ class DashboardManager {
     }
 
     async loadRecentActivity() {
+        console.log('Iniciando carga de actividad reciente...');
         try {
             const response = await fetch('dashboard_api.php?action=actividad_reciente', {
                 credentials: 'same-origin'
             });
+            
+            console.log('Response Status:', response.status);
+            console.log('Response OK:', response.ok);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
             const data = await response.json();
+            console.log('Datos de actividad recibidos:', data);
             
             const activityContainer = document.getElementById('recent-activity');
-            if (data.length > 0) {
+            if (!activityContainer) {
+                console.error('No se encontró el contenedor recent-activity');
+                return;
+            }
+            
+            if (data && data.length > 0) {
+                console.log('Mostrando', data.length, 'actividades');
                 activityContainer.innerHTML = data.map(activity => `
                     <div class="activity-item">
                         <div class="activity-icon ${this.getActivityIconClass(activity.type)}">
@@ -162,6 +178,7 @@ class DashboardManager {
                     </div>
                 `).join('');
             } else {
+                console.log('No hay datos de actividad');
                 activityContainer.innerHTML = `
                     <div class="text-center py-4">
                         <i class="bi bi-clock-history fs-2 text-muted"></i>
@@ -171,12 +188,15 @@ class DashboardManager {
             }
         } catch (error) {
             console.error('Error cargando actividad reciente:', error);
-            document.getElementById('recent-activity').innerHTML = `
-                <div class="text-center py-4 text-danger">
-                    <i class="bi bi-exclamation-triangle"></i>
-                    <p class="mt-2">Error cargando actividad</p>
-                </div>
-            `;
+            const activityContainer = document.getElementById('recent-activity');
+            if (activityContainer) {
+                activityContainer.innerHTML = `
+                    <div class="text-center py-4 text-danger">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <p class="mt-2">Error cargando actividad: ${error.message}</p>
+                    </div>
+                `;
+            }
         }
     }
 

@@ -937,32 +937,11 @@ if (isset($_SESSION['sucursal_id'])) {
                             <h5><i class="bi bi-clock"></i> Actividad Reciente</h5>
                         </div>
                         <div class="activity-body" id="recent-activity">
-                            <div class="activity-item">
-                                <div class="activity-icon bg-success">
-                                    <i class="bi bi-plus-circle"></i>
+                            <div class="text-center py-4">
+                                <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                    <span class="visually-hidden">Cargando...</span>
                                 </div>
-                                <div class="activity-content">
-                                    <p>Nueva venta registrada</p>
-                                    <small>Hace 5 minutos</small>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="activity-icon bg-info">
-                                    <i class="bi bi-box"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <p>Producto actualizado</p>
-                                    <small>Hace 15 minutos</small>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="activity-icon bg-warning">
-                                    <i class="bi bi-exclamation-triangle"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <p>Stock bajo detectado</p>
-                                    <small>Hace 1 hora</small>
-                                </div>
+                                <p class="mt-2 mb-0 text-muted">Cargando actividad reciente...</p>
                             </div>
                         </div>
                     </div>

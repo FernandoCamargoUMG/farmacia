@@ -80,24 +80,40 @@ try {
             break;
             
         case 'actividad_reciente':
-            $activities = [
-                [
-                    'type' => 'success',
-                    'description' => 'Sistema funcionando correctamente',
-                    'time_ago' => 'Ahora mismo'
-                ],
-                [
-                    'type' => 'info',
-                    'description' => 'Dashboard actualizado',
-                    'time_ago' => 'Hace 1 minuto'
-                ],
-                [
-                    'type' => 'sale',
-                    'description' => 'Nueva venta registrada',
-                    'time_ago' => 'Hace 5 minutos'
-                ]
-            ];
-            echo json_encode($activities);
+            try {
+                // Datos estáticos de ejemplo (más adelante se puede conectar con BD)
+                $activities = [
+                    [
+                        'type' => 'success',
+                        'description' => 'Sistema funcionando correctamente',
+                        'time_ago' => 'Ahora mismo'
+                    ],
+                    [
+                        'type' => 'info',
+                        'description' => 'Dashboard actualizado',
+                        'time_ago' => 'Hace 1 minuto'
+                    ],
+                    [
+                        'type' => 'sale',
+                        'description' => 'Nueva venta registrada',
+                        'time_ago' => 'Hace 5 minutos'
+                    ]
+                ];
+                
+                // Log para debugging
+                error_log("Dashboard API - Actividad reciente solicitada. Devolviendo " . count($activities) . " actividades");
+                
+                echo json_encode($activities);
+            } catch (Exception $e) {
+                error_log("Error en actividad_reciente: " . $e->getMessage());
+                echo json_encode([
+                    [
+                        'type' => 'warning',
+                        'description' => 'Error cargando actividad',
+                        'time_ago' => 'Ahora'
+                    ]
+                ]);
+            }
             break;
             
         default:
