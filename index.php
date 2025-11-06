@@ -1,8 +1,6 @@
 <?php
-// Mostrar errores para desarrollo
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// Cargar configuración específica para Hostinger
+require_once __DIR__ . '/hostinger_config.php';
 
 // Iniciar sesión solo si no está activa
 if (session_status() !== PHP_SESSION_ACTIVE) {

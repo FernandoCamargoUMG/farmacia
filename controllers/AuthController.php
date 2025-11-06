@@ -11,31 +11,94 @@ class AuthController {
     public function login() {
         $this->asegurarSesion();
 
-        $correo = $_POST['correo'];
-        $password = $_POST['password'];
-        $sucursal_id = $_POST['sucursal_id'];
-        $usuario = Usuario::login($correo, $password);
+        $correo = $_POST['correo'] ?? '';
+        $password = $_POST['password'] ?? '';
+        $sucursal_id = $_POST['sucursal_id'] ?? 1;
 
-        if ($usuario) {
-            $_SESSION['usuario_id'] = $usuario['id'];
-            $_SESSION['usuario_nombre'] = $usuario['nombre']; // Agregar nombre del usuario
-            $_SESSION['sucursal_id'] = $sucursal_id;
-            $_SESSION['rol_id'] = $usuario['rol_id'];
-            $_SESSION['rol_nombre'] = $usuario['rol_nombre']; // Agregar nombre del rol
-            $_SESSION['correo'] = $usuario['correo'];
+        if (empty($correo) || empty($password)) {
+            $this->redirectToLogin("Correo y contraseña son requeridos");
+            return;
+        }
 
-            header("Location: /?route=dashboard");
-            exit;
+        try {
+            $usuario = Usuario::login($correo, $password);
+
+            if ($usuario) {
+                // Configurar variables de sesión
+                $_SESSION['usuario_id'] = $usuario['id'];
+                $_SESSION['usuario_nombre'] = $usuario['nombre'];
+                $_SESSION['sucursal_id'] = $sucursal_id;
+                $_SESSION['rol_id'] = $usuario['rol_id'];
+                $_SESSION['rol_nombre'] = $usuario['rol_nombre'];
+                $_SESSION['correo'] = $usuario['correo'];
+                $_SESSION['logged_in'] = true;
+
+                // Redirección compatible con hosting compartido
+                $this->redirectToDashboard();
+            } else {
+                $this->redirectToLogin("Credenciales inválidas");
+            }
+        } catch (Exception $e) {
+            error_log("Error en login: " . $e->getMessage());
+            $this->redirectToLogin("Error del sistema. Intente nuevamente.");
+        }
+    }
+
+    private function redirectToDashboard() {
+        // Múltiples métodos de redirección para compatibilidad con hosting
+        if (headers_sent()) {
+            echo '<script>window.location.href = "index.php?route=dashboard";</script>';
+            echo '<meta http-equiv="refresh" content="0;url=index.php?route=dashboard">';
         } else {
-            header("Location: /?error=1");
+            // Intentar diferentes formatos de URL
+            $baseUrl = $this->getBaseUrl();
+            
+            // Primero intentar con ruta relativa
+            header("Location: index.php?route=dashboard");
             exit;
         }
     }
 
+    private function redirectToLogin($message = "") {
+        if (headers_sent()) {
+            $errorParam = !empty($message) ? "&error=" . urlencode($message) : "&error=1";
+            echo '<script>window.location.href = "index.php' . $errorParam . '";</script>';
+            echo '<meta http-equiv="refresh" content="0;url=index.php' . $errorParam . '">';
+        } else {
+            $errorParam = !empty($message) ? "?error=" . urlencode($message) : "?error=1";
+            header("Location: index.php" . $errorParam);
+            exit;
+        }
+    }
+
+    private function getBaseUrl() {
+        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'];
+        $script = dirname($_SERVER['SCRIPT_NAME']);
+        return $protocol . '://' . $host . rtrim($script, '/') . '/';
+    }
+
     public function logout() {
         $this->asegurarSesion();
+        
+        // Limpiar todas las variables de sesión
+        $_SESSION = array();
+        
+        // Destruir la cookie de sesión si existe
+        if (isset($_COOKIE[session_name()])) {
+            setcookie(session_name(), '', time() - 42000, '/');
+        }
+        
+        // Destruir la sesión
         session_destroy();
-        header('Location: /');
-        exit;
+        
+        // Redirección compatible con hosting compartido
+        if (headers_sent()) {
+            echo '<script>window.location.href = "index.php";</script>';
+            echo '<meta http-equiv="refresh" content="0;url=index.php">';
+        } else {
+            header('Location: index.php');
+            exit;
+        }
     }
 }
