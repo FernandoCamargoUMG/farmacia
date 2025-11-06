@@ -859,9 +859,9 @@ if (isset($_SESSION['sucursal_id'])) {
                         <div class="stats-content">
                             <h3 id="total-productos">-</h3>
                             <p>Total Productos</p>
-                            <small class="stats-trend positive">
+                            <!--<small class="stats-trend positive">
                                 <i class="bi bi-arrow-up"></i> +5% este mes
-                            </small>
+                            </small>-->
                         </div>
                     </div>
                 </div>
