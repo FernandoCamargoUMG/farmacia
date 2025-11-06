@@ -45,12 +45,12 @@ class AuthController {
     }
 
     private function redirectToDashboard() {
-        // Redirección directa al dashboard sin rutas para Hostinger
+        // Redirección directa al dashboard en la raíz para Hostinger
         if (headers_sent()) {
-            echo '<script>window.location.href = "views/dashboard.php";</script>';
-            echo '<meta http-equiv="refresh" content="0;url=views/dashboard.php">';
+            echo '<script>window.location.href = "dashboard.php";</script>';
+            echo '<meta http-equiv="refresh" content="0;url=dashboard.php">';
         } else {
-            header("Location: views/dashboard.php");
+            header("Location: dashboard.php");
             exit;
         }
     }
