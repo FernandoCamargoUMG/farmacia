@@ -81,8 +81,80 @@ try {
             
         case 'actividad_reciente':
             try {
-                // Datos estáticos de ejemplo (más adelante se puede conectar con BD)
-                $activities = [
+                $sucursal_id = $_SESSION['sucursal_id'] ?? 1;
+                $activities = [];
+                
+                // Obtener últimas ventas
+                $stmt = $conn->prepare("
+                    SELECT 'sale' as type, 
+                           CONCAT('Venta #', numero_documento, ' - Q', FORMAT(total, 2)) as description,
+                           CASE 
+                               WHEN TIMESTAMPDIFF(MINUTE, fecha, NOW()) < 60 
+                               THEN CONCAT('Hace ', TIMESTAMPDIFF(MINUTE, fecha, NOW()), ' minutos')
+                               WHEN TIMESTAMPDIFF(HOUR, fecha, NOW()) < 24
+                               THEN CONCAT('Hace ', TIMESTAMPDIFF(HOUR, fecha, NOW()), ' horas')
+                               ELSE DATE_FORMAT(fecha, '%d/%m/%Y')
+                           END as time_ago,
+                           fecha
+                    FROM egreso_cab 
+                    WHERE sucursal_id = ? AND sta = 1
+                    ORDER BY fecha DESC 
+                    LIMIT 2
+                ");
+                $stmt->execute([$sucursal_id]);
+                $ventas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                
+                // Obtener movimientos de caja recientes
+                $stmt = $conn->prepare("
+                    SELECT 'info' as type,
+                           CONCAT('Movimiento caja: ', descripcion) as description,
+                           CASE 
+                               WHEN TIMESTAMPDIFF(MINUTE, fecha, NOW()) < 60 
+                               THEN CONCAT('Hace ', TIMESTAMPDIFF(MINUTE, fecha, NOW()), ' minutos')
+                               WHEN TIMESTAMPDIFF(HOUR, fecha, NOW()) < 24
+                               THEN CONCAT('Hace ', TIMESTAMPDIFF(HOUR, fecha, NOW()), ' horas')
+                               ELSE DATE_FORMAT(fecha, '%d/%m/%Y')
+                           END as time_ago,
+                           fecha
+                    FROM movimiento_caja 
+                    WHERE sucursal_id = ?
+                    ORDER BY fecha DESC 
+                    LIMIT 2
+                ");
+                $stmt->execute([$sucursal_id]);
+                $movimientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                
+                // Combinar y ordenar actividades
+                $activities = array_merge($ventas, $movimientos);
+                
+                // Ordenar por fecha más reciente
+                usort($activities, function($a, $b) {
+                    return strtotime($b['fecha']) - strtotime($a['fecha']);
+                });
+                
+                // Tomar solo las 3 más recientes
+                $activities = array_slice($activities, 0, 3);
+                
+                // Remover el campo fecha (no lo necesitamos en el frontend)
+                foreach ($activities as &$activity) {
+                    unset($activity['fecha']);
+                }
+                
+                // Si no hay actividades, mostrar actividad del sistema
+                if (empty($activities)) {
+                    $activities = [
+                        [
+                            'type' => 'success',
+                            'description' => 'Sistema funcionando correctamente',
+                            'time_ago' => 'Ahora mismo'
+                        ]
+                    ];
+                }
+                
+                echo json_encode($activities);
+            } catch (Exception $e) {
+                error_log("Error en actividad_reciente: " . $e->getMessage());
+                echo json_encode([
                     [
                         'type' => 'success',
                         'description' => 'Sistema funcionando correctamente',
@@ -97,20 +169,6 @@ try {
                         'type' => 'sale',
                         'description' => 'Nueva venta registrada',
                         'time_ago' => 'Hace 5 minutos'
-                    ]
-                ];
-                
-                // Log para debugging
-                error_log("Dashboard API - Actividad reciente solicitada. Devolviendo " . count($activities) . " actividades");
-                
-                echo json_encode($activities);
-            } catch (Exception $e) {
-                error_log("Error en actividad_reciente: " . $e->getMessage());
-                echo json_encode([
-                    [
-                        'type' => 'warning',
-                        'description' => 'Error cargando actividad',
-                        'time_ago' => 'Ahora'
                     ]
                 ]);
             }
