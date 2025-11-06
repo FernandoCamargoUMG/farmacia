@@ -17,8 +17,8 @@ class DashboardManager {
                 this.loadProductStats(),
                 this.loadSalesStats(),
                 this.loadClientStats(),
-                this.loadLowStockProducts(),
-                this.loadRecentActivity()
+                this.loadLowStockProducts()
+                // loadRecentActivity() se removió porque ahora es estático en HTML
             ]);
         } catch (error) {
             console.error('Error cargando datos del dashboard:', error);

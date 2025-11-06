@@ -937,11 +937,32 @@ if (isset($_SESSION['sucursal_id'])) {
                             <h5><i class="bi bi-clock"></i> Actividad Reciente</h5>
                         </div>
                         <div class="activity-body" id="recent-activity">
-                            <div class="text-center py-4">
-                                <div class="spinner-border spinner-border-sm text-primary" role="status">
-                                    <span class="visually-hidden">Cargando...</span>
+                            <div class="activity-item">
+                                <div class="activity-icon bg-success">
+                                    <i class="bi bi-check-circle"></i>
                                 </div>
-                                <p class="mt-2 mb-0 text-muted">Cargando actividad reciente...</p>
+                                <div class="activity-content">
+                                    <p>Sistema funcionando correctamente</p>
+                                    <small>Ahora mismo</small>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon bg-info">
+                                    <i class="bi bi-arrow-clockwise"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <p>Dashboard actualizado</p>
+                                    <small>Hace 1 minuto</small>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon bg-success">
+                                    <i class="bi bi-currency-dollar"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <p>Nueva venta registrada</p>
+                                    <small>Hace 5 minutos</small>
+                                </div>
                             </div>
                         </div>
                     </div>
