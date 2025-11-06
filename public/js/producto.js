@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Función para cargar categorías
             function cargarCategorias() {
-                fetch('/controllers/categoriaProductoController.php?action=listar')
+                fetch('controllers/categoriaProductoController.php?action=listar')
                     .then(res => res.json())
                     .then(data => {
                         const select = document.getElementById('selectCategoria');
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Mostrar listado de productos
             function mostrarProductos() {
-                fetch('/controllers/productoController.php?action=listar')
+                fetch('controllers/productoController.php?action=listar')
                     .then(res => res.json())
                     .then(data => {
                         if ($.fn.DataTable.isDataTable('#tablaProducto')) {

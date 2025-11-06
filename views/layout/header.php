@@ -1034,6 +1034,23 @@ if (isset($_SESSION['sucursal_id'])) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        // Configurar ruta base para todos los fetch
+        window.BASE_URL = '';
+        
+        // Intercepatar todas las peticiones fetch para corregir rutas
+        const originalFetch = window.fetch;
+        window.fetch = function(url, options) {
+            // Si la URL empieza con /controllers/, quitarle la barra inicial
+            if (typeof url === 'string' && url.startsWith('/controllers/')) {
+                url = url.substring(1); // Quitar la barra inicial
+            }
+            // Si la URL empieza con /autocomplete/, quitarle la barra inicial
+            if (typeof url === 'string' && url.startsWith('/autocomplete/')) {
+                url = url.substring(1); // Quitar la barra inicial
+            }
+            return originalFetch.call(this, url, options);
+        };
+
         // Funciones globales para el dashboard
         function refreshChart() {
             if (window.dashboardManager) {
@@ -1053,8 +1070,6 @@ if (isset($_SESSION['sucursal_id'])) {
                 initDashboard();
             }
         }, 500);
-
-
     </script>
 </body>
 
