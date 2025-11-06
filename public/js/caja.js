@@ -37,9 +37,8 @@ document.addEventListener('DOMContentLoaded', function () {
             btnMostrar.addEventListener('click', () => {
             const sucursalId = document.getElementById('filtroSucursal').value;
 
-            const url = new URL('/controllers/cajaController.php', window.location.origin);
-            url.searchParams.set('action', 'listar');
-            if (sucursalId) url.searchParams.set('sucursal_id', sucursalId);
+            let url = 'controllers/cajaController.php?action=listar';
+            if (sucursalId) url += '&sucursal_id=' + sucursalId;
 
             fetch(url)
                 .then(res => res.json())
@@ -62,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         function cargarFiltros() {
-            fetch('/controllers/cajaController.php?action=filtros')
+            fetch('controllers/cajaController.php?action=filtros')
                 .then(res => res.json())
                 .then(data => {
                     const sucursalSelect = document.getElementById('filtroSucursal');
