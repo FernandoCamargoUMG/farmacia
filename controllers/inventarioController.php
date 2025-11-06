@@ -23,26 +23,35 @@ if ($action === 'listar') {
 
     try {
         $conn = Conexion::conectar();
-    //$stmt = $conn->prepare("CALL obtener_movimientos_y_stock(?)");
+        
+        // Obtener nombre de bodega ANTES de ejecutar el stored procedure
+        $bodegaNombre = null;
+        if ($bodega_id) {
+            $stmtBodega = $conn->prepare("SELECT nombre FROM bodega WHERE id = ?");
+            $stmtBodega->execute([$bodega_id]);
+            $bodegaNombre = $stmtBodega->fetchColumn();
+            $stmtBodega->closeCursor(); // Cerrar cursor
+        }
+        
+        // Ejecutar stored procedure
         $stmt = $conn->prepare("CALL sp_inventario(?)");
         $stmt->execute([$sucursal_id]);
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->closeCursor(); // Cerrar cursor del stored procedure
 
-        if ($bodega_id) {
-            $result = array_filter($result, fn($r) => $r['bodega'] == getBodegaNombre($conn, $bodega_id));
+        // Filtrar por bodega si se especificó
+        if ($bodega_id && $bodegaNombre) {
+            $result = array_filter($result, fn($r) => $r['bodega'] == $bodegaNombre);
         }
 
         echo json_encode(array_values($result));
     } catch (Exception $e) {
-        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        error_log("Error en inventarioController.php - listar: " . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Error al cargar los datos de inventario']);
     }
 }
 
-function getBodegaNombre($conn, $id) {
-    $stmt = $conn->prepare("SELECT nombre FROM bodega WHERE id = ?");
-    $stmt->execute([$id]);
-    return $stmt->fetchColumn();
-}
+
 
 if ($action === 'low_stock') {
     header('Content-Type: application/json');
