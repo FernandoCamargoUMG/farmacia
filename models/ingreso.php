@@ -37,7 +37,7 @@ class Ingreso
 
         try {
             // Cabecera
-            $stmt = $conn->prepare("SELECT ic.*, p.nombre AS proveedor
+            $stmt = $conn->prepare("SELECT ic.*, p.nombre AS proveedor, p.codigo AS proveedor_codigo
                                 FROM ingreso_cab ic
                                 INNER JOIN proveedor p ON ic.proveedor_id = p.id
                                 WHERE ic.id = ?");

@@ -335,6 +335,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td>${row.proveedor}</td>
                         <td>Q ${row.total}</td>
                         <td>
+                            <button class="btn btn-sm btn-info btnComprobante" data-id="${row.id}" title="Generar Comprobante PDF">📄</button>
                             <button class="btn btn-sm btn-warning btnEditar" data-id="${row.id}">✏️</button>
                             <button class="btn btn-sm btn-danger btnEliminar" data-id="${row.id}">🗑</button>
                         </td>
@@ -387,6 +388,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             btn.addEventListener('click', () => {
                                 const id = btn.dataset.id;
                                 cargarIngresoParaEditar(id);
+                            });
+                        });
+
+                        // Evento generar comprobante PDF
+                        document.querySelectorAll('.btnComprobante').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                const id = btn.dataset.id;
+                                // Abrir PDF en nueva ventana
+                                window.open(`controllers/comprobanteController.php?action=comprobante&id=${id}`, '_blank');
                             });
                         });
                     });

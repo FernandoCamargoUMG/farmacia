@@ -331,6 +331,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <td>${parseFloat(egreso.total).toFixed(2)}</td>
                             <td>${textoEstado}</td>
                             <td>
+                                <button class="btn btn-info btn-sm btnRecibo" data-id="${egreso.id}" title="Generar Recibo de Caja">📄</button>
                                 <button class="btn btn-primary btn-sm btn-editar" data-id="${egreso.id}"><i class="bi bi-pencil"></i></button>
                                 <button class="btn btn-danger btn-sm btn-eliminar" data-id="${egreso.id}"><i class="bi bi-trash"></i></button>
                             </td>`;
@@ -359,6 +360,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             btn.addEventListener('click', () => {
                                 const id = btn.getAttribute('data-id');
                                 eliminarEgreso(id);
+                            });
+                        });
+
+                        // Eventos generar recibo de caja
+                        tbody.querySelectorAll('.btnRecibo').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                const id = btn.getAttribute('data-id');
+                                // Abrir recibo PDF en nueva ventana
+                                window.open(`controllers/reciboController.php?action=recibo&id=${id}`, '_blank');
                             });
                         });
                     });

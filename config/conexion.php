@@ -4,11 +4,12 @@ class Conexion {
     
     // conexion a bd
     public static function conectar() {
-        // Obtener datos desde variables de entorno
-        $host = "host.docker.internal"; // IP pública del servidor MySQL de Hostinger
-        $dbname = "farmacia"; // Nombre de la base de datos
-        $user = "root";  // Usuario de la base de datos
-        $pass = "";  
+        
+        //Obtener datos desde variables de entorno
+        $host = "srv1928.hstgr.io"; 
+        $dbname = "u834187355_ferreteria";
+        $user = "u834187355_katerin";
+        $pass = "4l]JgZCMFzU";
 
         try {
             $pdo = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
