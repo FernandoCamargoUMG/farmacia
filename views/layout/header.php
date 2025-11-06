@@ -1029,28 +1029,47 @@ if (isset($_SESSION['sucursal_id'])) {
         // Configurar ruta base para todos los fetch
         window.BASE_URL = '';
         
-        // Intercepatar todas las peticiones fetch para corregir rutas
-        const originalFetch = window.fetch;
-        window.fetch = function(url, options) {
+        // Función para corregir rutas
+        function fixUrl(url) {
             if (typeof url === 'string') {
+                // Si la URL empieza con /farmacia/controllers/, corregir a controllers/
+                if (url.startsWith('/farmacia/controllers/')) {
+                    return url.substring(10); // Quitar /farmacia/
+                }
                 // Si la URL empieza con /controllers/, quitarle la barra inicial
-                if (url.startsWith('/controllers/')) {
-                    url = url.substring(1);
+                else if (url.startsWith('/controllers/')) {
+                    return url.substring(1);
                 }
                 // Si la URL empieza con /autocomplete/, quitarle la barra inicial
                 else if (url.startsWith('/autocomplete/')) {
-                    url = url.substring(1);
+                    return url.substring(1);
                 }
                 // Si la URL empieza con ../controllers/, quitarle el ../
                 else if (url.startsWith('../controllers/')) {
-                    url = url.substring(3);
+                    return url.substring(3);
                 }
                 // Si la URL empieza con ../autocomplete/, quitarle el ../
                 else if (url.startsWith('../autocomplete/')) {
-                    url = url.substring(3);
+                    return url.substring(3);
+                }
+                // Si la URL empieza con ./autocomplete/, quitarle el ./
+                else if (url.startsWith('./autocomplete/')) {
+                    return url.substring(2);
                 }
             }
-            return originalFetch.call(this, url, options);
+            return url;
+        }
+
+        // Intercepatar todas las peticiones fetch
+        const originalFetch = window.fetch;
+        window.fetch = function(url, options) {
+            return originalFetch.call(this, fixUrl(url), options);
+        };
+
+        // Intercepatar XMLHttpRequest también
+        const originalOpen = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function(method, url, ...args) {
+            return originalOpen.call(this, method, fixUrl(url), ...args);
         };
 
         // Funciones globales para el dashboard
