@@ -74,30 +74,3 @@ document.addEventListener('submit', function(e) {
     }
 });
 
-// Cargar módulos dinámicamente cuando se hagan clic en los enlaces del menú
-document.addEventListener('click', function(e) {
-    const link = e.target.closest('a[href^="#"]');
-    if (link) {
-        const href = link.getAttribute('href');
-        const module = href.substring(1); // Quitar el #
-        
-        // Mapeo de rutas a módulos
-        const moduleMap = {
-            'clientes': 'clientes',
-            'producto': 'productos', 
-            'proveedores': 'proveedores',
-            'bodega': 'bodegas',
-            'ingreso': 'ingreso',
-            'venta': 'venta',
-            'stock': 'inventario',
-            'reportes': 'reportes',
-            'caja': 'caja',
-            'Usuarios': 'usuarios',
-            'planilla': 'planilla'
-        };
-        
-        if (moduleMap[module] && window.loadModule) {
-            window.loadModule(moduleMap[module]);
-        }
-    }
-});
