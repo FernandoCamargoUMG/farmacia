@@ -1,38 +1,52 @@
 <?php
-// Cargar configuración específica para Hostinger
-require_once __DIR__ . '/hostinger_config.php';
-
-// Iniciar sesión solo si no está activa
+// Iniciar sesión
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-require_once __DIR__ . '/controllers/AuthController.php';
-
-$route = $_GET['route'] ?? null;
-$auth = new AuthController();
-
-// Rutas
-if ($route === 'login' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    $auth->login();
-    exit;
-} elseif ($route === 'logout') {
-    $auth->logout();
-    exit;
-} elseif ($route === 'dashboard') {
-    if (!isset($_SESSION['usuario_id'])) {
-        header('Location: /?route=login');
-        exit;
+// Si hay un POST de login, procesarlo
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['correo']) && isset($_POST['password'])) {
+    require_once __DIR__ . '/models/usuario.php';
+    
+    $correo = $_POST['correo'];
+    $password = $_POST['password'];
+    $sucursal_id = $_POST['sucursal_id'] ?? 1;
+    
+    try {
+        $usuario = Usuario::login($correo, $password);
+        
+        if ($usuario) {
+            $_SESSION['usuario_id'] = $usuario['id'];
+            $_SESSION['usuario_nombre'] = $usuario['nombre'];
+            $_SESSION['sucursal_id'] = $sucursal_id;
+            $_SESSION['rol_id'] = $usuario['rol_id'];
+            $_SESSION['rol_nombre'] = $usuario['rol_nombre'];
+            $_SESSION['correo'] = $usuario['correo'];
+            $_SESSION['logged_in'] = true;
+            
+            // Recargar la página para mostrar el dashboard
+            echo '<script>window.location.reload();</script>';
+            exit;
+        } else {
+            $error = "Credenciales inválidas";
+        }
+    } catch (Exception $e) {
+        $error = "Error del sistema";
     }
+}
+
+// Si hay logout
+if (isset($_GET['logout'])) {
+    session_destroy();
+    echo '<script>window.location.href = "index.php";</script>';
+    exit;
+}
+
+// Si está logueado, mostrar dashboard
+if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
     require_once __DIR__ . '/views/dashboard.php';
     exit;
 }
 
-// Ruta por defecto
-if (isset($_SESSION['usuario_id'])) {
-    // En lugar de redireccionar, cargar directamente el dashboard
-    require_once __DIR__ . '/views/dashboard.php';
-    exit;
-}
-
+// Si no está logueado, mostrar login
 require_once __DIR__ . '/views/auth/login.php';

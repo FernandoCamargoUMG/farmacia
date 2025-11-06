@@ -16,10 +16,10 @@
                 <div class="card">
                     <div class="card-header bg-primary text-white">Iniciar Sesión</div>
                     <div class="card-body">
-                        <?php if (isset($_GET['error'])): ?>
-                            <div class="alert alert-danger">Credenciales inválidas..</div>
+                        <?php if (isset($error)): ?>
+                            <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
                         <?php endif; ?>
-                        <form method="POST" action="/?route=login">
+                        <form method="POST" action="index.php">
                             <div class="mb-3">
                                 <label for="correo" class="form-label">Correo</label>
                                 <input type="email" class="form-control" name="correo" required>
