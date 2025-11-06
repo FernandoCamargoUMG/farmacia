@@ -27,7 +27,7 @@ class DashboardManager {
 
     async loadProductStats() {
         try {
-            const response = await fetch('/controllers/productoController.php?action=count', {
+            const response = await fetch('controllers/productoController.php?action=count', {
                 credentials: 'same-origin'
             });
             
@@ -52,7 +52,7 @@ class DashboardManager {
 
     async loadSalesStats() {
         try {
-            const response = await fetch('/controllers/egresoController.php?action=today_stats', {
+            const response = await fetch('controllers/egresoController.php?action=today_stats', {
                 credentials: 'same-origin'
             });
             const data = await response.json();
@@ -68,7 +68,7 @@ class DashboardManager {
 
     async loadClientStats() {
         try {
-            const response = await fetch('/controllers/clienteController.php?action=count', {
+            const response = await fetch('controllers/clienteController.php?action=count', {
                 credentials: 'same-origin'
             });
             const data = await response.json();
@@ -84,7 +84,7 @@ class DashboardManager {
 
     async loadLowStockProducts() {
         try {
-            const response = await fetch('/controllers/inventarioController.php?action=low_stock', {
+            const response = await fetch('controllers/inventarioController.php?action=low_stock', {
                 credentials: 'same-origin'
             });
             const data = await response.json();
@@ -143,7 +143,7 @@ class DashboardManager {
 
     async loadRecentActivity() {
         try {
-            const response = await fetch('/controllers/dashboardController.php?action=recent_activity', {
+            const response = await fetch('controllers/dashboardController.php?action=recent_activity', {
                 credentials: 'same-origin'
             });
             const data = await response.json();
@@ -182,7 +182,7 @@ class DashboardManager {
 
     async initSalesChart() {
         try {
-            const response = await fetch('/controllers/egresoController.php?action=weekly_sales', {
+            const response = await fetch('controllers/egresoController.php?action=weekly_sales', {
                 credentials: 'same-origin'
             });
             const data = await response.json();
