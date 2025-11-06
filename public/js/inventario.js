@@ -43,10 +43,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const sucursalId = document.getElementById('filtroSucursal').value;
             const bodegaId = document.getElementById('filtroBodega').value;
 
-            const url = new URL('/controllers/inventarioController.php', window.location.origin);
-            url.searchParams.set('action', 'listar');
-            if (sucursalId) url.searchParams.set('sucursal_id', sucursalId);
-            if (bodegaId) url.searchParams.set('bodega_id', bodegaId);
+            let url = 'controllers/inventarioController.php?action=listar';
+            if (sucursalId) url += '&sucursal_id=' + sucursalId;
+            if (bodegaId) url += '&bodega_id=' + bodegaId;
 
             fetch(url)
                 .then(res => res.json())

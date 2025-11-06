@@ -1063,6 +1063,10 @@ if (isset($_SESSION['sucursal_id'])) {
         // Intercepatar todas las peticiones fetch
         const originalFetch = window.fetch;
         window.fetch = function(url, options) {
+            // Si es un objeto URL, convertir a string primero
+            if (url instanceof URL) {
+                url = url.toString();
+            }
             return originalFetch.call(this, fixUrl(url), options);
         };
 
