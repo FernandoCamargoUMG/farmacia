@@ -18,31 +18,69 @@ if ($action === 'filtros') {
 if ($action === 'listar') {
     header('Content-Type: application/json');
 
-    $sucursal_id = $_GET['sucursal_id'] ?? $_SESSION['sucursal_id'];
+    $sucursal_id = $_GET['sucursal_id'] ?? $_SESSION['sucursal_id'] ?? 1;
     $bodega_id = $_GET['bodega_id'] ?? null;
 
     try {
         $conn = Conexion::conectar();
         
-        // Obtener nombre de bodega ANTES de ejecutar el stored procedure
-        $bodegaNombre = null;
-        if ($bodega_id) {
-            $stmtBodega = $conn->prepare("SELECT nombre FROM bodega WHERE id = ?");
-            $stmtBodega->execute([$bodega_id]);
-            $bodegaNombre = $stmtBodega->fetchColumn();
-            $stmtBodega->closeCursor(); // Cerrar cursor
+        // Primero verificar si el stored procedure existe
+        $checkSP = $conn->query("SHOW PROCEDURE STATUS WHERE Name = 'sp_inventario'");
+        $spExists = $checkSP->rowCount() > 0;
+        
+        if ($spExists) {
+            // Obtener nombre de bodega ANTES de ejecutar el stored procedure
+            $bodegaNombre = null;
+            if ($bodega_id) {
+                $stmtBodega = $conn->prepare("SELECT nombre FROM bodega WHERE id = ?");
+                $stmtBodega->execute([$bodega_id]);
+                $bodegaNombre = $stmtBodega->fetchColumn();
+                $stmtBodega->closeCursor(); // Cerrar cursor
+            }
+            
+            // Ejecutar stored procedure
+            $stmt = $conn->prepare("CALL sp_inventario(?)");
+            $stmt->execute([$sucursal_id]);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt->closeCursor(); // Cerrar cursor del stored procedure
+
+            // Filtrar por bodega si se especificó
+            if ($bodega_id && $bodegaNombre) {
+                $result = array_filter($result, fn($r) => $r['bodega'] == $bodegaNombre);
+            }
+        } else {
+            // Fallback: consulta directa si no existe el SP
+            $sql = "
+                SELECT 
+                    p.nombre as producto,
+                    s.nombre_sucursal as sucursal,
+                    b.nombre as bodega,
+                    'Movimiento' as movimiento,
+                    COALESCE(i.entrada, 0) as cantidad,
+                    COALESCE(i.fecha, NOW()) as fecha,
+                    'Inventario' as origen,
+                    COALESCE(i.entrada - i.salida, 0) as stock_actual
+                FROM producto p
+                LEFT JOIN inventario i ON p.id = i.producto_id
+                LEFT JOIN sucursal s ON i.sucursal_id = s.id OR s.id = ?
+                LEFT JOIN bodega b ON i.bodega_id = b.id
+                WHERE s.id = ?
+            ";
+            
+            if ($bodega_id) {
+                $sql .= " AND b.id = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->execute([$sucursal_id, $sucursal_id, $bodega_id]);
+            } else {
+                $stmt = $conn->prepare($sql);
+                $stmt->execute([$sucursal_id, $sucursal_id]);
+            }
+            
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
         
-        // Ejecutar stored procedure
-        $stmt = $conn->prepare("CALL sp_inventario(?)");
-        $stmt->execute([$sucursal_id]);
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $stmt->closeCursor(); // Cerrar cursor del stored procedure
-
-        // Filtrar por bodega si se especificó
-        if ($bodega_id && $bodegaNombre) {
-            $result = array_filter($result, fn($r) => $r['bodega'] == $bodegaNombre);
-        }
+        // Asegurar que el resultado sea un array válido
+        $result = is_array($result) ? array_values($result) : [];
 
         echo json_encode(array_values($result));
     } catch (Exception $e) {
