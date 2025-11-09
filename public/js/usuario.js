@@ -45,16 +45,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                         <div class="modal-body">
                             <div class="mb-3">
-                                <label>Categoría</label>
+                                <label>Seleccionar Rol</label>
                                 <select name="rol_id" id="selectRol" class="form-control" required>
                                     <option value="">Seleccione una categoría</option>
                                 </select>
                             </div>
 
                             <div class="mb-3">
-                                <label>Categoría</label>
+                                <label>Seleccionar Sucursal</label>
                                 <select name="sucursal_id" id="selectSucursal" class="form-control" required>
-                                    <option value="">Seleccione una categoría</option>
+                                    <option value="">Seleccione una sucursal</option>
                                 </select>
                             </div>
 
@@ -70,106 +70,49 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         </div>`;
 
-        function importarUsuariosSistemaA() {
-            fetch('http://localhost/project-api/public/index.php?path=users') // URL de tu API REST del Sistema A
-                .then(res => res.json())
-                .then(data => {
-                    if (!data.length) {
-                        Swal.fire('Aviso', 'No se encontraron usuarios en Sistema A', 'info');
-                        return;
-                    }
-
-                    // Recorrer cada usuario y enviarlo al backend de Sistema B para guardar
-                    data.forEach(usuario => {
-                        const formData = new FormData();
-                        formData.append('nombre', usuario.nombre);
-                        formData.append('correo', usuario.email); // tu columna en Sistema B
-                        formData.append('password', btoa(Math.random().toString(36).substring(2,10)));
-                        formData.append('rol_id', 1);        // valor por defecto
-                        formData.append('sucursal_id', 1);   // valor por defecto // password aleatoria base64
-
-                        fetch('/controllers/UsuariosController.php?action=guardar', {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then(res => res.json())
-                        .then(resp => {
-                            console.log('Usuario importado:', resp);
-                        });
-                    });
-
-                    Swal.fire('Éxito', 'Usuarios importados desde Sistema A', 'success')
-                        .then(() => mostrarUsuarios()); // refrescar tabla
-                })
-                .catch(err => {
-                    console.error(err);
-                    Swal.fire('Error', 'No se pudo conectar con Sistema A', 'error');
-                });
-            }
-            document.getElementById('btnImportarUsuarios').addEventListener('click', importarUsuariosSistemaA);
 
 
 
-            // Función para cargar categorías
-            function cargarRoles() {
-                fetch('/controllers/categoriaUsuariosController.php?action=listar')
-                    .then(res => res.json())
-                    .then(data => {
-                        const select = document.getElementById('selectRol');
-                        select.innerHTML = '<option value="">Seleccione una categoría</option>';
-                        data.forEach(cat => {
-                            const option = document.createElement('option');
-                            option.value = cat.id;
-                            option.textContent = cat.nombre;
-                            select.appendChild(option);
-                        });
-                    });
-            }
-
-            function cargarSucursales() {
-                fetch('/controllers/SucUsuariosController.php?action=listar')
-                    .then(res => res.json())
-                    .then(data => {
-                        const select = document.getElementById('selectSucursal');
-                        select.innerHTML = '<option value="">Seleccione una categoría</option>';
-                        data.forEach(cat => {
-                            const option = document.createElement('option');
-                            option.value = cat.id;
-                            option.textContent = cat.nombre_sucursal;
-                            select.appendChild(option);
-                        });
-                    });
-            }
-
-            // Abrir modal
-            document.querySelector('[data-bs-target="#modalNuevoUsuarios"]').addEventListener('click', function() {
-                const form = document.getElementById('formNuevoUsuarios');
-                form.reset();
-                form.UsuariosId.value = '';
-                cargarRoles();
-                cargarSucursales();
-            });
+            
 
             // Mostrar listado de Usuarios
             function mostrarUsuarios() {
-                fetch('/controllers/UsuariosController.php?action=listar')
-                    .then(res => res.json())
+                console.log('Iniciando carga de usuarios...');
+                fetch('controllers/UsuariosController.php?action=listar')
+                    .then(res => {
+                        console.log('Respuesta del servidor:', res.status);
+                        return res.json();
+                    })
                     .then(data => {
+                        console.log('Datos recibidos:', data);
+                        console.log('Tipo de datos:', typeof data);
+                        console.log('Es array:', Array.isArray(data));
+                        if (Array.isArray(data)) {
+                            console.log('Cantidad de usuarios:', data.length);
+                        }
                         if ($.fn.DataTable.isDataTable('#tablaUsuarios')) {
                             $('#tablaUsuarios').DataTable().clear().destroy();
                         }
 
             const tbody = document.getElementById('tbodyUsuarios');
-            tbody.innerHTML = data.map(usuario => `
-                <tr>
-                    <td>${usuario.nombre || ''}</td>
-                    <td>${usuario.correo || ''}</td>
-                    <td>
-                        <button class="btn btn-sm btn-warning btnEditar" data-id="${usuario.id}">✏️</button>
-                        <button class="btn btn-sm btn-danger btnEliminar" data-id="${usuario.id}">🗑️</button>
-                    </td>
-                </tr>
-            `).join('');
+                        
+                        if (Array.isArray(data) && data.length > 0) {
+                            console.log('Renderizando', data.length, 'usuarios en la tabla');
+                            tbody.innerHTML = data.map(usuario => `
+                                <tr>
+                                    <td>${usuario.nombre || ''}</td>
+                                    <td>${usuario.correo || ''}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning btnEditar" data-id="${usuario.id}">✏️</button>
+                                        <button class="btn btn-sm btn-danger btnEliminar" data-id="${usuario.id}">🗑️</button>
+                                    </td>
+                                </tr>
+                            `).join('');
+                            console.log('Tabla de usuarios renderizada correctamente');
+                        } else {
+                            console.log('No hay datos de usuarios para mostrar');
+                            tbody.innerHTML = '<tr><td colspan="3" class="text-center">No hay usuarios registrados</td></tr>';
+                        }
 
                         $('#tablaUsuarios').DataTable({
                             language: {
@@ -182,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.querySelectorAll('.btnEditar').forEach(btn => {
                             btn.addEventListener('click', function() {
                                 const id = this.dataset.id;
-                                fetch(`/controllers/UsuariosController.php?action=ver&id=${id}`)
+                                fetch(`controllers/UsuariosController.php?action=ver&id=${id}`)
                                     .then(res => res.json())
                                     .then(Usuarios => {
                                         const form = document.getElementById('formNuevoUsuarios');
@@ -212,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     cancelButtonText: 'Cancelar'
                                 }).then(result => {
                                     if (result.isConfirmed) {
-                                        fetch('/controllers/UsuariosController.php?action=eliminar', {
+                                        fetch('controllers/UsuariosController.php?action=eliminar', {
                                                 method: 'POST',
                                                 headers: {
                                                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -232,8 +175,54 @@ document.addEventListener('DOMContentLoaded', function() {
                                 });
                             });
                         });
+                    })
+                    .catch(error => {
+                        console.error('Error al cargar usuarios:', error);
+                        console.error('Detalles del error:', error.message);
+                        const tbody = document.getElementById('tbodyUsuarios');
+                        tbody.innerHTML = '<tr><td colspan="3" class="text-center text-danger">Error al cargar usuarios</td></tr>';
                     });
             }
+
+            // Función para cargar categorías
+            function cargarRoles() {
+                fetch('controllers/categoriaUsuariosController.php?action=listar')
+                    .then(res => res.json())
+                    .then(data => {
+                        const select = document.getElementById('selectRol');
+                        select.innerHTML = '<option value="">Seleccione una categoría</option>';
+                        data.forEach(cat => {
+                            const option = document.createElement('option');
+                            option.value = cat.id;
+                            option.textContent = cat.nombre;
+                            select.appendChild(option);
+                        });
+                    });
+            }
+
+            function cargarSucursales() {
+                fetch('controllers/SucUsuariosController.php?action=listar')
+                    .then(res => res.json())
+                    .then(data => {
+                        const select = document.getElementById('selectSucursal');
+                        select.innerHTML = '<option value="">Seleccione una categoría</option>';
+                        data.forEach(cat => {
+                            const option = document.createElement('option');
+                            option.value = cat.id;
+                            option.textContent = cat.nombre_sucursal;
+                            select.appendChild(option);
+                        });
+                    });
+            }
+
+            // Abrir modal
+            document.querySelector('[data-bs-target="#modalNuevoUsuarios"]').addEventListener('click', function() {
+                const form = document.getElementById('formNuevoUsuarios');
+                form.reset();
+                form.UsuariosId.value = '';
+                cargarRoles();
+                cargarSucursales();
+            });
 
             document.getElementById('btnMostrarUsuarios').addEventListener('click', mostrarUsuarios);
 
@@ -246,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const id = formData.get("id");
                 const action = id ? 'actualizar' : 'guardar';
 
-                fetch(`/controllers/UsuariosController.php?action=${action}`, {
+                fetch(`controllers/UsuariosController.php?action=${action}`, {
                         method: 'POST',
                         body: formData
                     })
