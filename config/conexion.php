@@ -6,7 +6,7 @@ class Conexion {
     public static function conectar() {
         
         //Obtener datos desde variables de entorno
-        $host = "localhost"; 
+        $host = "srv1928.hstgr.io"; 
         $dbname = "u834187355_ferreteria";
         $user = "u834187355_katerin";
         $pass = "4l]JgZCMFzU";
