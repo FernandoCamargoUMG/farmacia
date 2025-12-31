@@ -59,7 +59,9 @@ try {
     switch ($action) {
         case 'productos_count':
             try {
-                $stmt = $conn->query("SELECT COUNT(*) as total FROM producto WHERE 1");
+                $sucursal_id = $_SESSION['sucursal_id'] ?? 1;
+                $stmt = $conn->prepare("SELECT COUNT(*) as total FROM producto WHERE sucursal_id = ?");
+                $stmt->execute([$sucursal_id]);
                 $result = $stmt->fetch(PDO::FETCH_ASSOC);
                 echo json_encode(['total' => (int)($result['total'] ?? 0)]);
             } catch (Exception $e) {
@@ -70,7 +72,9 @@ try {
             
         case 'ventas_hoy':
             try {
-                $stmt = $conn->query("SELECT COUNT(*) as total FROM egreso_cab WHERE DATE(fecha) = CURDATE() AND sta = 1");
+                $sucursal_id = $_SESSION['sucursal_id'] ?? 1;
+                $stmt = $conn->prepare("SELECT COUNT(*) as total FROM egreso_cab WHERE DATE(fecha) = CURDATE() AND sta = 1 AND sucursal_id = ?");
+                $stmt->execute([$sucursal_id]);
                 $result = $stmt->fetch(PDO::FETCH_ASSOC);
                 echo json_encode(['total' => (int)($result['total'] ?? 0)]);
             } catch (Exception $e) {
@@ -81,12 +85,22 @@ try {
             
         case 'clientes_count':
             try {
-                $stmt = $conn->query("SELECT COUNT(*) as total FROM clientes WHERE 1");
+                $sucursal_id = $_SESSION['sucursal_id'] ?? 1;
+                // Intentar con filtro por sucursal, si no existe la columna, contar todos
+                $stmt = $conn->prepare("SELECT COUNT(*) as total FROM clientes WHERE sucursal_id = ?");
+                $stmt->execute([$sucursal_id]);
                 $result = $stmt->fetch(PDO::FETCH_ASSOC);
                 echo json_encode(['total' => (int)($result['total'] ?? 0)]);
             } catch (Exception $e) {
-                error_log("Error clientes_count: " . $e->getMessage());
-                echo json_encode(['total' => 3]); // Basado en datos del SQL (JUAN, JUANA, KEVIN)
+                // Si falla (por ejemplo, si no existe sucursal_id en clientes), contar todos
+                try {
+                    $stmt = $conn->query("SELECT COUNT(*) as total FROM clientes WHERE 1");
+                    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                    echo json_encode(['total' => (int)($result['total'] ?? 0)]);
+                } catch (Exception $e2) {
+                    error_log("Error clientes_count: " . $e2->getMessage());
+                    echo json_encode(['total' => 3]); // Basado en datos del SQL (JUAN, JUANA, KEVIN)
+                }
             }
             break;
             
@@ -107,12 +121,13 @@ try {
                         ), 0) AS stock_actual
                     FROM producto p
                     LEFT JOIN inventario i ON p.id = i.producto_id AND i.sucursal_id = ?
+                    WHERE p.sucursal_id = ?
                     GROUP BY p.id, p.nombre, p.codigo
                     HAVING stock_actual <= 10
                     ORDER BY stock_actual ASC
                     LIMIT 10
                 ");
-                $stmt->execute([$sucursal_id]);
+                $stmt->execute([$sucursal_id, $sucursal_id]);
                 $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 echo json_encode($products);
             } catch (Exception $e) {

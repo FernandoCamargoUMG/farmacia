@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <option value="">Seleccione una categoría</option>
                                 </select>
                             </div>
-                            <div class="mb-3"><label>codigo</label><input type="text" name="codigo" class="form-control" required></div>
+                            <!--<div class="mb-3"><label>codigo</label><input type="text" name="codigo" class="form-control" required></div>-->
                             <div class="mb-3"><label>Nombre</label><input type="text" name="nombre" class="form-control" required></div>
                             <div class="mb-3"><label>descripción</label><input type="text" name="descripcion" class="form-control"></div>
                             <div class="mb-3"><label>precio</label><input type="text" name="precio" class="form-control"></div>
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Función para cargar categorías
             function cargarCategorias() {
-                fetch('controllers/categoriaProductoController.php?action=listar')
+                return fetch('controllers/categoriaProductoController.php?action=listar')
                     .then(res => res.json())
                     .then(data => {
                         const select = document.getElementById('selectCategoria');
@@ -73,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             option.textContent = cat.descripcion;
                             select.appendChild(option);
                         });
+                        return data;
                     });
             }
 
@@ -124,14 +125,14 @@ document.addEventListener('DOMContentLoaded', function() {
                                     .then(producto => {
                                         const form = document.getElementById('formNuevoProducto');
                                         form.productoId.value = producto.id;
-                                        form.codigo.value = producto.codigo;
+                                        //form.codigo.value = producto.codigo;
                                         form.nombre.value = producto.nombre;
                                         form.descripcion.value = producto.descripcion;
                                         form.precio.value = producto.precio;
-                                        cargarCategorias();
-                                        setTimeout(() => {
-                                            form.categoria_id.value = producto.categoria_id;
-                                        }, 300);
+                                        // Cargar categorías y luego seleccionar la correcta
+                                        cargarCategorias().then(() => {
+                                            document.getElementById('selectCategoria').value = producto.categoria_id;
+                                        });
                                         new bootstrap.Modal(document.getElementById('modalNuevoProducto')).show();
                                     });
                             });
