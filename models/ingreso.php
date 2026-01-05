@@ -9,7 +9,7 @@ class Ingreso
         $pdo = Conexion::conectar();
         $stmt = $pdo->prepare("SELECT ic.id, ic.sucursal_id, 
             ic.proveedor_id, 
-            ic.numero, ic.total, 
+            ic.numero, ic.total, ic.sta,
             DATE_FORMAT(ic.fecha, '%d-%m-%Y') AS fecha,
             p.nombre AS proveedor
             FROM ingreso_cab ic
@@ -75,25 +75,25 @@ class Ingreso
 
 
     // Guardar nuevo ingreso (cabecera)
-    public static function guardarCabecera($sucursal_id, $proveedor_id, $fecha, $numero, $subtotal, $gravada, $iva, $total, $observaciones)
+    public static function guardarCabecera($sucursal_id, $proveedor_id, $forma_pago, $fecha, $numero, $subtotal, $gravada, $iva, $total, $observaciones, $opcionpago, $sta)
     {
         $conn = Conexion::conectar();
-        $stmt = $conn->prepare("INSERT INTO ingreso_cab (sucursal_id, proveedor_id, fecha, numero, subtotal, gravada, iva, total, observaciones, sta)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+        $stmt = $conn->prepare("INSERT INTO ingreso_cab (sucursal_id, proveedor_id, forma_pago, fecha, numero, subtotal, gravada, iva, total, observaciones, opcionpago, sta)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
-        $stmt->execute([$sucursal_id, $proveedor_id, $fecha, $numero, $subtotal, $gravada, $iva, $total, $observaciones]);
+        $stmt->execute([$sucursal_id, $proveedor_id, $forma_pago, $fecha, $numero, $subtotal, $gravada, $iva, $total, $observaciones, $opcionpago, $sta]);
         return $conn->lastInsertId();
     }
 
     // Actualizar cabecera existente
-    public static function actualizarCabecera($id, $sucursal_id, $proveedor_id, $fecha, $numero, $subtotal, $gravada, $iva, $total, $observaciones)
+    public static function actualizarCabecera($id, $sucursal_id, $proveedor_id, $forma_pago, $fecha, $numero, $subtotal, $gravada, $iva, $total, $observaciones, $opcionpago, $sta)
     {
         $conn = Conexion::conectar();
         $stmt = $conn->prepare("UPDATE ingreso_cab
-            SET sucursal_id = ?, proveedor_id = ?, fecha = ?, numero = ?, subtotal = ?, gravada = ?, iva = ?, total = ?, observaciones = ?
+            SET sucursal_id = ?, proveedor_id = ?, forma_pago = ?, fecha = ?, numero = ?, subtotal = ?, gravada = ?, iva = ?, total = ?, observaciones = ?, opcionpago = ?, sta = ?
             WHERE id = ?
         ");
-        return $stmt->execute([$sucursal_id, $proveedor_id, $fecha, $numero, $subtotal, $gravada, $iva, $total, $observaciones, $id]);
+        return $stmt->execute([$sucursal_id, $proveedor_id, $forma_pago, $fecha, $numero, $subtotal, $gravada, $iva, $total, $observaciones, $opcionpago, $sta, $id]);
     }
 
     // Guardar detalle de ingreso

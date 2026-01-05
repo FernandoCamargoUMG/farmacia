@@ -47,7 +47,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <option value="">Seleccione una categoría</option>
                                 </select>
                             </div>
-                            <!--<div class="mb-3"><label>codigo</label><input type="text" name="codigo" class="form-control" required></div>-->
+                            <div class="mb-3">
+                                <label>Código de Barras</label>
+                                <input type="text" name="codigo" id="codigoBarras" class="form-control" placeholder="Escanee el código de barras...">
+                                <small class="text-muted">Use el lector de código de barras o déjelo vacío para generar automáticamente</small>
+                            </div>
                             <div class="mb-3"><label>Nombre</label><input type="text" name="nombre" class="form-control" required></div>
                             <div class="mb-3"><label>descripción</label><input type="text" name="descripcion" class="form-control"></div>
                             <div class="mb-3"><label>precio</label><input type="text" name="precio" class="form-control"></div>
@@ -83,6 +87,47 @@ document.addEventListener('DOMContentLoaded', function() {
                 form.reset();
                 form.productoId.value = '';
                 cargarCategorias();
+                
+                // Focus en el campo de código para lector de barras
+                setTimeout(() => {
+                    document.getElementById('codigoBarras').focus();
+                }, 500);
+            });
+
+            // Listener para código de barras - el lector envía Enter automáticamente
+            document.getElementById('codigoBarras').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const codigo = this.value.trim();
+                    
+                    if (codigo) {
+                        // Verificar si el código ya existe
+                        fetch(`controllers/productoController.php?action=buscar_codigo&codigo=${encodeURIComponent(codigo)}`)
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.existe) {
+                                    Swal.fire({
+                                        title: 'Código ya existe',
+                                        text: `El código "${codigo}" ya está registrado para: ${data.producto.nombre}`,
+                                        icon: 'warning',
+                                        confirmButtonText: 'Entendido'
+                                    });
+                                    this.value = '';
+                                    this.focus();
+                                } else {
+                                    // Código disponible, pasar al siguiente campo
+                                    document.querySelector('[name="nombre"]').focus();
+                                }
+                            })
+                            .catch(err => {
+                                console.error('Error verificando código:', err);
+                                document.querySelector('[name="nombre"]').focus();
+                            });
+                    } else {
+                        // Si está vacío, pasar al siguiente campo
+                        document.querySelector('[name="nombre"]').focus();
+                    }
+                }
             });
 
             // Mostrar listado de productos

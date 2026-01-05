@@ -1,11 +1,11 @@
-document.addEventListener('DOMContentLoaded', function() {
-        // Variables globales para productos y bodegas (se cargarán al iniciar)
-        window.productos = [];
-        window.bodegas = [];
+document.addEventListener('DOMContentLoaded', function () {
+    // Variables globales para productos y bodegas (se cargarán al iniciar)
+    window.productos = [];
+    window.bodegas = [];
 
-        function loadIngresos() {
-            const content = document.getElementById('dynamic-content');
-            content.innerHTML = `
+    function loadIngresos() {
+        const content = document.getElementById('dynamic-content');
+        content.innerHTML = `
         <div class="ingresos-view">
             <h2 class="mb-4"><i class="bi bi-journal-plus"></i> Ingresos a Inventario</h2>
             <div class="card shadow" style="max-width: 1100px; margin: 0 auto;">
@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <th>Fecha</th>
                                 <th>Proveedor</th>
                                 <th>Total</th>
+                                <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -62,6 +63,44 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </div>
                             </div>
 
+                            <div class="row">
+                                <div class="col-md-4 mb-2">
+                                    <label>Forma de Pago</label>
+                                    <select name="forma_pago" class="form-select" required>
+                                        <option value="1">Efectivo</option>
+                                        <option value="2">Cheque</option>
+                                        <option value="3">Depósito</option>
+                                        <option value="4">Tarjeta de Crédito</option>
+                                        <option value="5">Tarjeta de Débito</option>
+                                        <option value="6">Transferencia Bancaria</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4 mb-2">
+                                    <label>Tipo de Venta</label><br>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="opcionpago" value="0" checked>
+                                        <label class="form-check-label">Contado</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="opcionpago" value="1">
+                                        <label class="form-check-label">Crédito</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-2">
+                                    <label>Tipo</label><br>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="tipo_iva" value="gravada" checked>
+                                        <label class="form-check-label">No Exenta</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="tipo_iva" value="exenta">
+                                        <label class="form-check-label">Exenta</label>
+                                    </div>
+                                </div>
+                            </div>
+
                             <hr>
 
                             <table class="table table-bordered" id="tablaDetalles">
@@ -94,7 +133,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Guardar</button>
+                            <button type="button" class="btn btn-secondary" id="btnGuardarBorrador">Guardar como Borrador</button>
+                            <button type="button" class="btn btn-success" id="btnEmitirCompra">Emitir Compra</button>
                         </div>
                     </form>
                 </div>
@@ -102,82 +142,82 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
         `;
 
-            document.querySelector('[data-bs-target="#modalNuevoIngreso"]').addEventListener('click', function() {
-                const form = document.getElementById('formNuevoIngreso');
-                form.reset();
-                form.removeAttribute('data-editing-id'); // quitar ID si venía de una edición
-                document.getElementById('detalleBody').innerHTML = ''; // limpiar detalles
-                document.getElementById('proveedor_id').value = '';
-                document.getElementById('inputProveedor').value = '';
+        document.querySelector('[data-bs-target="#modalNuevoIngreso"]').addEventListener('click', function () {
+            const form = document.getElementById('formNuevoIngreso');
+            form.reset();
+            form.removeAttribute('data-editing-id'); // quitar ID si venía de una edición
+            document.getElementById('detalleBody').innerHTML = ''; // limpiar detalles
+            document.getElementById('proveedor_id').value = '';
+            document.getElementById('inputProveedor').value = '';
+        });
+
+
+        // Función autocompletar genérica
+        function autocomplete(input, hiddenInput, listContainer, endpoint, extraCallback = null) {
+            input.addEventListener('input', function () {
+                const val = this.value.trim();
+                if (val.length < 1) {
+                    hiddenInput.value = '';
+                    listContainer.innerHTML = '';
+                    return;
+                }
+
+                fetch(`${endpoint}?q=${encodeURIComponent(val)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        listContainer.innerHTML = '';
+                        data.forEach(item => {
+                            const div = document.createElement('div');
+                            div.textContent = item.nombre || item.label || item.nombre_proveedor || item.nombre_producto || item.nombre_bodega || item.nombre || '';
+                            div.classList.add('autocomplete-item');
+                            div.style.cursor = 'pointer';
+                            div.style.padding = '5px';
+                            div.addEventListener('click', () => {
+                                input.value = div.textContent;
+                                hiddenInput.value = item.id;
+                                listContainer.innerHTML = '';
+                                if (extraCallback) extraCallback(item);
+                            });
+                            listContainer.appendChild(div);
+                        });
+                    });
             });
 
+            document.addEventListener('click', (e) => {
+                if (e.target !== input) {
+                    listContainer.innerHTML = '';
+                }
+            });
+        }
 
-            // Función autocompletar genérica
-            function autocomplete(input, hiddenInput, listContainer, endpoint, extraCallback = null) {
-                input.addEventListener('input', function() {
-                    const val = this.value.trim();
-                    if (val.length < 1) {
-                        hiddenInput.value = '';
-                        listContainer.innerHTML = '';
-                        return;
-                    }
+        // Inicializar autocomplete para proveedor
+        const inputProveedor = document.getElementById('inputProveedor');
+        const proveedorId = document.getElementById('proveedor_id');
+        const listaProveedor = document.getElementById('autocompleteProveedorList');
+        autocomplete(inputProveedor, proveedorId, listaProveedor, '/autocomplete/autocomplete_proveedores.php');
 
-                    fetch(`${endpoint}?q=${encodeURIComponent(val)}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            listContainer.innerHTML = '';
-                            data.forEach(item => {
-                                const div = document.createElement('div');
-                                div.textContent = item.nombre || item.label || item.nombre_proveedor || item.nombre_producto || item.nombre_bodega || item.nombre || '';
-                                div.classList.add('autocomplete-item');
-                                div.style.cursor = 'pointer';
-                                div.style.padding = '5px';
-                                div.addEventListener('click', () => {
-                                    input.value = div.textContent;
-                                    hiddenInput.value = item.id;
-                                    listContainer.innerHTML = '';
-                                    if (extraCallback) extraCallback(item);
-                                });
-                                listContainer.appendChild(div);
-                            });
-                        });
-                });
+        // Cargar productos y bodegas para uso en filas
+        fetch('/controllers/productoController.php?action=listar')
+            .then(res => res.json())
+            .then(data => {
+                window.productos = data;
+            });
 
-                document.addEventListener('click', (e) => {
-                    if (e.target !== input) {
-                        listContainer.innerHTML = '';
-                    }
-                });
-            }
+        fetch('/controllers/sucursalBodegaController.php?action=listar')
+            .then(res => res.json())
+            .then(data => {
+                window.bodegas = data;
+            });
 
-            // Inicializar autocomplete para proveedor
-            const inputProveedor = document.getElementById('inputProveedor');
-            const proveedorId = document.getElementById('proveedor_id');
-            const listaProveedor = document.getElementById('autocompleteProveedorList');
-            autocomplete(inputProveedor, proveedorId, listaProveedor, '/autocomplete/autocomplete_proveedores.php');
+        // Función para agregar fila con autocompletados para producto y bodega
+        function agregarFilaDetalle() {
+            const tbody = document.getElementById('detalleBody');
+            const idUnico = Date.now();
 
-            // Cargar productos y bodegas para uso en filas
-            fetch('/controllers/productoController.php?action=listar')
-                .then(res => res.json())
-                .then(data => {
-                    window.productos = data;
-                });
+            const tr = document.createElement('tr');
+            tr.dataset.id = idUnico;
 
-            fetch('/controllers/sucursalBodegaController.php?action=listar')
-                .then(res => res.json())
-                .then(data => {
-                    window.bodegas = data;
-                });
-
-            // Función para agregar fila con autocompletados para producto y bodega
-            function agregarFilaDetalle() {
-                const tbody = document.getElementById('detalleBody');
-                const idUnico = Date.now();
-
-                const tr = document.createElement('tr');
-                tr.dataset.id = idUnico;
-
-                tr.innerHTML = `
+            tr.innerHTML = `
             <td class="position-relative">
                 <input type="text" class="form-control inputProducto" id="inputProducto${idUnico}" autocomplete="off" required>
                 <input type="hidden" name="producto_id[]" id="producto_id${idUnico}" required>
@@ -194,321 +234,370 @@ document.addEventListener('DOMContentLoaded', function() {
             <td><button type="button" class="btn btn-danger btn-sm eliminar-fila">🗑</button></td>
             `;
 
-                tbody.appendChild(tr);
+            tbody.appendChild(tr);
 
-                // Autocomplete producto
-                autocomplete(
-                    document.getElementById(`inputProducto${idUnico}`),
-                    document.getElementById(`producto_id${idUnico}`),
-                    document.getElementById(`autocompleteProductoList${idUnico}`),
-                    './autocomplete/autocomplete_productos.php',
-                    (item) => {
-                        const precioInput = tr.querySelector('.precio');
-                        precioInput.value = item.precio || 0;
-                        calcularFila(tr);
-                    }
-                );
+            // Autocomplete producto
+            autocomplete(
+                document.getElementById(`inputProducto${idUnico}`),
+                document.getElementById(`producto_id${idUnico}`),
+                document.getElementById(`autocompleteProductoList${idUnico}`),
+                './autocomplete/autocomplete_productos.php',
+                (item) => {
+                    const precioInput = tr.querySelector('.precio');
+                    precioInput.value = item.precio || 0;
+                    calcularFila(tr);
+                }
+            );
 
-                // Autocomplete bodega
-                autocomplete(
-                    document.getElementById(`inputBodega${idUnico}`),
-                    document.getElementById(`bodega_id${idUnico}`),
-                    document.getElementById(`autocompleteBodegaList${idUnico}`),
-                    '/autocomplete/autocomplete_bodegas.php'
-                );
+            // Autocomplete bodega
+            autocomplete(
+                document.getElementById(`inputBodega${idUnico}`),
+                document.getElementById(`bodega_id${idUnico}`),
+                document.getElementById(`autocompleteBodegaList${idUnico}`),
+                '/autocomplete/autocomplete_bodegas.php'
+            );
 
-                // Eventos para recalcular totales cuando cambien cantidad o precio
-                tr.querySelectorAll('.cantidad, .precio').forEach(input => {
-                    input.addEventListener('input', () => calcularFila(tr));
-                });
+            // Eventos para recalcular totales cuando cambien cantidad o precio
+            tr.querySelectorAll('.cantidad, .precio').forEach(input => {
+                input.addEventListener('input', () => calcularFila(tr));
+            });
 
-                // Botón eliminar fila
-                tr.querySelector('.eliminar-fila').addEventListener('click', () => {
-                    tr.remove();
-                    calcularTotales();
-                });
-            }
-
-            // Calcular total de fila
-            function calcularFila(tr) {
-                const cantidad = parseFloat(tr.querySelector('.cantidad').value) || 0;
-                const precioConIVA = parseFloat(tr.querySelector('.precio').value) || 0;
-
-                // Convertimos el precio con IVA a precio sin IVA
-                const precioSinIVA = precioConIVA / 1.12;
-
-                const total = cantidad * precioSinIVA;
-
-                tr.querySelector('.total').value = total.toFixed(2);
+            // Botón eliminar fila
+            tr.querySelector('.eliminar-fila').addEventListener('click', () => {
+                tr.remove();
                 calcularTotales();
+            });
+        }
+
+        // Calcular total de fila
+        function calcularFila(tr) {
+            const cantidad = parseFloat(tr.querySelector('.cantidad').value) || 0;
+            const precioConIVA = parseFloat(tr.querySelector('.precio').value) || 0;
+
+            // Convertimos el precio con IVA a precio sin IVA
+            const precioSinIVA = precioConIVA / 1.12;
+
+            const total = cantidad * precioSinIVA;
+
+            tr.querySelector('.total').value = total.toFixed(2);
+            calcularTotales();
+        }
+
+        // Calcular totales generales
+        function calcularTotales() {
+            const filas = document.querySelectorAll('#detalleBody tr');
+            let subtotal = 0;
+
+            filas.forEach(tr => {
+                subtotal += parseFloat(tr.querySelector('.total').value) || 0;
+            });
+
+            const form = document.getElementById('formNuevoIngreso');
+            const tipoIva = form.querySelector('input[name="tipo_iva"]:checked').value;
+            
+            let iva = 0;
+            let gravada = 0;
+            
+            if (tipoIva === 'exenta') {
+                // Exenta: sin IVA
+                iva = 0;
+                gravada = 0;
+            } else {
+                // No exenta: con IVA del 12%
+                iva = subtotal * 0.12;
+                gravada = subtotal;
             }
+            
+            const total = subtotal + iva;
 
-            // Calcular totales generales
-            function calcularTotales() {
-                const filas = document.querySelectorAll('#detalleBody tr');
-                let subtotal = 0;
+            form.subtotal.value = subtotal.toFixed(2);
+            form.gravada.value = gravada.toFixed(2);
+            form.iva.value = iva.toFixed(2);
+            form.total.value = total.toFixed(2);
+        }
 
-                filas.forEach(tr => {
-                    subtotal += parseFloat(tr.querySelector('.total').value) || 0; 
-                });
-
-                const iva = subtotal * 0.12;
-                const total = subtotal + iva;
-
-                const form = document.getElementById('formNuevoIngreso');
-                form.subtotal.value = subtotal.toFixed(2);
-                form.gravada.value = subtotal.toFixed(2); 
-                form.iva.value = iva.toFixed(2);
-                form.total.value = total.toFixed(2);
-            }
-
-            // Cargar ingreso para editar
-            function cargarIngresoParaEditar(id) {
-                fetch(`/controllers/ingresoController.php?action=obtener&id=${id}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        console.log(data);
-                        if (!data) {
-                            Swal.fire('Error', 'No se encontró el ingreso.', 'error');
-                            return;
-                        }
-
-                        const form = document.getElementById('formNuevoIngreso');
-
-                        form.fecha.value = data.fecha.split(' ')[0]; // Separa la fecha de la hora
-                        form.numero.value = data.numero;
-                        document.getElementById('proveedor_id').value = data.proveedor_id;
-                        document.getElementById('inputProveedor').value = data.proveedor;
-
-                        const tbody = document.getElementById('detalleBody');
-                        tbody.innerHTML = '';
-
-                        data.detalles.forEach(det => {
-                            agregarFilaDetalle(); // Crea la fila
-                            const tr = tbody.lastElementChild;
-
-                            // Rellenar directamente desde el tr, sin usar IDs individuales
-                            tr.querySelector('.inputProducto').value = det.producto_nombre;
-                            tr.querySelector('[name="producto_id[]"]').value = det.producto_id;
-
-                            tr.querySelector('.inputBodega').value = det.bodega_nombre;
-                            tr.querySelector('[name="bodega_id[]"]').value = det.bodega_id;
-
-                            tr.querySelector('.cantidad').value = det.cantidad;
-                            tr.querySelector('.precio').value = det.precio;
-
-                            calcularFila(tr); // Calcula total de la fila
-                        });
-
-
-                        form.subtotal.value = parseFloat(data.subtotal).toFixed(2);
-                        form.gravada.value = parseFloat(data.gravada).toFixed(2);
-                        form.iva.value = parseFloat(data.iva).toFixed(2);
-                        form.total.value = parseFloat(data.total).toFixed(2);
-
-                        form.observaciones.value = data.observaciones || '';
-
-                        form.dataset.editingId = id;
-
-                        const modal = new bootstrap.Modal(document.getElementById('modalNuevoIngreso'));
-                        modal.show();
-                    })
-                    .catch(() => {
-                        Swal.fire('Error', 'Error al cargar el ingreso.', 'error');
-                    });
-            }
-
-            // Mostrar ingresos
-            function mostrarIngresos() {
-                fetch('/controllers/ingresoController.php?action=listar')
-                    .then(res => res.json())
-                    .then(data => {
-                        console.log(data);
-                        if ($.fn.DataTable.isDataTable('#tablaIngresos')) {
-                            $('#tablaIngresos').DataTable().clear().destroy();
-                        }
-                        const tbody = document.getElementById('tbodyIngresos');
-                        tbody.innerHTML = data.map(row => `
-                    <tr>
-                        <td>${row.numero}</td>
-                        <td>${row.fecha}</td>
-                        <td>${row.proveedor}</td>
-                        <td>Q ${row.total}</td>
-                        <td>
-                            <button class="btn btn-sm btn-info btnComprobante" data-id="${row.id}" title="Generar Comprobante PDF">📄</button>
-                            <button class="btn btn-sm btn-warning btnEditar" data-id="${row.id}">✏️</button>
-                            <button class="btn btn-sm btn-danger btnEliminar" data-id="${row.id}">🗑</button>
-                        </td>
-                    </tr>
-                `).join('');
-
-                        $('#tablaIngresos').DataTable({
-                            language: {
-                                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
-                            },
-                            pageLength: 5,
-                            lengthMenu: [5, 10, 25, 50, 100]
-                        });
-
-                        // Evento eliminar ingreso
-                        document.querySelectorAll('.btnEliminar').forEach(btn => {
-                            btn.addEventListener('click', () => {
-                                const id = btn.dataset.id;
-                                Swal.fire({
-                                    title: '¿Eliminar ingreso?',
-                                    icon: 'warning',
-                                    showCancelButton: true,
-                                    confirmButtonText: 'Sí, eliminar',
-                                    cancelButtonText: 'Cancelar'
-                                }).then(result => {
-                                    if (result.isConfirmed) {
-                                        fetch('/controllers/ingresoController.php?action=eliminar', {
-                                                method: 'POST',
-                                                headers: {
-                                                    'Content-Type': 'application/x-www-form-urlencoded'
-                                                },
-                                                body: `id=${id}`
-                                            })
-                                            .then(res => res.json())
-                                            .then(data => {
-                                                if (data.success) {
-                                                    Swal.fire('Eliminado', '', 'success');
-                                                    mostrarIngresos();
-                                                } else {
-                                                    Swal.fire('Error', 'No se pudo eliminar.', 'error');
-                                                }
-                                            });
-                                    }
-                                });
-                            });
-                        });
-
-                        // Evento editar ingreso
-                        document.querySelectorAll('.btnEditar').forEach(btn => {
-                            btn.addEventListener('click', () => {
-                                const id = btn.dataset.id;
-                                cargarIngresoParaEditar(id);
-                            });
-                        });
-
-                        // Evento generar comprobante PDF
-                        document.querySelectorAll('.btnComprobante').forEach(btn => {
-                            btn.addEventListener('click', () => {
-                                const id = btn.dataset.id;
-                                // Abrir PDF en nueva ventana
-                                window.open(`controllers/comprobanteController.php?action=comprobante&id=${id}`, '_blank');
-                            });
-                        });
-                    });
-            }
-
-            // Eventos e inicializaciones
-            document.getElementById('btnAgregarDetalle').addEventListener('click', agregarFilaDetalle);
-            document.getElementById('btnMostrarIngresos').addEventListener('click', mostrarIngresos);
-
-            // Guardar o editar ingreso
-            document.getElementById('formNuevoIngreso').addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                const form = this;
-
-                if (!proveedorId.value) {
-                    Swal.fire('Error', 'Debe seleccionar un proveedor válido.', 'error');
-                    return;
-                }
-
-                const filas = document.querySelectorAll('#detalleBody tr');
-                if (filas.length === 0) {
-                    Swal.fire('Error', 'Debe agregar al menos un detalle.', 'error');
-                    return;
-                }
-
-                const detalles = [];
-                for (const tr of filas) {
-                    const producto_id = tr.querySelector('input[name="producto_id[]"]').value;
-                    const bodega_id = tr.querySelector('input[name="bodega_id[]"]').value;
-                    const cantidad = tr.querySelector('.cantidad').value;
-                    const precio = tr.querySelector('.precio').value;
-
-                    if (!producto_id || !bodega_id) {
-                        Swal.fire('Error', 'Debe seleccionar producto y bodega válidos en todas las filas.', 'error');
+        // Cargar ingreso para editar
+        function cargarIngresoParaEditar(id) {
+            fetch(`/controllers/ingresoController.php?action=obtener&id=${id}`)
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data);
+                    if (!data) {
+                        Swal.fire('Error', 'No se encontró el ingreso.', 'error');
                         return;
                     }
 
-                    detalles.push({
-                        producto_id,
-                        bodega_id,
-                        cantidad,
-                        precio
+                    const form = document.getElementById('formNuevoIngreso');
+
+                    form.fecha.value = data.fecha.split(' ')[0]; // Separa la fecha de la hora
+                    form.numero.value = data.numero;
+                    document.getElementById('proveedor_id').value = data.proveedor_id;
+                    document.getElementById('inputProveedor').value = data.proveedor;
+
+                    // Cargar forma de pago
+                    if (data.forma_pago) {
+                        form.forma_pago.value = data.forma_pago;
+                    }
+
+                    // Cargar opción de pago (contado/crédito)
+                    const opcionPago = data.opcionpago || 0;
+                    form.querySelector(`input[name="opcionpago"][value="${opcionPago}"]`).checked = true;
+
+                    // Determinar tipo de IVA
+                    if (parseFloat(data.iva) === 0 && parseFloat(data.gravada) === 0) {
+                        form.querySelector('input[name="tipo_iva"][value="exenta"]').checked = true;
+                    } else {
+                        form.querySelector('input[name="tipo_iva"][value="gravada"]').checked = true;
+                    }
+
+                    const tbody = document.getElementById('detalleBody');
+                    tbody.innerHTML = '';
+
+                    data.detalles.forEach(det => {
+                        agregarFilaDetalle(); // Crea la fila
+                        const tr = tbody.lastElementChild;
+
+                        // Rellenar directamente desde el tr, sin usar IDs individuales
+                        tr.querySelector('.inputProducto').value = det.producto_nombre;
+                        tr.querySelector('[name="producto_id[]"]').value = det.producto_id;
+
+                        tr.querySelector('.inputBodega').value = det.bodega_nombre;
+                        tr.querySelector('[name="bodega_id[]"]').value = det.bodega_id;
+
+                        tr.querySelector('.cantidad').value = det.cantidad;
+                        tr.querySelector('.precio').value = det.precio;
+
+                        calcularFila(tr); // Calcula total de la fila
                     });
-                }
 
-                ['subtotal', 'gravada', 'iva', 'total'].forEach(campo => {
-                    const val = form[campo].value.replace(/,/g, '');
-                    form[campo].value = parseFloat(val).toFixed(2);
+
+                    form.subtotal.value = parseFloat(data.subtotal).toFixed(2);
+                    form.gravada.value = parseFloat(data.gravada).toFixed(2);
+                    form.iva.value = parseFloat(data.iva).toFixed(2);
+                    form.total.value = parseFloat(data.total).toFixed(2);
+
+                    form.observaciones.value = data.observaciones || '';
+
+                    form.dataset.editingId = id;
+
+                    const modal = new bootstrap.Modal(document.getElementById('modalNuevoIngreso'));
+                    modal.show();
+                })
+                .catch(() => {
+                    Swal.fire('Error', 'Error al cargar el ingreso.', 'error');
                 });
+        }
 
-                const action = form.dataset.editingId ? 'editar' : 'guardar';
-                let formData = new FormData(form);
-                formData.append('detalles', JSON.stringify(detalles));
-                if (form.dataset.editingId) {
-                    formData.append('id', form.dataset.editingId);
-                }
+        // Mostrar ingresos
+        function mostrarIngresos() {
+            fetch('/controllers/ingresoController.php?action=listar')
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data);
+                    if ($.fn.DataTable.isDataTable('#tablaIngresos')) {
+                        $('#tablaIngresos').DataTable().clear().destroy();
+                    }
+                    const tbody = document.getElementById('tbodyIngresos');
+                    tbody.innerHTML = data.map(row => {
+                        const estado = row.sta == 1 ? '<span class="badge bg-success">Emitido</span>' : '<span class="badge bg-secondary">Borrador</span>';
+                        return `
+                        <tr>
+                            <td>${row.numero}</td>
+                            <td>${row.fecha}</td>
+                            <td>${row.proveedor}</td>
+                            <td>Q ${row.total}</td>
+                            <td>${estado}</td>
+                            <td>
+                                <button class="btn btn-sm btn-info btnComprobante" data-id="${row.id}" title="Generar Comprobante PDF">📄</button>
+                                <button class="btn btn-sm btn-warning btnEditar" data-id="${row.id}"><i class="bi bi-pencil"></i></button>
+                                <button class="btn btn-sm btn-danger btnEliminar" data-id="${row.id}"><i class="bi bi-trash"></i></button>
+                            </td>
+                        </tr>
+                    `}).join('');
 
-                fetch(`/controllers/ingresoController.php?action=${action}`, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
+                    $('#tablaIngresos').DataTable({
+                        language: {
+                            url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+                        },
+                        pageLength: 5,
+                        lengthMenu: [5, 10, 25, 50, 100]
+                    });
+
+                    // Evento eliminar ingreso
+                    document.querySelectorAll('.btnEliminar').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
                             Swal.fire({
-                                title: '¡Ingreso guardado!',
-                                text: '¿Qué deseas hacer ahora?',
-                                icon: 'success',
+                                title: '¿Eliminar ingreso?',
+                                icon: 'warning',
                                 showCancelButton: true,
-                                confirmButtonText: 'Agregar otro',
-                                cancelButtonText: 'Ver listado',
-                                reverseButtons: true
-                            }).then((result) => {
-                                const modalEl = document.getElementById('modalNuevoIngreso');
-                                const modal = bootstrap.Modal.getInstance(modalEl);
-
+                                confirmButtonText: 'Sí, eliminar',
+                                cancelButtonText: 'Cancelar'
+                            }).then(result => {
                                 if (result.isConfirmed) {
-                                    // Reiniciar formulario y volver a abrir modal para agregar otro ingreso
-                                    form.reset();
-                                    document.getElementById('detalleBody').innerHTML = '';
-                                    proveedorId.value = '';
-                                    inputProveedor.value = '';
-                                    if (!modal._isShown) {
-                                        modal.show();
-                                    }
-                                } else {
-                                    // Ocultar modal y mostrar listado
-                                    modal.hide();
-                                    setTimeout(() => {
-                                        document.body.classList.remove('modal-open');
-                                        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
-                                    }, 300);
-                                    mostrarIngresos();
+                                    fetch('/controllers/ingresoController.php?action=eliminar', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/x-www-form-urlencoded'
+                                        },
+                                        body: `id=${id}`
+                                    })
+                                        .then(res => res.json())
+                                        .then(data => {
+                                            if (data.success) {
+                                                Swal.fire('Eliminado', '', 'success');
+                                                mostrarIngresos();
+                                            } else {
+                                                Swal.fire('Error', 'No se pudo eliminar.', 'error');
+                                            }
+                                        });
                                 }
                             });
-                        } else {
-                            Swal.fire('Error', `No se pudo ${action === 'editar' ? 'actualizar' : 'guardar'}.`, 'error');
-                        }
-                    })
-                    .catch(() => {
-                        Swal.fire('Error', 'Error de comunicación con el servidor.', 'error');
+                        });
                     });
-            });
 
+                    // Evento editar ingreso
+                    document.querySelectorAll('.btnEditar').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            cargarIngresoParaEditar(id);
+                        });
+                    });
+
+                    // Evento generar comprobante PDF
+                    document.querySelectorAll('.btnComprobante').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.dataset.id;
+                            // Abrir PDF en nueva ventana
+                            window.open(`controllers/comprobanteController.php?action=comprobante&id=${id}`, '_blank');
+                        });
+                    });
+                });
         }
 
-        const ingresosLink = document.querySelector('a[href="#ingreso"]');
-        if (ingresosLink) {
-            ingresosLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                loadIngresos();
+        // Eventos e inicializaciones
+        document.getElementById('btnAgregarDetalle').addEventListener('click', agregarFilaDetalle);
+        document.getElementById('btnMostrarIngresos').addEventListener('click', mostrarIngresos);
+        
+        // Recalcular totales cuando cambia el tipo de IVA
+        document.querySelectorAll('input[name="tipo_iva"]').forEach(radio => {
+            radio.addEventListener('change', calcularTotales);
+        });
+
+        // Función común para guardar ingreso
+        function guardarIngreso(sta) {
+            const form = document.getElementById('formNuevoIngreso');
+
+            if (!proveedorId.value) {
+                Swal.fire('Error', 'Debe seleccionar un proveedor válido.', 'error');
+                return;
+            }
+
+            const filas = document.querySelectorAll('#detalleBody tr');
+            if (filas.length === 0) {
+                Swal.fire('Error', 'Debe agregar al menos un detalle.', 'error');
+                return;
+            }
+
+            const detalles = [];
+            for (const tr of filas) {
+                const producto_id = tr.querySelector('input[name="producto_id[]"]').value;
+                const bodega_id = tr.querySelector('input[name="bodega_id[]"]').value;
+                const cantidad = tr.querySelector('.cantidad').value;
+                const precio = tr.querySelector('.precio').value;
+
+                if (!producto_id || !bodega_id) {
+                    Swal.fire('Error', 'Debe seleccionar producto y bodega válidos en todas las filas.', 'error');
+                    return;
+                }
+
+                detalles.push({
+                    producto_id,
+                    bodega_id,
+                    cantidad,
+                    precio
+                });
+            }
+
+            ['subtotal', 'gravada', 'iva', 'total'].forEach(campo => {
+                const val = form[campo].value.replace(/,/g, '');
+                form[campo].value = parseFloat(val).toFixed(2);
             });
+
+            const action = form.dataset.editingId ? 'editar' : 'guardar';
+            let formData = new FormData(form);
+            formData.append('detalles', JSON.stringify(detalles));
+            formData.append('sta', sta);
+            if (form.dataset.editingId) {
+                formData.append('id', form.dataset.editingId);
+            }
+
+            fetch(`/controllers/ingresoController.php?action=${action}`, {
+                method: 'POST',
+                body: formData
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const mensaje = sta == 1 ? '¡Compra emitida correctamente!' : '¡Borrador guardado!';
+                        Swal.fire({
+                            title: mensaje,
+                            text: '¿Qué deseas hacer ahora?',
+                            icon: 'success',
+                            showCancelButton: true,
+                            confirmButtonText: 'Agregar otro',
+                            cancelButtonText: 'Ver listado',
+                            reverseButtons: true
+                        }).then((result) => {
+                            const modalEl = document.getElementById('modalNuevoIngreso');
+                            const modal = bootstrap.Modal.getInstance(modalEl);
+
+                            if (result.isConfirmed) {
+                                // Reiniciar formulario y volver a abrir modal para agregar otro ingreso
+                                form.reset();
+                                document.getElementById('detalleBody').innerHTML = '';
+                                proveedorId.value = '';
+                                inputProveedor.value = '';
+                                form.removeAttribute('data-editing-id');
+                                if (!modal._isShown) {
+                                    modal.show();
+                                }
+                            } else {
+                                // Ocultar modal y mostrar listado
+                                modal.hide();
+                                setTimeout(() => {
+                                    document.body.classList.remove('modal-open');
+                                    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                                    mostrarIngresos();
+                                }, 300);
+                            }
+                        });
+                    } else {
+                        Swal.fire('Error', data.message || 'Ocurrió un error al guardar.', 'error');
+                    }
+                })
+                .catch(() => {
+                    Swal.fire('Error', 'Error en el servidor.', 'error');
+                });
         }
-    });
+
+        // Botón: Guardar como Borrador (sta = 0)
+        document.getElementById('btnGuardarBorrador').addEventListener('click', function() {
+            guardarIngreso(0);
+        });
+
+        // Botón: Emitir Compra (sta = 1)
+        document.getElementById('btnEmitirCompra').addEventListener('click', function() {
+            guardarIngreso(1);
+        });
+
+    }
+
+    const ingresosLink = document.querySelector('a[href="#ingreso"]');
+    if (ingresosLink) {
+        ingresosLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            loadIngresos();
+        });
+    }
+});

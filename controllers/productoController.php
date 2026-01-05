@@ -59,3 +59,26 @@ if ($action === 'count') {
     $total = Producto::contarTotal($sucursal_id);
     echo json_encode(['total' => $total]);
 }
+
+if ($action === 'buscar_codigo') {
+    header('Content-Type: application/json');
+    $codigo = $_GET['codigo'] ?? '';
+    $sucursal_id = $_SESSION['sucursal_id'] ?? null;
+    
+    if (empty($codigo)) {
+        echo json_encode(['existe' => false]);
+        exit;
+    }
+    
+    $producto = Producto::obtenerPorCodigo($codigo, $sucursal_id);
+    
+    if ($producto) {
+        echo json_encode([
+            'existe' => true,
+            'producto' => $producto
+        ]);
+    } else {
+        echo json_encode(['existe' => false]);
+    }
+    exit;
+}

@@ -52,13 +52,16 @@ if ($action === 'guardar') {
     $cabId = Ingreso::guardarCabecera(
         $_SESSION['sucursal_id'],
         $datos['proveedor_id'],
+        $datos['forma_pago'] ?? 1,
         $fecha, // Usar fecha del cliente o servidor
         $datos['numero'],
         $datos['subtotal'],
         $datos['gravada'],
         $datos['iva'],
         $datos['total'],
-        $datos['observaciones']
+        $datos['observaciones'],
+        $datos['opcionpago'] ?? 0,
+        $datos['sta'] ?? 0
     );
 
     // Guardar detalles
@@ -95,13 +98,16 @@ if ($action === 'editar') {
         $id,
         $_SESSION['sucursal_id'],
         $datos['proveedor_id'],
+        $datos['forma_pago'] ?? 1,
         $fecha,
         $datos['numero'],
         $datos['subtotal'],
         $datos['gravada'],
         $datos['iva'],
         $datos['total'],
-        $datos['observaciones']
+        $datos['observaciones'],
+        $datos['opcionpago'] ?? 0,
+        $datos['sta'] ?? 0
     );
 
     if (!$exito) {

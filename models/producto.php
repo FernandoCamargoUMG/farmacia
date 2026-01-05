@@ -25,6 +25,22 @@ class Producto
         $conn = null; // Cerrar conexión PDO
         return $result;
     }
+
+    public static function obtenerPorCodigo($codigo, $sucursal_id = null)
+    {
+        $conn = Conexion::conectar();
+        if ($sucursal_id) {
+            $stmt = $conn->prepare("SELECT * FROM producto WHERE codigo = ? AND sucursal_id = ?");
+            $stmt->execute([$codigo, $sucursal_id]);
+        } else {
+            $stmt = $conn->prepare("SELECT * FROM producto WHERE codigo = ?");
+            $stmt->execute([$codigo]);
+        }
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $conn = null;
+        return $result;
+    }
+
     public static function obtenerTodos($sucursal_id)
     {
         $conn = Conexion::conectar();

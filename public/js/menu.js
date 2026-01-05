@@ -84,3 +84,24 @@ document.addEventListener('submit', function(e) {
     }
 });
 
+// Manejadores de enlaces del menú
+document.addEventListener('click', function(e) {
+    const target = e.target.closest('a[href^="#"]');
+    if (target) {
+        e.preventDefault();
+        const hash = target.getAttribute('href');
+        
+        switch(hash) {
+            case '#notaCreditoCliente':
+                if (typeof loadNotasCreditoCliente === 'function') {
+                    loadNotasCreditoCliente();
+                }
+                break;
+            case '#notaCreditoProveedor':
+                if (typeof loadNotasCreditoProveedor === 'function') {
+                    loadNotasCreditoProveedor();
+                }
+                break;
+        }
+    }
+});

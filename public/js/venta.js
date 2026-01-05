@@ -103,6 +103,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
                             <hr>
 
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label><i class="bi bi-upc-scan"></i> Escanear Código de Barras</label>
+                                    <input type="text" id="codigoBarrasVenta" class="form-control" placeholder="Escanee el código de barras del producto..." autocomplete="off">
+                                    <small class="text-muted">Escanee el código de barras para agregar productos automáticamente</small>
+                                </div>
+                            </div>
+
                             <table class="table table-bordered" id="tablaDetallesEgreso">
                                 <thead>
                                     <tr>
@@ -192,6 +200,80 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('autocompleteClienteList'),
                 '/autocomplete/autocomplete_clientes.php'
             );
+
+            // --- ESCÁNER DE CÓDIGO DE BARRAS ---
+            const codigoBarrasInput = document.getElementById('codigoBarrasVenta');
+            if (codigoBarrasInput) {
+                codigoBarrasInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const codigo = this.value.trim();
+                        
+                        if (!codigo) {
+                            return;
+                        }
+
+                        // Buscar producto por código
+                        fetch(`/controllers/productoController.php?action=buscar_codigo&codigo=${encodeURIComponent(codigo)}`)
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.existe && data.producto) {
+                                    // Agregar fila y autocompletar con el producto encontrado
+                                    agregarFilaDetalleEgreso();
+                                    
+                                    // Obtener la última fila agregada
+                                    const tbody = document.getElementById('detalleBodyEgreso');
+                                    const ultimaFila = tbody.querySelector('tr:last-child');
+                                    
+                                    if (ultimaFila) {
+                                        const idUnico = ultimaFila.dataset.id;
+                                        const inputProducto = document.getElementById(`inputProducto${idUnico}`);
+                                        const hiddenProducto = document.getElementById(`producto_id${idUnico}`);
+                                        const inputPrecio = ultimaFila.querySelector('.precio');
+                                        
+                                        // Autocompletar campos
+                                        inputProducto.value = data.producto.nombre;
+                                        hiddenProducto.value = data.producto.id;
+                                        inputPrecio.value = data.producto.precio || 0;
+                                        
+                                        // Calcular totales
+                                        calcularFilaEgreso(ultimaFila);
+                                        
+                                        // Enfocar el campo de cantidad
+                                        ultimaFila.querySelector('.cantidad').focus();
+                                        ultimaFila.querySelector('.cantidad').select();
+                                    }
+                                    
+                                    // Limpiar el campo de código de barras
+                                    this.value = '';
+                                    
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Producto agregado',
+                                        text: `${data.producto.nombre} ha sido agregado a la venta`,
+                                        timer: 1500,
+                                        showConfirmButton: false
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'warning',
+                                        title: 'Producto no encontrado',
+                                        text: 'No se encontró ningún producto con ese código de barras'
+                                    });
+                                    this.value = '';
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error al buscar producto:', error);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Ocurrió un error al buscar el producto'
+                                });
+                            });
+                    }
+                });
+            }
 
             // --- DATOS GLOBALES ---
             window.productos = [];
@@ -321,7 +403,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         tbody.innerHTML = '';
                         data.forEach(egreso => {
                             const tr = document.createElement('tr');
-                            const textoEstado = parseInt(egreso.sta) === 0 ? 'Borrador' : 'Emitido';
+                            const textoEstado = parseInt(egreso.sta) === 0 ? '<span class="badge bg-secondary">Borrador</span>' : '<span class="badge bg-success">Emitido</span>';
 
                             tr.innerHTML = `
                             

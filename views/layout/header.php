@@ -764,6 +764,16 @@ if (isset($_SESSION['sucursal_id'])) {
                 ['label' => 'Categoria de proveedores', 'link' => '#proveedorcat'],
             ]
         ],
+        'notas_credito' => [
+            'label' => 'Notas de Crédito', 
+            'icon' => 'file-earmark-text', 
+            'link' => '#', 
+            'roles' => [ADMIN, Bodeguero],
+            'submenu' => [
+                ['label' => 'Notas Clientes', 'link' => '#notaCreditoCliente', 'icon' => 'person-badge'],
+                ['label' => 'Notas Proveedores', 'link' => '#notaCreditoProveedor', 'icon' => 'truck'],
+            ]
+        ],
     ];
 
     $rol_id = $_SESSION['rol_id'] ?? 0;
@@ -994,6 +1004,8 @@ if (isset($_SESSION['sucursal_id'])) {
     <script src="public/js/caja.js"></script>
     <script src="public/js/usuario.js"></script>
     <script src="public/js/dashboard.js"></script>
+    <script src="public/js/notaCreditoCliente.js"></script>
+    <script src="public/js/notaCreditoProveedor.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

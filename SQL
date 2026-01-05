@@ -336,6 +336,17 @@ CREATE TABLE `egreso_det` (
   CONSTRAINT `fk_producto_egreso_det` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_sucursal_egreso_det` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursal` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+ALTER TABLE `u834187355_ferreteria`.`producto` 
+ADD COLUMN `sucursal_id` INT NULL AFTER `categoria_id`,
+ADD INDEX `fk_sucursal_producto_idx` (`sucursal_id` ASC) VISIBLE;
+;
+ALTER TABLE `producto` 
+ADD CONSTRAINT `fk_sucursal_producto`
+  FOREIGN KEY (`sucursal_id`)
+  REFERENCES `sucursal` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -464,6 +475,7 @@ CREATE TABLE `ingreso_cab` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `sucursal_id` int(11) NOT NULL,
   `proveedor_id` int(11) NOT NULL,
+  `forma_pago` int(11) DEFAULT NULL COMMENT 'Efectivo\\nCheque\\nDeposito\\nTarjeta de Crédito\\nTarjeta de Débito\\nTransferencia Bancaria\\n',
   `fecha` datetime DEFAULT NULL,
   `numero` varchar(50) DEFAULT NULL,
   `subtotal` decimal(12,2) DEFAULT 0.00,
@@ -472,11 +484,14 @@ CREATE TABLE `ingreso_cab` (
   `iva` decimal(12,2) DEFAULT 0.00,
   `sta` tinyint(4) NOT NULL DEFAULT 0,
   `observaciones` varchar(255) DEFAULT NULL,
+  `opcionpago` tinyint(4) DEFAULT 0 COMMENT '0=contado/1=credito',
   PRIMARY KEY (`id`),
   KEY `fk_proveedor_idx` (`proveedor_id`),
   KEY `fk_sucursal_idx` (`sucursal_id`),
+  KEY `fk_forma_pago_ingreso_idx` (`forma_pago`),
   CONSTRAINT `fk_proveedor` FOREIGN KEY (`proveedor_id`) REFERENCES `proveedor` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_sucursal_ingreso_cab` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursal` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_sucursal_ingreso_cab` FOREIGN KEY (`sucursal_id`) REFERENCES `sucursal` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_forma_pago_ingreso` FOREIGN KEY (`forma_pago`) REFERENCES `forma_pago` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
