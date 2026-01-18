@@ -49,13 +49,26 @@ document.addEventListener('DOMContentLoaded', function () {
                             <div class="row">
                                 <div class="col-md-4 mb-2">
                                     <label>Fecha</label>
-                                    <input type="date" name="fecha" class="form-control" required>
+                                    <input type="date" name="fecha" id="fechaIngreso" class="form-control" required>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label>Tipo de Número</label><br>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="tipo_numero_ingreso" id="numeroAutomaticoIngreso" value="automatico" checked>
+                                        <label class="form-check-label" for="numeroAutomaticoIngreso">Automático</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="tipo_numero_ingreso" id="numeroManualIngreso" value="manual">
+                                        <label class="form-check-label" for="numeroManualIngreso">Manual</label>
+                                    </div>
                                 </div>
                                 <div class="col-md-4 mb-2">
                                     <label>Número</label>
-                                    <input type="text" name="numero" class="form-control" required>
+                                    <input type="text" name="numero" id="numeroIngreso" class="form-control" placeholder="Se generará automáticamente" readonly required>
                                 </div>
-                                <div class="col-md-4 mb-2 position-relative">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 mb-2 position-relative">
                                     <label>Proveedor</label>
                                     <input type="text" id="inputProveedor" class="form-control" autocomplete="off" required>
                                     <input type="hidden" name="proveedor_id" id="proveedor_id" required>
@@ -149,6 +162,34 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('detalleBody').innerHTML = ''; // limpiar detalles
             document.getElementById('proveedor_id').value = '';
             document.getElementById('inputProveedor').value = '';
+            
+            // Establecer fecha actual
+            const hoy = new Date();
+            const fechaFormateada = hoy.toISOString().split('T')[0];
+            document.getElementById('fechaIngreso').value = fechaFormateada;
+            
+            // Configurar número automático por defecto
+            document.getElementById('numeroAutomaticoIngreso').checked = true;
+            document.getElementById('numeroIngreso').value = '';
+            document.getElementById('numeroIngreso').placeholder = 'Se generará automáticamente';
+            document.getElementById('numeroIngreso').readOnly = true;
+        });
+        
+        // Listener para cambio de tipo de número en compras
+        document.addEventListener('change', function(e) {
+            if (e.target.name === 'tipo_numero_ingreso') {
+                const numeroInput = document.getElementById('numeroIngreso');
+                if (e.target.value === 'automatico') {
+                    numeroInput.value = '';
+                    numeroInput.placeholder = 'Se generará automáticamente';
+                    numeroInput.readOnly = true;
+                } else {
+                    numeroInput.value = '';
+                    numeroInput.placeholder = 'Ingrese el número de compra';
+                    numeroInput.readOnly = false;
+                    numeroInput.focus();
+                }
+            }
         });
 
 
@@ -528,6 +569,11 @@ document.addEventListener('DOMContentLoaded', function () {
             let formData = new FormData(form);
             formData.append('detalles', JSON.stringify(detalles));
             formData.append('sta', sta);
+            
+            // Agregar tipo de número
+            const tipoNumero = document.querySelector('input[name="tipo_numero_ingreso"]:checked')?.value || 'automatico';
+            formData.append('tipo_numero', tipoNumero);
+            
             if (form.dataset.editingId) {
                 formData.append('id', form.dataset.editingId);
             }

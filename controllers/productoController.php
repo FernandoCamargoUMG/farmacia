@@ -21,6 +21,7 @@ if ($action === 'guardar') {
     // El código se generará automáticamente si no se proporciona
     $exito = Producto::guardar(
         $_POST['categoria_id'],
+        $_POST['categoria_precio_id'] ?? null,
         $_SESSION['sucursal_id'],
         $_POST['codigo'] ?? '',
         $_POST['nombre'] ?? '',

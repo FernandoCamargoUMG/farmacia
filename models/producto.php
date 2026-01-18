@@ -44,9 +44,13 @@ class Producto
     public static function obtenerTodos($sucursal_id)
     {
         $conn = Conexion::conectar();
-        $stmt = $conn->prepare("SELECT pr.*, cp.descripcion AS categoria, s.nombre_sucursal as sucursal
+        $stmt = $conn->prepare("SELECT pr.*, cp.descripcion AS categoria, 
+                                cpre.nombre AS categoria_precio, 
+                                cpre.precio_base AS precio_categoria,
+                                s.nombre_sucursal as sucursal
                                 FROM producto pr
                                 LEFT JOIN categoria_producto cp ON pr.categoria_id = cp.id
+                                LEFT JOIN categoria_precio cpre ON pr.categoria_precio_id = cpre.id
                                 LEFT JOIN sucursal s ON pr.sucursal_id = s.id
                                 WHERE pr.sucursal_id = ?");
         $stmt->execute([$sucursal_id]);
@@ -74,7 +78,7 @@ class Producto
         return 'SKU-' . str_pad($numero, 4, '0', STR_PAD_LEFT);
     }
 
-    public static function guardar($categoria_id, $sucursal_id, $codigo, $nombre, $descripcion, $precio)
+    public static function guardar($categoria_id, $categoria_precio_id, $sucursal_id, $codigo, $nombre, $descripcion, $precio)
     {
         $conn = Conexion::conectar();
         
@@ -83,8 +87,8 @@ class Producto
             $codigo = self::generarCodigoSKU();
         }
         
-        $stmt = $conn->prepare("INSERT INTO producto (categoria_id, sucursal_id, codigo ,nombre, descripcion, precio) VALUES (?, ?, ?, ?, ?, ?)");
-        return $stmt->execute([$categoria_id, $sucursal_id, $codigo, $nombre, $descripcion, $precio]);
+        $stmt = $conn->prepare("INSERT INTO producto (categoria_id, categoria_precio_id, sucursal_id, codigo, nombre, descripcion, precio) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        return $stmt->execute([$categoria_id, $categoria_precio_id, $sucursal_id, $codigo, $nombre, $descripcion, $precio]);
     }
 
     public static function actualizar($id, $datos, $sucursal_id = null)
@@ -92,9 +96,10 @@ class Producto
         $conn = Conexion::conectar();
         if ($sucursal_id) {
             // Actualizar solo si el producto pertenece a la sucursal
-            $stmt = $conn->prepare("UPDATE producto SET categoria_id = ?, codigo = ?, nombre = ?, descripcion = ?, precio = ? WHERE id = ? AND sucursal_id = ?");
+            $stmt = $conn->prepare("UPDATE producto SET categoria_id = ?, categoria_precio_id = ?, codigo = ?, nombre = ?, descripcion = ?, precio = ? WHERE id = ? AND sucursal_id = ?");
             return $stmt->execute([
                 $datos['categoria_id'],
+                $datos['categoria_precio_id'] ?? null,
                 $datos['codigo'],
                 $datos['nombre'],
                 $datos['descripcion'],
@@ -103,9 +108,10 @@ class Producto
                 $sucursal_id
             ]);
         } else {
-            $stmt = $conn->prepare("UPDATE producto SET categoria_id = ?, codigo = ?, nombre = ?, descripcion = ?, precio = ? WHERE id = ?");
+            $stmt = $conn->prepare("UPDATE producto SET categoria_id = ?, categoria_precio_id = ?, codigo = ?, nombre = ?, descripcion = ?, precio = ? WHERE id = ?");
             return $stmt->execute([
                 $datos['categoria_id'],
+                $datos['categoria_precio_id'] ?? null,
                 $datos['codigo'],
                 $datos['nombre'],
                 $datos['descripcion'],

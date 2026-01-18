@@ -49,13 +49,26 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="row">
                                 <div class="col-md-4 mb-2">
                                     <label>Fecha</label>
-                                    <input type="date" name="fecha" class="form-control" required>
+                                    <input type="date" name="fecha" id="fechaVenta" class="form-control" required>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label>Tipo de Número</label><br>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="tipo_numero" id="numeroAutomaticoVenta" value="automatico" checked>
+                                        <label class="form-check-label" for="numeroAutomaticoVenta">Automático</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="tipo_numero" id="numeroManualVenta" value="manual">
+                                        <label class="form-check-label" for="numeroManualVenta">Manual</label>
+                                    </div>
                                 </div>
                                 <div class="col-md-4 mb-2">
                                     <label>Número</label>
-                                    <input type="text" name="numero" class="form-control" required>
+                                    <input type="text" name="numero" id="numeroVenta" class="form-control" placeholder="Se generará automáticamente" readonly required>
                                 </div>
-                                <div class="col-md-4 mb-2 position-relative">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 mb-2 position-relative">
                                     <label>Cliente</label>
                                     <input type="text" id="inputCliente" class="form-control" autocomplete="off" required>
                                     <input type="hidden" name="cliente_id" id="cliente_id" required>
@@ -156,7 +169,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 form.removeAttribute('data-editing-id');
                 document.getElementById('detalleBodyEgreso').innerHTML = '';
                 document.getElementById('cliente_id').value = '';
-                document.getElementById('inputCliente').value = '';
+                document.getElementById('inputCliente').value = '';                
+                // Establecer fecha actual
+                const hoy = new Date();
+                const fechaFormateada = hoy.toISOString().split('T')[0];
+                document.getElementById('fechaVenta').value = fechaFormateada;
+                
+                // Configurar número automático por defecto
+                document.getElementById('numeroAutomaticoVenta').checked = true;
+                document.getElementById('numeroVenta').value = '';
+                document.getElementById('numeroVenta').placeholder = 'Se generará automáticamente';
+                document.getElementById('numeroVenta').readOnly = true;
+            });
+            
+            // Listener para cambio de tipo de número en ventas
+            document.addEventListener('change', function(e) {
+                if (e.target.name === 'tipo_numero' && e.target.closest('#modalNuevoEgreso')) {
+                    const numeroInput = document.getElementById('numeroVenta');
+                    if (e.target.value === 'automatico') {
+                        numeroInput.value = '';
+                        numeroInput.placeholder = 'Se generará automáticamente';
+                        numeroInput.readOnly = true;
+                    } else {
+                        numeroInput.value = '';
+                        numeroInput.placeholder = 'Ingrese el número de venta';
+                        numeroInput.readOnly = false;
+                        numeroInput.focus();
+                    }
+                }
             });
 
             // --- AUTOCOMPLETE CLIENTE ---
@@ -579,6 +619,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 const submitter = e.submitter;
                 const estado = submitter ? submitter.getAttribute('data-estado') : '0';
                 formData.set('sta', estado);
+                
+                // Agregar tipo de número
+                const tipoNumero = document.querySelector('#modalNuevoEgreso input[name="tipo_numero"]:checked')?.value || 'automatico';
+                formData.set('tipo_numero', tipoNumero);
 
                 const egresoId = form.egreso_id.value.trim();
 

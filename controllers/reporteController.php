@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once __DIR__ . '/../config/conexion.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -46,7 +47,7 @@ class ReporteController {
     public function generarReporteInventario() {
         try {
             // Usar consulta mejorada que incluya código, precio y stock
-            $sucursal_id = $_GET['sucursal_id'] ?? 1;
+            $sucursal_id = $_SESSION['sucursal_id'] ?? 1;
             
             // Consulta mejorada que incluye código, precio y stock real
             $query = "
@@ -71,9 +72,10 @@ class ReporteController {
                           AND inv.sucursal_id = s.id), 0
                     ) AS stock_actual
                 FROM producto p
-                CROSS JOIN bodega b
+                INNER JOIN bodega b ON b.sucursal_id = ?
                 CROSS JOIN sucursal s
                 WHERE s.id = ?
+                  AND p.sucursal_id = ?
                   AND EXISTS (
                       SELECT 1 FROM inventario inv2 
                       WHERE inv2.producto_id = p.id 
@@ -84,7 +86,7 @@ class ReporteController {
             ";
             
             $stmt = $this->conn->prepare($query);
-            $stmt->execute([$sucursal_id]);
+            $stmt->execute([$sucursal_id, $sucursal_id, $sucursal_id]);
             $datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
             // Si no hay datos con inventario, mostrar todos los productos
@@ -95,17 +97,18 @@ class ReporteController {
                         p.nombre AS producto,
                         p.descripcion,
                         p.precio as precio_venta,
-                        'ALMACEN 2' AS bodega,
+                        b.nombre AS bodega,
                         s.nombre_sucursal AS sucursal,
                         0 as stock_actual
                     FROM producto p
                     CROSS JOIN sucursal s
-                    WHERE s.id = ?
+                    LEFT JOIN bodega b ON b.sucursal_id = s.id
+                    WHERE s.id = ? AND p.sucursal_id = ?
                     ORDER BY p.nombre
                 ";
                 
                 $stmt = $this->conn->prepare($query_fallback);
-                $stmt->execute([$sucursal_id]);
+                $stmt->execute([$sucursal_id, $sucursal_id]);
                 $datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
             }
             
@@ -118,7 +121,7 @@ class ReporteController {
     
     public function generarReporteBajoStock() {
         try {
-            $sucursal_id = $_GET['sucursal_id'] ?? 1;
+            $sucursal_id = $_SESSION['sucursal_id'] ?? 1;
             
             // Consulta para productos con stock bajo (≤ 5 unidades) agrupado por producto
             $query = "
@@ -144,13 +147,13 @@ class ReporteController {
                     ) AS stock_actual
                 FROM producto p
                 CROSS JOIN sucursal s
-                WHERE s.id = ?
+                WHERE s.id = ? AND p.sucursal_id = ?
                 HAVING stock_actual <= 5
                 ORDER BY stock_actual ASC, p.nombre
             ";
             
             $stmt = $this->conn->prepare($query);
-            $stmt->execute([$sucursal_id]);
+            $stmt->execute([$sucursal_id, $sucursal_id]);
             $datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
             // Si no hay productos con stock bajo, crear mensaje informativo
@@ -180,7 +183,7 @@ class ReporteController {
         try {
             $fechaInicio = $_GET['fecha_inicio'] ?? date('Y-m-01');
             $fechaFin = $_GET['fecha_fin'] ?? date('Y-m-d');
-            $sucursal_id = $_GET['sucursal_id'] ?? 1;
+            $sucursal_id = $_SESSION['sucursal_id'] ?? 1;
             
             // Usar stored procedure para obtener movimientos
             $stmt = $this->conn->prepare("CALL sp_inventario(?)");

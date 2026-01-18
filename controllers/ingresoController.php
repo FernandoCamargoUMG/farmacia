@@ -47,6 +47,12 @@ if ($action === 'guardar') {
 
     // Si viene fecha_local del cliente (JavaScript), usarla; si no, usar fecha del servidor
     $fecha = !empty($datos['fecha_local']) ? $datos['fecha_local'] : date('Y-m-d H:i:s');
+    
+    // Generar número automático si se solicita
+    $numero = $datos['numero'];
+    if (isset($datos['tipo_numero']) && $datos['tipo_numero'] === 'automatico') {
+        $numero = Ingreso::generarNumeroAutomatico($_SESSION['sucursal_id']);
+    }
 
     // Guardar cabecera
     $cabId = Ingreso::guardarCabecera(
@@ -54,7 +60,7 @@ if ($action === 'guardar') {
         $datos['proveedor_id'],
         $datos['forma_pago'] ?? 1,
         $fecha, // Usar fecha del cliente o servidor
-        $datos['numero'],
+        $numero,
         $datos['subtotal'],
         $datos['gravada'],
         $datos['iva'],

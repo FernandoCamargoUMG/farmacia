@@ -762,6 +762,7 @@ if (isset($_SESSION['sucursal_id'])) {
                 ['label' => 'Tipo de activos', 'link' => '#activoc'],
                 ['label' => 'Categoria de productos', 'link' => '#productocat'],
                 ['label' => 'Categoria de proveedores', 'link' => '#proveedorcat'],
+                ['label' => 'Categoria de precios', 'link' => '#categoria-precio'],
             ]
         ],
         'notas_credito' => [
@@ -996,6 +997,7 @@ if (isset($_SESSION['sucursal_id'])) {
     <script src="public/js/CategoriaActivo.js"></script>
     <script src="public/js/CategoriaProducto.js"></script>
     <script src="public/js/CategoriaProveedor.js"></script>
+    <script src="public/js/categoriaPrecio.js"></script>
     <script src="public/js/formaPago.js"></script>
     <script src="public/js/activoFijo.js"></script>
     <script src="public/js/depreciacion.js"></script>

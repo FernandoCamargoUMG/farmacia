@@ -42,10 +42,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                         <div class="modal-body">
                             <div class="mb-3">
-                                <label>Categoría</label>
+                                <label>Categoría de Producto</label>
                                 <select name="categoria_id" id="selectCategoria" class="form-control" required>
                                     <option value="">Seleccione una categoría</option>
                                 </select>
+                            </div>
+                            <div class="mb-3">
+                                <label>Categoría de Precio</label>
+                                <select name="categoria_precio_id" id="selectCategoriaPrecio" class="form-control">
+                                    <option value="">Seleccione una categoría de precio (opcional)</option>
+                                </select>
+                                <small class="text-muted">Si la categoría tiene precio base, se autocompletará el campo precio</small>
                             </div>
                             <div class="mb-3">
                                 <label>Código de Barras</label>
@@ -54,7 +61,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                             <div class="mb-3"><label>Nombre</label><input type="text" name="nombre" class="form-control" required></div>
                             <div class="mb-3"><label>descripción</label><input type="text" name="descripcion" class="form-control"></div>
-                            <div class="mb-3"><label>precio</label><input type="text" name="precio" class="form-control"></div>
+                            <div class="mb-3">
+                                <label>Precio</label>
+                                <input type="number" name="precio" id="precioProducto" step="0.01" min="0" class="form-control" required>
+                                <small class="text-muted" id="mensajePrecioCategoria" style="display: none; color: #28a745;">
+                                    <i class="bi bi-info-circle"></i> Precio autocompletado desde la categoría
+                                </small>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">Guardar</button>
@@ -64,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         </div>`;
 
-            // Función para cargar categorías
+            // Función para cargar categorías de producto
             function cargarCategorias() {
                 return fetch('controllers/categoriaProductoController.php?action=listar')
                     .then(res => res.json())
@@ -80,13 +93,54 @@ document.addEventListener('DOMContentLoaded', function() {
                         return data;
                     });
             }
+            
+            // Función para cargar categorías de precio
+            function cargarCategoriasPrecio() {
+                return fetch('controllers/categoriaPrecioController.php?action=listar')
+                    .then(res => res.json())
+                    .then(data => {
+                        const select = document.getElementById('selectCategoriaPrecio');
+                        select.innerHTML = '<option value="">Seleccione una categoría de precio (opcional)</option>';
+                        data.forEach(cat => {
+                            const option = document.createElement('option');
+                            option.value = cat.id;
+                            option.textContent = cat.nombre + (cat.precio_base ? ` (Q${parseFloat(cat.precio_base).toFixed(2)})` : ' (Personalizado)');
+                            option.dataset.precioBase = cat.precio_base || '';
+                            select.appendChild(option);
+                        });
+                        return data;
+                    });
+            }
+            
+            // Listener para cambio de categoría de precio
+            document.addEventListener('change', function(e) {
+                if (e.target.id === 'selectCategoriaPrecio') {
+                    const selectedOption = e.target.options[e.target.selectedIndex];
+                    const precioBase = selectedOption.dataset.precioBase;
+                    const precioInput = document.getElementById('precioProducto');
+                    const mensajePrecio = document.getElementById('mensajePrecioCategoria');
+                    
+                    if (precioBase) {
+                        // Autocompletar precio
+                        precioInput.value = parseFloat(precioBase).toFixed(2);
+                        mensajePrecio.style.display = 'block';
+                        precioInput.readOnly = false; // Permitir editar aunque venga de categoría
+                    } else {
+                        // Limpiar precio si no hay precio base
+                        mensajePrecio.style.display = 'none';
+                        precioInput.readOnly = false;
+                    }
+                }
+            });
 
             // Abrir modal
             document.querySelector('[data-bs-target="#modalNuevoProducto"]').addEventListener('click', function() {
                 const form = document.getElementById('formNuevoProducto');
                 form.reset();
                 form.productoId.value = '';
+                document.getElementById('mensajePrecioCategoria').style.display = 'none';
                 cargarCategorias();
+                cargarCategoriasPrecio();
                 
                 // Focus en el campo de código para lector de barras
                 setTimeout(() => {
@@ -170,14 +224,25 @@ document.addEventListener('DOMContentLoaded', function() {
                                     .then(producto => {
                                         const form = document.getElementById('formNuevoProducto');
                                         form.productoId.value = producto.id;
-                                        //form.codigo.value = producto.codigo;
+                                        document.getElementById('codigoBarras').value = producto.codigo;
                                         form.nombre.value = producto.nombre;
                                         form.descripcion.value = producto.descripcion;
-                                        form.precio.value = producto.precio;
+                                        document.getElementById('precioProducto').value = producto.precio;
+                                        
                                         // Cargar categorías y luego seleccionar la correcta
                                         cargarCategorias().then(() => {
                                             document.getElementById('selectCategoria').value = producto.categoria_id;
                                         });
+                                        
+                                        // Cargar categorías de precio
+                                        cargarCategoriasPrecio().then(() => {
+                                            if (producto.categoria_precio_id) {
+                                                document.getElementById('selectCategoriaPrecio').value = producto.categoria_precio_id;
+                                            }
+                                        });
+                                        
+                                        document.getElementById('mensajePrecioCategoria').style.display = 'none';
+                                        
                                         new bootstrap.Modal(document.getElementById('modalNuevoProducto')).show();
                                     });
                             });

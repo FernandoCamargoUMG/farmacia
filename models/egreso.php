@@ -3,6 +3,38 @@ require_once __DIR__ . '/../config/conexion.php';
 
 class Egreso
 {
+    // Generar número automático de venta
+    public static function generarNumeroAutomatico($sucursalId)
+    {
+        $conn = Conexion::conectar();
+        
+        // Obtener el último número de venta de la sucursal
+        $stmt = $conn->prepare("SELECT numero FROM egreso_cab 
+                               WHERE sucursal_id = ? 
+                               ORDER BY id DESC LIMIT 1");
+        $stmt->execute([$sucursalId]);
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($resultado && !empty($resultado['numero'])) {
+            // Extraer número y aumentar
+            $ultimoNumero = $resultado['numero'];
+            
+            // Si el número tiene formato, extraer solo los dígitos
+            preg_match('/\d+/', $ultimoNumero, $matches);
+            if (!empty($matches)) {
+                $numero = intval($matches[0]) + 1;
+            } else {
+                $numero = 1;
+            }
+        } else {
+            // Primera venta de la sucursal
+            $numero = 1;
+        }
+        
+        // Formato: VEN-000001
+        return 'VEN-' . str_pad($numero, 6, '0', STR_PAD_LEFT);
+    }
+
     // Obtener todos los egresos por sucursal
     public static function obtenerPorSucursal($sucursalId)
     {
